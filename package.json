@@ -1,0 +1,25 @@
+{
+  "name": "assyst-ts",
+  "version": "1.0.0",
+  "description": "A bot with features to make developers' lives easier.",
+  "main": "index.js",
+  "directories": {
+    "lib": "lib"
+  },
+  "scripts": {
+    "test": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Jacherr/Assyst-TS.git"
+  },
+  "author": "Jacherr",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Jacherr/Assyst-TS/issues"
+  },
+  "homepage": "https://github.com/Jacherr/Assyst-TS#readme",
+  "dependencies": {
+    "detritus-client": "^0.9.38"
+  }
+}
