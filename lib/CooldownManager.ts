@@ -11,11 +11,12 @@ export default class CooldownManager {
     }
 
     public getCooldownFromEntry(entry: ChannelGuildText | Guild | User): ICooldown | null {
-        const value: [string, ICooldown] | undefined = Array.from(this.cooldowns).find(v => v[0] === entry.id)
+        const value: [string, ICooldown] | undefined = Array.from(this.cooldowns).find(v => v[0] === entry.id);
+
         if (Array.isArray(value)) {
-            return value[1]
+            return value[1];
         } else {
-            return null
+            return null;
         }
     }
 }

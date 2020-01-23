@@ -9,7 +9,7 @@ export interface IAssystOptions {
 }
 export interface ICommandOptions {
     name: string,
-    execute: () => void,
+    execute: () => Message,
     permissionLevel: number,
     timeout: number,
     argsMin: number,

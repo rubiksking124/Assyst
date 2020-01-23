@@ -1,7 +1,7 @@
 {
   "name": "assyst-ts",
   "version": "1.0.0",
-  "description": "A bot with features to make developers' lives easier.",
+  "description": "epic monox sex bot",
   "main": "index.js",
   "directories": {
     "lib": "lib"
@@ -20,8 +20,12 @@
   },
   "homepage": "https://github.com/Jacherr/Assyst-TS#readme",
   "dependencies": {
-    "@axonteam/eslint-config": "^2.2.1",
+    "@types/superagent": "^4.1.4",
     "detritus-client": "^0.9.38",
-    "eslint": "^6.8.0"
+    "superagent": "^5.2.1"
+  },
+  "devDependencies": {
+    "eslint": "^6.8.0",
+    "@axonteam/eslint-config": "^2.2.1"
   }
 }

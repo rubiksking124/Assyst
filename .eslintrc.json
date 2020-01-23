@@ -1,5 +1,8 @@
 {
     "extends": "@axonteam/eslint-config",
+    "env": {
+        "node": true
+    },
     "rules": {
         "no-invalid-this": 0
     }
