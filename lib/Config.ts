@@ -16,5 +16,5 @@ export default class Config {
     }
     public readonly description: string = description
     public readonly version: string = version
-    public readonly tokens: object = tokens
+    public readonly tokens = tokens
 }

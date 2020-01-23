@@ -11,7 +11,7 @@ export default class Assyst {
     public staff: IStaff
     public utils: Utils
     constructor(options: IAssystOptions) {
-        this.bot = options.bot;
+        this.bot = options.bot || new ShardClient(options.config.tokens.bot);
         this.version = options.config.version;
         this.description = options.config.description;
         this.emotes = options.config.emotes;
