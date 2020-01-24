@@ -1,6 +1,6 @@
 import { ShardClient } from 'detritus-client';
 import { Message } from 'detritus-client/lib/structures';
-import { IFlagInfo, IInfo } from './Interfaces'
+import { IFlagInfo, IInfo, IFlag } from './Interfaces'
 import Config from './Config'
 import Assyst from './Assyst'
 export interface IAssystOptions {
@@ -9,18 +9,19 @@ export interface IAssystOptions {
 }
 export interface ICommandOptions {
     name: string,
-    execute: () => Message,
-    permissionLevel: number,
     timeout: number,
-    argsMin: number,
-    aliases: Array<string>,
-    validFlags: Array<IFlagInfo>,
-    nsfw: boolean,
-    visibleInHelp: boolean,
     info: IInfo,
     assyst: Assyst
+    permissionLevel?: number,
+    aliases?: Array<string>,
+    validFlags?: Array<IFlagInfo>,
+    nsfw?: boolean,
+    visibleInHelp?: boolean,
+    argsMin?: number,
 }
 export interface ICommandContext {
     args: string[],
-    message: Message
+    message: Message,
+    reply: (options: any) => Promise<Message>
+    flags: Array<IFlag>
 }

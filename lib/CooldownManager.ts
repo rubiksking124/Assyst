@@ -1,5 +1,6 @@
 import { ICooldown } from './Interfaces';
 import { Guild, User, ChannelGuildText } from 'detritus-client/lib/structures';
+
 export default class CooldownManager { 
     private cooldowns: Map<string, ICooldown> // ID (of a user, channel or guild) => [Cooldown]
     constructor() {

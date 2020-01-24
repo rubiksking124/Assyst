@@ -2,6 +2,7 @@ import { ICommandOptions, ICommandContext } from './CInterfaces'
 import Assyst from './Assyst'
 import { IInfo, IFlagInfo,  } from './Interfaces'
 import { Message } from 'detritus-client/lib/structures'
+import { PERMISSION_LEVELS } from './Enums';
 
 export default class Command {
     public name: string;
@@ -14,19 +15,29 @@ export default class Command {
     public visibleInHelp: boolean;
     public info: IInfo;
     public assyst: Assyst;
-    public execute: (context: ICommandContext) => Message;
 
     constructor(options: ICommandOptions) {
         this.name = options.name;
-        this.execute = options.execute;
         this.timeout = options.timeout;
-        this.argsMin = options.argsMin;
-        this.aliases = options.aliases;
+        this.argsMin = options.argsMin || 0;
+        this.aliases = options.aliases || [];
         this.info = options.info;
-        this.visibleInHelp = options.visibleInHelp;
+        if(options.visibleInHelp === undefined) {
+            this.visibleInHelp = false
+        } else {
+            this.visibleInHelp = options.visibleInHelp
+        }
         this.assyst = options.assyst;
-        this.nsfw = options.nsfw;
-        this.validFlags = options.validFlags;
-        this.permissionLevel = options.permissionLevel;
+        if(options.nsfw === undefined) {
+            this.nsfw = false
+        } else {
+            this.nsfw = options.nsfw
+        }
+        this.validFlags = options.validFlags || [];
+        this.permissionLevel = options.permissionLevel || PERMISSION_LEVELS.NORMAL;
+    }
+
+    public execute(context: ICommandContext): Promise<Message> {
+        throw new Error('This function must be called from a class extension.');
     }
 }

@@ -18,11 +18,12 @@ export interface IFlagInfo {
     name: string,
     description: string,
     argumented: boolean,
+    permissionLevel: number,
     accepts?: Array<string>
 }
 export interface IFlag {
     name: string,
-    content?: string
+    value?: string
 }
 export interface IInfo {
     description: string,
