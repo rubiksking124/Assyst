@@ -1,4 +1,9 @@
 {
+  "include":  [
+    "src/**/*",
+    "lib/**/*",
+    "index.ts"
+  ],
   "compilerOptions": {
     /* Basic Options */
     // "incremental": true,                   /* Enable incremental compilation */

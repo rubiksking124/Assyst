@@ -33,7 +33,7 @@ export default class DetritusDocs extends Command {
         });
     }
 
-    public execute(context: ICommandContext): Promise<Message> {
-        return context.reply('test');
+    public execute(context: ICommandContext): Promise<Message | null> {
+        return this.sendMsg(context.message.channel, 'Test');
     }
 }

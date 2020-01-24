@@ -1,2 +1,5 @@
 privateConfig.json
 node_modules
+src/**/*.js
+lib/**/*.js
+**/*.js

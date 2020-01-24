@@ -11,18 +11,19 @@ export default class Handler {
     
     public handleMessage(message: Message): void {
         const { content } = message;
-        if(!content.startsWith(this.assyst.prefix) || !content.startsWith(`<@${this.assyst.bot.user?.id}>`) || !content.startsWith(`<@!${this.assyst.bot.user?.id}>`)) {
+        if(!content.startsWith(this.assyst.prefix) && !content.startsWith(`<@${this.assyst.bot.user?.id}>`) && !content.startsWith(`<@!${this.assyst.bot.user?.id}>`)) {
             return;
         }
-
+        
         const [command, ...args] = content.substr(this.assyst.prefix.length).split(/ +/);
-        if (!this.assyst.commands.has(command)) {
+        if (!this.assyst.commands.has(command.toLowerCase())) {
             return;
         }
-
-        const targetCommand = <Command>this.assyst.commands.get(command);
-        const permissionLevel: number = this.checkPermissions(targetCommand, message.author.id)
-        if (permissionLevel >= targetCommand.permissionLevel) {
+        
+        const targetCommand = <Command>this.assyst.commands.get(command.toLowerCase());
+        const permissionLevel: number = this.checkPermissions(message.author.id);
+        if (permissionLevel <= targetCommand.permissionLevel) {
+            console.log(`Returning since command permission level is ${targetCommand.permissionLevel}, user's is ${permissionLevel}`)
             return;
         }
 
@@ -32,7 +33,7 @@ export default class Handler {
             args,
             message,
             flags,
-            reply: message.reply
+            reply: (...args) => message.reply(...args)
         });
     }
 
@@ -66,7 +67,7 @@ export default class Handler {
         return args;
     }
 
-    private checkPermissions(command: Command, id: string): number {
+    private checkPermissions(id: string): number {
         if (this.assyst.staff.owners.includes(id)) {
             return 0
         } else if (this.assyst.staff.admins.includes(id)) {

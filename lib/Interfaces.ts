@@ -1,4 +1,5 @@
 import { Guild, User, ChannelGuildText } from 'detritus-client/lib/structures';
+import { MESSAGE_TYPE_EMOTES } from './Enums'
 export interface IStaff {
     owners: Array<string>,
     admins: Array<string>,
@@ -30,4 +31,9 @@ export interface IInfo {
     examples: Array<string>,
     usage: string,
     author: string
+}
+export interface ISendMsgOptions {
+    type?: MESSAGE_TYPE_EMOTES,
+    noEscapeMentions?: boolean,
+    edit?: string
 }
