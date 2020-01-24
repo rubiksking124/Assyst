@@ -2,6 +2,7 @@ import { Message } from 'detritus-client/lib/structures';
 import Assyst from './Assyst'
 import Command from './Command'
 import { IFlag } from './Interfaces';
+import { PERMISSION_LEVELS } from './Enums'
 export default class Handler {
     public assyst: Assyst;
     
@@ -22,8 +23,7 @@ export default class Handler {
         
         const targetCommand = <Command>this.assyst.commands.get(command.toLowerCase());
         const permissionLevel: number = this.checkPermissions(message.author.id);
-        if (permissionLevel <= targetCommand.permissionLevel) {
-            console.log(`Returning since command permission level is ${targetCommand.permissionLevel}, user's is ${permissionLevel}`)
+        if (permissionLevel /* user */ < targetCommand.permissionLevel) {
             return;
         }
 
@@ -69,11 +69,11 @@ export default class Handler {
 
     private checkPermissions(id: string): number {
         if (this.assyst.staff.owners.includes(id)) {
-            return 0
+            return PERMISSION_LEVELS.OWNER;
         } else if (this.assyst.staff.admins.includes(id)) {
-            return 1 
+            return PERMISSION_LEVELS.ADMIN;
         } else {
-            return 2
+            return PERMISSION_LEVELS.NORMAL;
         }
     }
 }

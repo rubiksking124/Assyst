@@ -44,4 +44,17 @@ export default class Command {
     get sendMsg() {
         return this.assyst.sendMsg.bind(this.assyst);
     }
+
+    get request() {
+        return this.assyst.request.bind(this.assyst);
+    }
+
+    get bot() {
+        return this.assyst.bot
+    }
+
+    get utils() {
+        return this.assyst.utils
+    }
+
 }

@@ -10,6 +10,10 @@ client.bot.on("gatewayReady", () => {
     console.info("Assyst is ready");
 });
 
+process.on('unhandledRejection', (err: any) => {
+    client.bot.channels.get('560593330270896129')?.createMessage(`\`\`\`js\n${err.toString()}\`\`\``)
+});
+
 (async () => {
     await client.bot.run();
 })();

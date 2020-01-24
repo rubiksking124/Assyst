@@ -8,7 +8,9 @@ import Resolver from './Resolver';
 import { readdirSync } from 'fs';
 import { Context } from 'detritus-client/lib/command'
 import { ChannelGuildText, Message } from 'detritus-client/lib/structures'
-import { MESSAGE_TYPE_EMOTES } from './Enums'
+import { MESSAGE_TYPE_EMOTES, REQUEST_TYPE } from './Enums'
+import superagent from 'superagent';
+const { Paginator } = require('detritus-pagination'); // TODO: any because I fucked up typings lol, will fix soon
 
 const { Markup } = Utils;
 
@@ -24,6 +26,9 @@ export default class Assyst {
     public commands: Map<string, Command>;
     public handler: Handler;
     public resolver: Resolver;
+    public paginator: any; // todo: typings
+    public apis: any; // todo: typings
+    public reactions: any; // ^
 
     constructor(options: IAssystOptions) {
         this.bot = options.bot || new ShardClient(options.config.tokens.bot);
@@ -32,10 +37,16 @@ export default class Assyst {
         this.emotes = options.config.emotes;
         this.staff = options.config.staff;
         this.prefix = options.config.prefix;
+        this.apis = options.config.apis;
+        this.reactions = options.config.reactions;
         this.utils = new AssystUtils;
         this.commands = new Map();
         this.handler = new Handler(this);
         this.resolver = new Resolver(this);
+        this.paginator = new Paginator(this.bot, {
+            maxTime: 120000,
+            pageLoop: true
+        });
 
         this.loadCommands()
             .then((c: Map<string, Command>) => {
@@ -50,7 +61,8 @@ export default class Assyst {
 
         for (const file of files) {
             const command: any = await import(`../src/commands/${file}`).then((m: any) => m.default);
-            this.commands.set(command.name.toLowerCase(), new command(this));
+            const instance: Command = new command(this);
+            this.commands.set(instance.name.toLowerCase(), instance);
             console.log(`Loaded command: ${command.name}`);
         }
 
@@ -65,10 +77,10 @@ export default class Assyst {
 
     public async sendMsg(channel: ChannelGuildText | string | null, message: string | Message, options?: ISendMsgOptions): Promise<Message | null> {
         let msgToSend: string;
-        if(!options) {
+        if (!options) {
             options = {}
         }
-        if(channel === null) {
+        if (channel === null) {
             throw new Error('Channel argument was null');
         }
         if (typeof message === 'string') {
@@ -113,6 +125,19 @@ export default class Assyst {
                 return this.bot.rest.createMessage(channel, msgToSend);
             default:
                 throw new Error('The channel paramater must either be a channel object or channel ID');
+        }
+    }
+
+    public async request(url: string, type: REQUEST_TYPE, set?: any, args?: any) {
+        if (type === REQUEST_TYPE.GET) {
+            const response = await superagent.get(url);
+            return response;
+        } else if (type === REQUEST_TYPE.POST) {
+            const response = await superagent
+                .post(url)
+                .set(set)
+                .send(args);
+            return response;
         }
     }
 }

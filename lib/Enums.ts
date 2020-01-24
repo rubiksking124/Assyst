@@ -9,3 +9,7 @@ export enum MESSAGE_TYPE_EMOTES {
     LOADING = 3,
     INFO = 4
 }
+export enum REQUEST_TYPE {
+    GET = 1,
+    POST = 2
+} 

@@ -1,8 +1,9 @@
 import Command from '../../lib/Command';
 import Assyst from '../../lib/Assyst';
-import { PERMISSION_LEVELS } from '../../lib/Enums';
-import { ICommandContext } from '../../lib/CInterfaces'
-import { Message } from 'detritus-client/lib/structures'
+import { PERMISSION_LEVELS, REQUEST_TYPE } from '../../lib/Enums';
+import { ICommandContext } from '../../lib/CInterfaces';
+import { Message } from 'detritus-client/lib/structures';
+import superagent from 'superagent';
 
 export default class DetritusDocs extends Command {
     constructor(assyst: Assyst) {
@@ -33,7 +34,21 @@ export default class DetritusDocs extends Command {
         });
     }
 
-    public execute(context: ICommandContext): Promise<Message | null> {
-        return this.sendMsg(context.message.channel, 'Test');
+    public async execute(context: ICommandContext): Promise<Message | null> {
+        //const response: superagent.Response | undefined = await this.request(`${this.assyst.apis.detritusDocsSearch}?query=${encodeURIComponent(context.args[0])}`, REQUEST_TYPE.GET)
+        //    .then(v => v?.body);
+
+        const pages: any[] = ["test1", "test2"];
+
+        const paginator = await this.assyst.paginator.createReactionPaginator({
+            reactions: this.assyst.reactions,
+            pages,
+            message: context.message
+        });
+
+        console.log(Object.getOwnPropertyNames(paginator));
+
+        
+        return null;
     }
 }
