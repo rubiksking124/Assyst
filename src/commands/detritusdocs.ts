@@ -1,6 +1,6 @@
 import Command from '../../lib/Command';
 import Assyst from '../../lib/Assyst';
-import { PERMISSION_LEVELS, REQUEST_TYPE } from '../../lib/Enums';
+import { PERMISSION_LEVELS, REQUEST_TYPES, COOLDOWN_TYPES } from '../../lib/Enums';
 import { ICommandContext } from '../../lib/CInterfaces';
 import { Message } from 'detritus-client/lib/structures';
 import superagent from 'superagent';
@@ -12,7 +12,10 @@ export default class DetritusDocs extends Command {
             aliases: [ 'dd' ],
             argsMin: 1,
             assyst,
-            timeout: 3000,
+            cooldown: {
+                timeout: 3000,
+                type: COOLDOWN_TYPES.USER
+            },
             validFlags: [
                 {
                     name: 'type',

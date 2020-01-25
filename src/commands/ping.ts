@@ -1,6 +1,6 @@
 import Command from '../../lib/Command';
 import Assyst from '../../lib/Assyst';
-import { MESSAGE_TYPE_EMOTES } from '../../lib/Enums';
+import { MESSAGE_TYPE_EMOTES, COOLDOWN_TYPES } from '../../lib/Enums';
 import { ICommandContext } from '../../lib/CInterfaces';
 import { Message } from 'detritus-client/lib/structures';
 
@@ -10,7 +10,10 @@ export default class Ping extends Command {
             name: 'ping',
             aliases: [ 'pong', 'pang' ],
             assyst,
-            timeout: 1500,
+            cooldown: {
+                timeout: 1500,
+                type: COOLDOWN_TYPES.GUILD
+            },
             info: {
                 description: 'Ping the bot',
                 examples: ['ping'],

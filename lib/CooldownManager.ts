@@ -1,5 +1,6 @@
 import { ICooldown } from './Interfaces';
 import { Guild, User, ChannelGuildText } from 'detritus-client/lib/structures';
+import  { COOLDOWN_TYPES } from './Enums'
 
 export default class CooldownManager { 
     private cooldowns: Map<string, ICooldown> // ID (of a user, channel or guild) => [Cooldown]
@@ -19,5 +20,13 @@ export default class CooldownManager {
         } else {
             return null;
         }
+    }
+    
+    public addCooldown(endTime: number, id: string, type: COOLDOWN_TYPES ): Map<string, ICooldown> {
+        return this.cooldowns.set(id, {
+            effectiveOn: type, 
+            endUnix: endTime,
+            sentMessage: false,
+        })
     }
 }

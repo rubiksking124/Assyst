@@ -1,8 +1,8 @@
 import { Message } from 'detritus-client/lib/structures';
 import Assyst from './Assyst'
 import Command from './Command'
-import { IFlag } from './Interfaces';
-import { PERMISSION_LEVELS } from './Enums'
+import { IFlag, ICooldown } from './Interfaces';
+import { PERMISSION_LEVELS, COOLDOWN_TYPES, MESSAGE_TYPE_EMOTES } from './Enums'
 export default class Handler {
     public assyst: Assyst;
     
@@ -11,13 +11,15 @@ export default class Handler {
     }
     
     public handleMessage(message: Message): void {
+        if (!message.channel || !message.channel.guild) return;
+        
         const { content } = message;
         if(!content.startsWith(this.assyst.prefix) && !content.startsWith(`<@${this.assyst.bot.user?.id}>`) && !content.startsWith(`<@!${this.assyst.bot.user?.id}>`)) {
             return;
         }
         
         const [command, ...args] = content.substr(this.assyst.prefix.length).split(/ +/);
-        if (!this.assyst.commands.has(command.toLowerCase())) {
+        if (!this.getCommand(command)) {
             return;
         }
         
@@ -27,7 +29,37 @@ export default class Handler {
             return;
         }
 
-        const flags: Array<IFlag> = this.resolveFlags(args, permissionLevel, targetCommand)
+        // add cooldown stuff here !
+        // check command cooldown type first (actually we need a definition for those)
+        let idToCheck: string;
+        switch (targetCommand.cooldown.type) {
+            case COOLDOWN_TYPES.CHANNEL:
+                idToCheck = message.channel.id;
+                break;
+            case COOLDOWN_TYPES.USER:
+                idToCheck = message.author.id;
+                break;
+            case COOLDOWN_TYPES.GUILD:
+                idToCheck = message.channel.guild.id;
+                break;
+        }
+
+        const cooldown: ICooldown | null = this.assyst.cooldownManager.getCooldownFromId(idToCheck);
+        if (cooldown && cooldown.endUnix > Date.now()) {
+            if(!cooldown.sentMessage) {
+                this.assyst.sendMsg(message.channel, `This command is on cooldown for ${((cooldown.endUnix - Date.now()) / 1000).toFixed(2)} more seconds.`, { type: MESSAGE_TYPE_EMOTES.ERROR })
+                    .then((m: Message | null) => {
+                        cooldown.sentMessage = true;
+                        setTimeout(() => {
+                            if (m) m.delete();
+                        }, 5000);
+                    });
+            }
+        } else {
+            this.assyst.cooldownManager.addCooldown(Date.now() + targetCommand.cooldown.timeout, idToCheck, targetCommand.cooldown.type);
+        } 
+
+        const flags: Array<IFlag> = this.resolveFlags(args, permissionLevel, targetCommand);
 
         targetCommand.execute({
             args,
@@ -75,5 +107,22 @@ export default class Handler {
         } else {
             return PERMISSION_LEVELS.NORMAL;
         }
+    }
+
+    private getCommand(str: string): Command | null {
+        const command: [string, Command] | undefined = Array.from(this.assyst.commands).find(([, cmd]) => cmd.name.toLowerCase() === str.toLowerCase() 
+            || cmd.aliases.some((a: string) => a.toLowerCase() === str.toLowerCase()));
+
+        return command ? command[1] : null;
+
+
+        /*
+        if(!this.getCommand(str)) {
+            return null;
+        }
+        if(this.assyst.commands.get(str.toLowerCase()) !== undefined) {
+            return <Command>this.assyst.commands.get(str.toLowerCase())
+        } //TODO : add alias handle or something
+        return null;*/
     }
 }

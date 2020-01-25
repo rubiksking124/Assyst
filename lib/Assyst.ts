@@ -7,8 +7,9 @@ import Handler from './Handler';
 import Resolver from './Resolver';
 import { readdirSync } from 'fs';
 import { Context } from 'detritus-client/lib/command'
-import { ChannelGuildText, Message } from 'detritus-client/lib/structures'
-import { MESSAGE_TYPE_EMOTES, REQUEST_TYPE } from './Enums'
+import { ChannelGuildText, ChannelDM, Message } from 'detritus-client/lib/structures'
+import { MESSAGE_TYPE_EMOTES, REQUEST_TYPES } from './Enums'
+import CooldownManager from './CooldownManager'
 import superagent from 'superagent';
 const { Paginator } = require('detritus-pagination'); // TODO: any because I fucked up typings lol, will fix soon
 
@@ -26,6 +27,7 @@ export default class Assyst {
     public commands: Map<string, Command>;
     public handler: Handler;
     public resolver: Resolver;
+    public cooldownManager: CooldownManager
     public paginator: any; // todo: typings
     public apis: any; // todo: typings
     public reactions: any; // ^
@@ -43,8 +45,9 @@ export default class Assyst {
         this.commands = new Map();
         this.handler = new Handler(this);
         this.resolver = new Resolver(this);
+        this.cooldownManager = new CooldownManager()
         this.paginator = new Paginator(this.bot, {
-            maxTime: 120000,
+            maxTime: options.config.paginatorTimeout,
             pageLoop: true
         });
 
@@ -76,13 +79,14 @@ export default class Assyst {
     }
 
     public async sendMsg(channel: ChannelGuildText | string | null, message: string | Message, options?: ISendMsgOptions): Promise<Message | null> {
-        let msgToSend: string;
+        let msgToSend: string, targetChannel: string;
         if (!options) {
             options = {}
         }
         if (channel === null) {
             throw new Error('Channel argument was null');
         }
+
         if (typeof message === 'string') {
             msgToSend = message;
         } else {
@@ -128,16 +132,17 @@ export default class Assyst {
         }
     }
 
-    public async request(url: string, type: REQUEST_TYPE, set?: any, args?: any) {
-        if (type === REQUEST_TYPE.GET) {
-            const response = await superagent.get(url);
+    public async request(url: string, type: REQUEST_TYPES, set?: any, args?: any): Promise<superagent.Response | null> {
+        if (type === REQUEST_TYPES.GET) {
+            const response: superagent.Response = await superagent.get(url);
             return response;
-        } else if (type === REQUEST_TYPE.POST) {
-            const response = await superagent
+        } else if (type === REQUEST_TYPES.POST) {
+            const response: superagent.Response = await superagent
                 .post(url)
                 .set(set)
                 .send(args);
             return response;
         }
+        return null;
     }
 }

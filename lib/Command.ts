@@ -1,13 +1,13 @@
 import { ICommandOptions, ICommandContext } from './CInterfaces'
 import Assyst from './Assyst'
-import { IInfo, IFlagInfo,  } from './Interfaces'
+import { IInfo, IFlagInfo, ICooldownType } from './Interfaces'
 import { Message } from 'detritus-client/lib/structures'
 import { PERMISSION_LEVELS } from './Enums';
 
 export default class Command {
     public name: string;
     public permissionLevel: PERMISSION_LEVELS;
-    public timeout: number;
+    public cooldown: ICooldownType;
     public argsMin: number;
     public aliases: Array<string>;
     public validFlags: Array<IFlagInfo>;
@@ -18,7 +18,7 @@ export default class Command {
 
     constructor(options: ICommandOptions) {
         this.name = options.name;
-        this.timeout = options.timeout;
+        this.cooldown = options.cooldown;
         this.argsMin = options.argsMin || 0;
         this.aliases = options.aliases || [];
         this.info = options.info;

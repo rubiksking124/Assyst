@@ -1,6 +1,6 @@
 import { ShardClient } from 'detritus-client';
 import { Message } from 'detritus-client/lib/structures';
-import { IFlagInfo, IInfo, IFlag } from './Interfaces'
+import { IFlagInfo, IInfo, IFlag, ICooldownType } from './Interfaces'
 import Config from './Config'
 import Assyst from './Assyst'
 import { PERMISSION_LEVELS } from './Enums'
@@ -10,7 +10,7 @@ export interface IAssystOptions {
 }
 export interface ICommandOptions {
     name: string,
-    timeout: number,
+    cooldown: ICooldownType,
     info: IInfo,
     assyst: Assyst
     permissionLevel?: PERMISSION_LEVELS,

@@ -23,6 +23,7 @@ export default class Config {
         previousPage: "⬅️",
         nextPage: "➡️"
     };
+    public readonly paginatorTimeout: number = 120000;
     public readonly description: string = description;
     public readonly version: string = version;
     public readonly tokens = tokens;

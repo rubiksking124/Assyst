@@ -1,6 +1,6 @@
 import Command from '../../lib/Command';
 import Assyst from '../../lib/Assyst';
-import { PERMISSION_LEVELS, MESSAGE_TYPE_EMOTES } from '../../lib/Enums';
+import { PERMISSION_LEVELS, MESSAGE_TYPE_EMOTES, COOLDOWN_TYPES } from '../../lib/Enums';
 import { ICommandContext } from '../../lib/CInterfaces';
 import { Message } from 'detritus-client/lib/structures';
 
@@ -11,7 +11,10 @@ export default class Eval extends Command {
             aliases: [ 'e' ],
             argsMin: 1,
             assyst,
-            timeout: 0,
+            cooldown: {
+                timeout: 0,
+                type: COOLDOWN_TYPES.USER
+            },
             validFlags: [{
                 name: 'noreply',
                 argumented: false,
