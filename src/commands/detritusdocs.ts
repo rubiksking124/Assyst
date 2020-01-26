@@ -49,8 +49,6 @@ export default class DetritusDocs extends Command {
             message: context.message
         });
 
-        console.log(Object.getOwnPropertyNames(paginator));
-
         
         return null;
     }

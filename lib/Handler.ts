@@ -23,7 +23,7 @@ export default class Handler {
             return;
         }
         
-        const targetCommand = <Command>this.assyst.commands.get(command.toLowerCase());
+        const targetCommand = <Command>this.getCommand(command);
         const permissionLevel: number = this.checkPermissions(message.author.id);
         if (permissionLevel /* user */ < targetCommand.permissionLevel) {
             return;
