@@ -46,5 +46,8 @@ export interface ISendMsgOptions {
     type?: MESSAGE_TYPE_EMOTES,
     noEscapeMentions?: boolean,
     edit?: string,
-    storeAsResponseForUser?: string
+    storeAsResponseForUser?: {
+        user: string,
+        message: string
+    }
 }

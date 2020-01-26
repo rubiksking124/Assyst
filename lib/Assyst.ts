@@ -117,19 +117,14 @@ export default class Assyst {
             msgToSend = Markup.escape.mentions(msgToSend);
         }
         if(options.storeAsResponseForUser) {
-            let cid: string;
-            if(typeof channel === 'object') {
-                cid = channel.id;
+            const messageId: string = options.storeAsResponseForUser.message
+            let messages: Array<string>;
+            if(this.responseMessages.get(options.storeAsResponseForUser.user) !== undefined) {
+                messages = [...<Array<string>>this.responseMessages.get(options.storeAsResponseForUser.message), messageId];
             } else {
-                cid = channel;
+                messages = [messageId];
             }
-            let channels: Array<string>;
-            if(this.responseMessages.get(options.storeAsResponseForUser) !== undefined) {
-                channels = [...<Array<string>>this.responseMessages.get(options.storeAsResponseForUser), cid];
-            } else {
-                channels = [cid];
-            }
-            this.responseMessages.set(options.storeAsResponseForUser, channels);
+            this.responseMessages.set(options.storeAsResponseForUser.user, messages);
         }
         switch (typeof channel) {
             case 'object':

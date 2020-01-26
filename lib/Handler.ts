@@ -68,6 +68,10 @@ export default class Handler {
         });
     }
 
+    public handleEditedMessage(message: Message) {
+        
+    }
+
     private resolveFlags(args: Array<string>, authorPermLevel: number, command: Command): Array<IFlag> {
         let flags: Array<IFlag> = [];
 
