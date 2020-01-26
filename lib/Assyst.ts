@@ -11,6 +11,7 @@ import { ChannelGuildText, ChannelDM, Message } from 'detritus-client/lib/struct
 import { MESSAGE_TYPE_EMOTES, REQUEST_TYPES } from './Enums'
 import CooldownManager from './CooldownManager'
 import superagent from 'superagent';
+import { TeamMembershipStates } from 'detritus-client/lib/constants';
 const { Paginator } = require('detritus-pagination'); // TODO: any because I fucked up typings lol, will fix soon
 
 const { Markup } = Utils;
@@ -28,6 +29,7 @@ export default class Assyst {
     public handler: Handler;
     public resolver: Resolver;
     public cooldownManager: CooldownManager
+    public responseMessages: Map<string, Array<string>>
     public paginator: any; // todo: typings
     public apis: any; // todo: typings
     public reactions: any; // ^
@@ -43,6 +45,7 @@ export default class Assyst {
         this.reactions = options.config.reactions;
         this.utils = new AssystUtils;
         this.commands = new Map();
+        this.responseMessages = new Map();
         this.handler = new Handler(this);
         this.resolver = new Resolver(this);
         this.cooldownManager = new CooldownManager()
@@ -112,6 +115,21 @@ export default class Assyst {
         }
         if (options.noEscapeMentions === false || options.noEscapeMentions === undefined) {
             msgToSend = Markup.escape.mentions(msgToSend);
+        }
+        if(options.storeAsResponseForUser) {
+            let cid: string;
+            if(typeof channel === 'object') {
+                cid = channel.id;
+            } else {
+                cid = channel;
+            }
+            let channels: Array<string>;
+            if(this.responseMessages.get(options.storeAsResponseForUser) !== undefined) {
+                channels = [...<Array<string>>this.responseMessages.get(options.storeAsResponseForUser), cid];
+            } else {
+                channels = [cid];
+            }
+            this.responseMessages.set(options.storeAsResponseForUser, channels);
         }
         switch (typeof channel) {
             case 'object':

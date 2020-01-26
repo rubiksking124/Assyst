@@ -45,5 +45,6 @@ export interface IInfo {
 export interface ISendMsgOptions {
     type?: MESSAGE_TYPE_EMOTES,
     noEscapeMentions?: boolean,
-    edit?: string
+    edit?: string,
+    storeAsResponseForUser?: string
 }

@@ -1,7 +1,7 @@
 {
   "name": "assyst-ts",
   "version": "1.0.0",
-  "description": "epic monox sex bot",
+  "description": "Dev-helper discord bot",
   "main": "index.js",
   "directories": {
     "lib": "lib"

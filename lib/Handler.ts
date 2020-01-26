@@ -18,7 +18,7 @@ export default class Handler {
             return;
         }
         
-        const [command, ...args] = content.substr(this.assyst.prefix.length).split(/ +/);
+        let [command, ...args] = content.substr(this.assyst.prefix.length).split(/ +/);
         if (!this.getCommand(command)) {
             return;
         }
@@ -29,8 +29,6 @@ export default class Handler {
             return;
         }
 
-        // add cooldown stuff here !
-        // check command cooldown type first (actually we need a definition for those)
         let idToCheck: string;
         switch (targetCommand.cooldown.type) {
             case COOLDOWN_TYPES.CHANNEL:
@@ -60,6 +58,7 @@ export default class Handler {
         } 
 
         const flags: Array<IFlag> = this.resolveFlags(args, permissionLevel, targetCommand);
+        args = this.removeFlags(args, flags)
 
         targetCommand.execute({
             args,
