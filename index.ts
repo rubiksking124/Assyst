@@ -11,7 +11,7 @@ client.bot.on("gatewayReady", () => {
 });
 
 process.on('unhandledRejection', (err: any) => {
-    client.bot.channels.get('560593330270896129')?.createMessage(`\`\`\`js\n${err.toString()}\`\`\``)
+    client.bot.channels.get('560593330270896129')?.createMessage(`\`\`\`js\n${err.stack.toString()}\`\`\``)
 });
 
 (async () => {

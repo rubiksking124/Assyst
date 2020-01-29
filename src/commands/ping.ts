@@ -27,9 +27,15 @@ export default class Ping extends Command {
         const message = await this.sendMsg(context.message.channel, 'Pong!', { type: MESSAGE_TYPE_EMOTES.LOADING });
         try {
             const { gateway, rest } = await this.bot.ping();
-            return this.sendMsg(context.message.channel, `Pong! Gateway: ${gateway}ms, REST: ${rest}ms`, { edit: message?.id, type: MESSAGE_TYPE_EMOTES.SUCCESS })
+            return this.sendMsg(context.message.channel, `Pong! Gateway: ${gateway}ms, REST: ${rest}ms`, { edit: message?.id, type: MESSAGE_TYPE_EMOTES.SUCCESS,storeAsResponseForUser: {
+                user: context.message.author.id,
+                message: context.message.id
+            } })
         } catch(e) {
-            return this.sendMsg(context.message.channel, `Pong! >1000ms`, { edit: message?.id, type: MESSAGE_TYPE_EMOTES.SUCCESS });
+            return this.sendMsg(context.message.channel, `Pong! >1000ms`, { edit: message?.id, type: MESSAGE_TYPE_EMOTES.SUCCESS, storeAsResponseForUser: {
+                user: context.message.author.id,
+                message: context.message.id
+            } });
         }
         /*.catch((): Promise<Message | null> => {
             return this.sendMsg(context.message.channel, `Pong! >1000ms`, { edit: message?.id, type: MESSAGE_TYPE_EMOTES.SUCCESS })

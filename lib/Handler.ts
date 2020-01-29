@@ -1,7 +1,7 @@
 import { Message } from 'detritus-client/lib/structures';
 import Assyst from './Assyst'
 import Command from './Command'
-import { IFlag, ICooldown } from './Interfaces';
+import { IFlag, ICooldown, ICommandResponse } from './Interfaces';
 import { PERMISSION_LEVELS, COOLDOWN_TYPES, MESSAGE_TYPE_EMOTES } from './Enums'
 export default class Handler {
     public assyst: Assyst;
@@ -69,7 +69,26 @@ export default class Handler {
     }
 
     public handleEditedMessage(message: Message) {
-        
+        const responseMessageObject: ICommandResponse[] | undefined = this.assyst.responseMessages.get(message.author.id);
+        if (responseMessageObject?.some(i => i.source.includes(message.id))) {
+            const responseMessageId: string = <string>responseMessageObject?.find(i => i.source === message.id)?.response;
+            const responseMessage: Message | undefined = message.channel?.messages.get(responseMessageId);
+            if (responseMessage) {
+                responseMessage.delete();
+                // TODO: Remove this message from Assyst.responseMessages (removeResponseMessage())
+            }
+        }
+        this.handleMessage(message)
+    }
+
+    private removeResponseMessage(response: ICommandResponse): Map<string, ICommandResponse[]> {
+        let responseMessage: [string, ICommandResponse[]] | undefined = Array.from(this.assyst.responseMessages).find(i => i[1].includes(response))
+        if(responseMessage) {
+            const position: number = responseMessage[1].indexOf(response)
+            responseMessage[1].splice(position, 1)
+            this.assyst.responseMessages.set(responseMessage[0], responseMessage[1])
+        }
+        return this.assyst.responseMessages;
     }
 
     private resolveFlags(args: Array<string>, authorPermLevel: number, command: Command): Array<IFlag> {

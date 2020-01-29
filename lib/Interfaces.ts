@@ -51,3 +51,8 @@ export interface ISendMsgOptions {
         message: string
     }
 }
+
+export interface ICommandResponse {
+    source: string,
+    response: string
+}

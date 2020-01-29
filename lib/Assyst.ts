@@ -1,6 +1,6 @@
 import { ShardClient, Utils } from 'detritus-client';
-import { IAssystOptions } from './CInterfaces'
-import { IEmotes, IStaff, ISendMsgOptions } from './Interfaces';
+import { IAssystOptions, ICommandContext } from './CInterfaces'
+import { IEmotes, IStaff, ISendMsgOptions, ICommandResponse } from './Interfaces';
 import Command from './Command'
 import AssystUtils from './Utils'
 import Handler from './Handler';
@@ -29,7 +29,7 @@ export default class Assyst {
     public handler: Handler;
     public resolver: Resolver;
     public cooldownManager: CooldownManager
-    public responseMessages: Map<string, Array<string>>
+    public responseMessages: Map<string, Array<ICommandResponse>>
     public paginator: any; // todo: typings
     public apis: any; // todo: typings
     public reactions: any; // ^
@@ -79,6 +79,9 @@ export default class Assyst {
         this.bot.on("messageCreate", (context: Context) => {
             this.handler.handleMessage(context.message)
         });
+        this.bot.on('messageUpdate', (context: Context) => {
+            this.handler.handleEditedMessage(context.message)
+        })
     }
 
     public async sendMsg(channel: ChannelGuildText | string | null, message: string | Message, options?: ISendMsgOptions): Promise<Message | null> {
@@ -116,33 +119,46 @@ export default class Assyst {
         if (options.noEscapeMentions === false || options.noEscapeMentions === undefined) {
             msgToSend = Markup.escape.mentions(msgToSend);
         }
-        if(options.storeAsResponseForUser) {
-            const messageId: string = options.storeAsResponseForUser.message
-            let messages: Array<string>;
-            if(this.responseMessages.get(options.storeAsResponseForUser.user) !== undefined) {
-                messages = [...<Array<string>>this.responseMessages.get(options.storeAsResponseForUser.message), messageId];
-            } else {
-                messages = [messageId];
-            }
-            this.responseMessages.set(options.storeAsResponseForUser.user, messages);
-        }
+        let responseMessage: Message
         switch (typeof channel) {
             case 'object':
                 if (channel.id && !options.edit) {
-                    return this.bot.rest.createMessage(channel.id, msgToSend);
+                    responseMessage = await this.bot.rest.createMessage(channel.id, msgToSend);
+                } else if (options.edit) {
+                    responseMessage = await this.bot.rest.editMessage(channel.id, options.edit, msgToSend);
+                } else {
+                    throw new Error('Invalid channel object');   
                 }
-                if (options.edit) {
-                    return this.bot.rest.editMessage(channel.id, options.edit, msgToSend);
-                }
-                throw new Error('Invalid channel object');
+                break;
             case 'string':
                 if (options.edit) {
-                    return this.bot.rest.editMessage(channel, options.edit, msgToSend);
+                    responseMessage = await this.bot.rest.editMessage(<string>channel, options.edit, msgToSend);
+                } else {
+                    responseMessage = await this.bot.rest.createMessage(<string>channel, msgToSend);
                 }
-                return this.bot.rest.createMessage(channel, msgToSend);
+                break;
             default:
-                throw new Error('The channel paramater must either be a channel object or channel ID');
+                throw new Error('The channel paramater must either be a channel object or channel ID');     
         }
+        if(options.storeAsResponseForUser) {
+            const sourceMessageId: string = options.storeAsResponseForUser.message;
+            const responseMessageId: string = responseMessage.id;
+            let responseArray: Array<ICommandResponse>;
+            if(this.responseMessages.get(options.storeAsResponseForUser.user)) {
+                responseArray = <Array<ICommandResponse>>this.responseMessages.get(options.storeAsResponseForUser.user)
+                responseArray.push({
+                    source: sourceMessageId,
+                    response: responseMessageId
+                });
+            } else {
+                responseArray = [{
+                    source: sourceMessageId,
+                    response: responseMessageId
+                }];
+            }
+            this.responseMessages.set(options.storeAsResponseForUser.user, responseArray)
+        }
+        return responseMessage;
     }
 
     public async request(url: string, type: REQUEST_TYPES, set?: any, args?: any): Promise<superagent.Response | null> {

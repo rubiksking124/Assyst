@@ -58,8 +58,14 @@ export default class Eval extends Command {
         }
 
         if (fullLen > 2000) { 
-            this.sendMsg(context.message.channel, `\`\`\`js\n${evaled.slice(0, 1990)}\n\`\`\``);
+            this.sendMsg(context.message.channel, `\`\`\`js\n${evaled.slice(0, 1990)}\n\`\`\``, {storeAsResponseForUser: {
+                user: context.message.author.id,
+                message: context.message.id
+            }});
         }
-        return this.sendMsg(context.message.channel, `\`\`\`js\n${evaled}\`\`\``);
+        return this.sendMsg(context.message.channel, `\`\`\`js\n${evaled}\`\`\``, {storeAsResponseForUser: {
+            user: context.message.author.id,
+            message: context.message.id
+        }});
     }
 }
