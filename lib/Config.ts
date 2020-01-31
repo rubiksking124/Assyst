@@ -17,7 +17,8 @@ export default class Config {
     };
     public readonly apis = {
         fAPI: 'https://fapi.wrmsr.io',
-        detritusDocsSearch: 'https://detritus-docs-api.y21.workers.dev'
+        detritusDocsSearch: 'https://detritus-docs-api.y21.workers.dev',
+        shodanSearch: 'https://shodan-search-api.y21.workers.dev'
     };
     public readonly reactions = {
         previousPage: "⬅️",
@@ -27,4 +28,6 @@ export default class Config {
     public readonly description: string = description;
     public readonly version: string = version;
     public readonly tokens = tokens;
+    public readonly errorChannel: string = '672509739720114187';
+    public readonly embedColour: number = 0xf4632e
 }

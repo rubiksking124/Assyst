@@ -1,6 +1,6 @@
 import { ShardClient } from 'detritus-client';
-import { Message } from 'detritus-client/lib/structures';
-import { IFlagInfo, IInfo, IFlag, ICooldownType } from './Interfaces'
+import { Message, ChannelGuildText } from 'detritus-client/lib/structures';
+import { IFlagInfo, IInfo, IFlag, ICooldownType, ISendMsgOptions } from './Interfaces'
 import Config from './Config'
 import Assyst from './Assyst'
 import { PERMISSION_LEVELS } from './Enums'
@@ -23,6 +23,6 @@ export interface ICommandOptions {
 export interface ICommandContext {
     args: string[],
     message: Message,
-    reply: (options: any) => Promise<Message>
+    reply: (message: string | object, options?: ISendMsgOptions) => Promise<Message | null>
     flags: Array<IFlag>
 }

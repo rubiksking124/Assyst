@@ -7,7 +7,7 @@ import Handler from './Handler';
 import Resolver from './Resolver';
 import { readdirSync } from 'fs';
 import { Context } from 'detritus-client/lib/command'
-import { ChannelGuildText, ChannelDM, Message } from 'detritus-client/lib/structures'
+import { ChannelGuildText, ChannelDM, Message, MessageEmbed } from 'detritus-client/lib/structures'
 import { MESSAGE_TYPE_EMOTES, REQUEST_TYPES } from './Enums'
 import CooldownManager from './CooldownManager'
 import superagent from 'superagent';
@@ -33,6 +33,8 @@ export default class Assyst {
     public paginator: any; // todo: typings
     public apis: any; // todo: typings
     public reactions: any; // ^
+    public errorChannel: string;
+    public embedColour: number
 
     constructor(options: IAssystOptions) {
         this.bot = options.bot || new ShardClient(options.config.tokens.bot);
@@ -42,7 +44,9 @@ export default class Assyst {
         this.staff = options.config.staff;
         this.prefix = options.config.prefix;
         this.apis = options.config.apis;
+        this.errorChannel = options.config.errorChannel
         this.reactions = options.config.reactions;
+        this.embedColour = options.config.embedColour
         this.utils = new AssystUtils;
         this.commands = new Map();
         this.responseMessages = new Map();
@@ -63,7 +67,7 @@ export default class Assyst {
     }
 
     private async loadCommands(): Promise<Map<string, Command>> {
-        const files = readdirSync('./src/commands').filter((f: string) => f.endsWith(".js"));
+        const files = readdirSync('./src/commands').filter((f: string) => f.endsWith(".js") && !f.includes('template'));
 
         for (const file of files) {
             const command: any = await import(`../src/commands/${file}`).then((m: any) => m.default);
@@ -82,10 +86,13 @@ export default class Assyst {
         this.bot.on('messageUpdate', (context: Context) => {
             this.handler.handleEditedMessage(context.message)
         })
+        this.bot.on('messageDelete', (context: Context) => {
+            this.handler.handleDeletedMessage(context.message)
+        })
     }
 
-    public async sendMsg(channel: ChannelGuildText | string | null, message: string | Message, options?: ISendMsgOptions): Promise<Message | null> {
-        let msgToSend: string, targetChannel: string;
+    public async sendMsg(channel: ChannelGuildText | string | null, message: string | object, options?: ISendMsgOptions): Promise<Message | null> {
+        let msgToSend: string | object, targetChannel: string;
         if (!options) {
             options = {}
         }
@@ -93,11 +100,8 @@ export default class Assyst {
             throw new Error('Channel argument was null');
         }
 
-        if (typeof message === 'string') {
-            msgToSend = message;
-        } else {
-            msgToSend = message.content
-        }
+        msgToSend = message
+        
         if (options.type) {
             switch (options.type) {
                 case MESSAGE_TYPE_EMOTES.SUCCESS:
@@ -116,8 +120,8 @@ export default class Assyst {
                     break;
             }
         }
-        if (options.noEscapeMentions === false || options.noEscapeMentions === undefined) {
-            msgToSend = Markup.escape.mentions(msgToSend);
+        if (options.noEscapeMentions === false || options.noEscapeMentions === undefined && typeof msgToSend === 'string') {
+            msgToSend = Markup.escape.mentions(<string>msgToSend);
         }
         let responseMessage: Message
         switch (typeof channel) {

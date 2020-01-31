@@ -53,40 +53,52 @@ export default class Handler {
                         }, 5000);
                     });
             }
+            return;
         } else {
             this.assyst.cooldownManager.addCooldown(Date.now() + targetCommand.cooldown.timeout, idToCheck, targetCommand.cooldown.type);
         } 
 
         const flags: Array<IFlag> = this.resolveFlags(args, permissionLevel, targetCommand);
         args = this.removeFlags(args, flags)
-
-        targetCommand.execute({
-            args,
-            message,
-            flags,
-            reply: (...args) => message.reply(...args)
-        });
+        try {
+            targetCommand.execute({
+                args,
+                message,
+                flags,
+                reply: this.assyst.sendMsg.bind(this.assyst, message.channelId)
+            });
+        } catch(e) {
+            message.channel.createMessage(`:warning: Command raised an exception: \`\`\`js\n${e.stack}\n\`\`\``)
+        }
     }
 
     public handleEditedMessage(message: Message) {
+        this.updateResponseMessages(message);
+        this.handleMessage(message);
+    }
+
+    public handleDeletedMessage(message: Message) {
+        this.updateResponseMessages(message);
+    }
+
+    private updateResponseMessages(message: Message) {
         const responseMessageObject: ICommandResponse[] | undefined = this.assyst.responseMessages.get(message.author.id);
         if (responseMessageObject?.some(i => i.source.includes(message.id))) {
             const responseMessageId: string = <string>responseMessageObject?.find(i => i.source === message.id)?.response;
             const responseMessage: Message | undefined = message.channel?.messages.get(responseMessageId);
             if (responseMessage) {
                 responseMessage.delete();
-                // TODO: Remove this message from Assyst.responseMessages (removeResponseMessage())
+                this.removeResponseMessage(<ICommandResponse>this.assyst.responseMessages.get(message.author.id)?.find(i => i.source === message.id))
             }
         }
-        this.handleMessage(message)
     }
 
     private removeResponseMessage(response: ICommandResponse): Map<string, ICommandResponse[]> {
-        let responseMessage: [string, ICommandResponse[]] | undefined = Array.from(this.assyst.responseMessages).find(i => i[1].includes(response))
+        let responseMessage: [string, ICommandResponse[]] | undefined = Array.from(this.assyst.responseMessages).find(i => i[1].includes(response));
         if(responseMessage) {
-            const position: number = responseMessage[1].indexOf(response)
-            responseMessage[1].splice(position, 1)
-            this.assyst.responseMessages.set(responseMessage[0], responseMessage[1])
+            const position: number = responseMessage[1].indexOf(response);
+            responseMessage[1].splice(position, 1);
+            this.assyst.responseMessages.set(responseMessage[0], responseMessage[1]);
         }
         return this.assyst.responseMessages;
     }
@@ -131,20 +143,10 @@ export default class Handler {
         }
     }
 
-    private getCommand(str: string): Command | null {
+    public getCommand(str: string): Command | null {
         const command: [string, Command] | undefined = Array.from(this.assyst.commands).find(([, cmd]) => cmd.name.toLowerCase() === str.toLowerCase() 
             || cmd.aliases.some((a: string) => a.toLowerCase() === str.toLowerCase()));
 
         return command ? command[1] : null;
-
-
-        /*
-        if(!this.getCommand(str)) {
-            return null;
-        }
-        if(this.assyst.commands.get(str.toLowerCase()) !== undefined) {
-            return <Command>this.assyst.commands.get(str.toLowerCase())
-        } //TODO : add alias handle or something
-        return null;*/
     }
 }

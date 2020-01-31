@@ -31,4 +31,10 @@ export default class Utils {
         })
         return flagNames.includes(flagName)
     }
+
+    public elapsed(value: number) {
+        const date: Date = new Date(value);
+        const elapsed = { days: date.getUTCDate() - 1, hours: date.getUTCHours(), minutes: date.getUTCMinutes(), seconds: date.getUTCSeconds() };
+        return elapsed;
+    }
 }

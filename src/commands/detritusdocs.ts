@@ -13,7 +13,7 @@ export default class DetritusDocs extends Command {
             argsMin: 1,
             assyst,
             cooldown: {
-                timeout: 3000,
+                timeout: 5000,
                 type: COOLDOWN_TYPES.USER
             },
             validFlags: [

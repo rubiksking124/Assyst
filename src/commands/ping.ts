@@ -11,7 +11,7 @@ export default class Ping extends Command {
             aliases: [ 'pong', 'pang' ],
             assyst,
             cooldown: {
-                timeout: 1500,
+                timeout: 3000,
                 type: COOLDOWN_TYPES.GUILD
             },
             info: {
