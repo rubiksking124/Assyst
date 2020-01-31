@@ -145,22 +145,7 @@ export default class Assyst {
                 throw new Error('The channel paramater must either be a channel object or channel ID');     
         }
         if(options.storeAsResponseForUser) {
-            const sourceMessageId: string = options.storeAsResponseForUser.message;
-            const responseMessageId: string = responseMessage.id;
-            let responseArray: Array<ICommandResponse>;
-            if(this.responseMessages.get(options.storeAsResponseForUser.user)) {
-                responseArray = <Array<ICommandResponse>>this.responseMessages.get(options.storeAsResponseForUser.user)
-                responseArray.push({
-                    source: sourceMessageId,
-                    response: responseMessageId
-                });
-            } else {
-                responseArray = [{
-                    source: sourceMessageId,
-                    response: responseMessageId
-                }];
-            }
-            this.responseMessages.set(options.storeAsResponseForUser.user, responseArray)
+            this.handler.storeCommandResponse(options.storeAsResponseForUser.message, responseMessage.id, options.storeAsResponseForUser.user)
         }
         return responseMessage;
     }

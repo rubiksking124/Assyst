@@ -16,7 +16,7 @@ export default class Ping extends Command {
             },
             info: {
                 description: 'Ping the bot',
-                examples: ['ping'],
+                examples: [''],
                 usage: "",
                 author: "Jacherr"
             }

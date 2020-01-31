@@ -4,11 +4,13 @@ import { PERMISSION_LEVELS, MESSAGE_TYPE_EMOTES, COOLDOWN_TYPES } from '../../li
 import { ICommandContext } from '../../lib/CInterfaces';
 import { Message } from 'detritus-client/lib/structures';
 
+const AsyncFunction = Object.getPrototypeOf(async () => { }).constructor
+
 export default class Eval extends Command {
     constructor(assyst: Assyst) {
         super({
             name: 'eval',
-            aliases: [ 'e' ],
+            aliases: ['e'],
             argsMin: 1,
             assyst,
             cooldown: {
@@ -20,10 +22,23 @@ export default class Eval extends Command {
                 argumented: false,
                 description: 'Do not reply to the evaluation',
                 permissionLevel: 2
-            }], //TODO: add more eval flags
+            },
+            {
+                name: 'files.gg',
+                argumented: false,
+                description: 'Upload the result to files.gg',
+                permissionLevel: 2
+            },
+            {
+                name: 'async',
+                argumented: false,
+                description: 'Run the evaluation asynchronously',
+                permissionLevel: 2
+            }
+            ],
             info: {
                 description: 'Evaluate js code',
-                examples: ['eval 1+1', 'eval this'],
+                examples: ['1+1', 'this'],
                 usage: "[code]",
                 author: "Jacherr"
             },
@@ -34,18 +49,28 @@ export default class Eval extends Command {
     public async execute(context: ICommandContext): Promise<Message | null> {
         let evaled;
         try {
-            evaled = await Promise.resolve(eval(context.args.join(' ') ) ); // eslint-disable-line no-eval
+            if (this.utils.checkForFlag('async', context.flags)) {
+                const func = new AsyncFunction('context', context.args.join(' '));
+                evaled = await func(this);
+            } else {
+                evaled = await Promise.resolve(eval(context.args.join(' '))); // eslint-disable-line no-eval
+            }
         } catch (err) {
-            return this.sendMsg(context.message.channel, err.message, { type: MESSAGE_TYPE_EMOTES.ERROR } );
+            return this.sendMsg(context.message.channel, err.message, {
+                type: MESSAGE_TYPE_EMOTES.ERROR, storeAsResponseForUser: {
+                    user: context.message.author.id,
+                    message: context.message.id
+                }
+            });
         }
 
         if (typeof evaled === 'object') {
-            evaled = require('util').inspect(evaled, { depth: 0, showHidden: true } );
+            evaled = require('util').inspect(evaled, { depth: 0, showHidden: true });
         } else {
             evaled = String(evaled);
         }
 
-        if(this.utils.checkForFlag('noreply', context.flags)) {
+        if (this.utils.checkForFlag('noreply', context.flags)) {
             return null;
         }
 
@@ -57,15 +82,21 @@ export default class Eval extends Command {
             return null;
         }
 
-        if (fullLen > 2000) { 
-            this.sendMsg(context.message.channel, `\`\`\`js\n${evaled.slice(0, 1990)}\n\`\`\``, {storeAsResponseForUser: {
+        if (this.utils.checkForFlag('files.gg', context.flags) || fullLen > 1990) {
+            const link = await this.utils.uploadToFilesGG(evaled, 'evaloutput.js');
+            return context.reply(link, {
+                storeAsResponseForUser: {
+                    user: context.message.author.id,
+                    message: context.message.id
+                }
+            })
+        }
+
+        return context.reply(`\`\`\`js\n${evaled}\`\`\``, {
+            storeAsResponseForUser: {
                 user: context.message.author.id,
                 message: context.message.id
-            }});
-        }
-        return this.sendMsg(context.message.channel, `\`\`\`js\n${evaled}\`\`\``, {storeAsResponseForUser: {
-            user: context.message.author.id,
-            message: context.message.id
-        }});
+            }
+        });
     }
 }

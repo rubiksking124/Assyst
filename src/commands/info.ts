@@ -21,7 +21,7 @@ export default class Info extends Command {
             validFlags: [],
             info: {
                 description: 'Get bot information',
-                examples: ['info'],
+                examples: [''],
                 usage: "",
                 author: "Jacherr"
             }

@@ -18,7 +18,7 @@ export default class Stop extends Command {
             validFlags: [],
             info: {
                 description: 'Stops the bot',
-                examples: ['stop'],
+                examples: [''],
                 usage: "",
                 author: "Jacherr"
             },
