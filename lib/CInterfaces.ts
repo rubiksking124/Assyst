@@ -1,5 +1,6 @@
 import { ShardClient } from 'detritus-client';
-import { Message, ChannelGuildText } from 'detritus-client/lib/structures';
+import { Message } from 'detritus-client/lib/structures';
+import { PERMISSIONS_ALL } from 'detritus-client/lib/constants'
 import { IFlagInfo, IInfo, IFlag, ICooldownType, ISendMsgOptions } from './Interfaces'
 import Config from './Config'
 import Assyst from './Assyst'

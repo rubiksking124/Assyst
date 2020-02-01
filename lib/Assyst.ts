@@ -11,9 +11,9 @@ import { ChannelGuildText, ChannelDM, Message, MessageEmbed } from 'detritus-cli
 import { MESSAGE_TYPE_EMOTES, REQUEST_TYPES } from './Enums'
 import CooldownManager from './CooldownManager'
 import superagent from 'superagent';
-import { TeamMembershipStates } from 'detritus-client/lib/constants';
-const { Paginator } = require('detritus-pagination'); // TODO: any because I fucked up typings lol, will fix soon
+// import { TeamMembershipStates } from 'detritus-client/lib/constants';
 
+const { Paginator } = require('detritus-pagination'); // TODO: any because I fucked up typings lol, will fix soon
 const { Markup } = Utils;
 
 export default class Assyst {
