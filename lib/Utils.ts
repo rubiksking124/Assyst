@@ -4,6 +4,7 @@ import { IFlag } from './Interfaces';
 import { promisify } from 'util';
 import { unlink, writeFile } from 'fs';
 import superagent from 'superagent';
+import { isTagDirty } from 'git-rev-sync';
 
 const promisifyUnlink = promisify(unlink);
 const promisifyWrite = promisify(writeFile);
@@ -29,11 +30,15 @@ export default class Utils {
         return await (result.headers.get('content-type') === 'application/json' ? result.json() : result.arrayBuffer())
     }    
 
-    public checkForFlag(flagName: string, flags: Array<IFlag>): boolean {
+    public checkForFlag(flags: Array<IFlag>, flagName: string): boolean {
         const flagNames: Array<string> = flags.map((i: IFlag) => {
             return i.name
         })
         return flagNames.includes(flagName)
+    }
+
+    public getFlag(flags: Array<IFlag>, flagName: string): IFlag | null {
+        return flags.find(i => i.name === flagName) || null;
     }
 
     public elapsed(value: number) {

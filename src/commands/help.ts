@@ -46,7 +46,7 @@ export default class Cmd extends Command {
                     }
                 })
             }
-            if (this.utils.checkForFlag('flags', context.flags)) {
+            if (context.checkForFlag('flags')) {
 
             }
 

@@ -18,7 +18,8 @@ export default class Config {
     public readonly apis = {
         fAPI: 'https://fapi.wrmsr.io',
         detritusDocsSearch: 'https://detritus-docs-api.y21.workers.dev',
-        shodanSearch: 'https://shodan-search-api.y21.workers.dev'
+        shodanSearch: 'https://shodan-search-api.y21.workers.dev',
+        embedLink: 'https://discord-embed.y21.workers.dev'
     };
     public readonly reactions = {
         previousPage: "⬅️",

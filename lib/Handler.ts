@@ -1,7 +1,7 @@
 import { Message } from 'detritus-client/lib/structures';
 import Assyst from './Assyst'
 import Command from './Command'
-import { IFlag, ICooldown, ICommandResponse } from './Interfaces';
+import { IFlag, ICooldown, ICommandResponse, IFlagInfo } from './Interfaces';
 import { PERMISSION_LEVELS, COOLDOWN_TYPES, MESSAGE_TYPE_EMOTES } from './Enums'
 export default class Handler {
     public assyst: Assyst;
@@ -66,7 +66,9 @@ export default class Handler {
                 args,
                 message,
                 flags,
-                reply: this.assyst.sendMsg.bind(this.assyst, message.channelId)
+                reply: this.assyst.sendMsg.bind(this.assyst, message.channelId),
+                getFlag: this.assyst.utils.getFlag.bind(this.assyst, flags),
+                checkForFlag: this.assyst.utils.checkForFlag.bind(this.assyst, flags)
             });
         } catch (e) {
             message.channel.createMessage(`:warning: Command raised an exception: \`\`\`js\n${e.stack}\n\`\`\``)
@@ -121,6 +123,20 @@ export default class Handler {
         }
 
         return flags;
+
+        let resolvedFlags: Array<IFlag> =[];
+
+        args.forEach((arg: string, i: number) => {
+            if(arg.startsWith('-')) {
+                const foundFlag: string = arg.slice(1)
+                const commandFlag: IFlagInfo | undefined = command.validFlags.find(i => i.name === foundFlag)
+                let flagArg: string;
+                if(!commandFlag || commandFlag.permissionLevel > authorPermLevel) return;
+                resolvedFlags.push({
+                    name: foundFlag
+                });
+            };
+        });
     }
 
     private removeFlags(args: Array<string>, flagsToRemove: Array<IFlag>) {

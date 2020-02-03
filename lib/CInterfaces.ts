@@ -25,5 +25,7 @@ export interface ICommandContext {
     args: string[],
     message: Message,
     reply: (message: string | object, options?: ISendMsgOptions) => Promise<Message | null>
-    flags: Array<IFlag>
+    flags: Array<IFlag>,
+    getFlag: (flagName: string) => IFlag | null,
+    checkForFlag: (flagName: string) => boolean
 }

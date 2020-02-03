@@ -49,7 +49,7 @@ export default class Eval extends Command {
     public async execute(context: ICommandContext): Promise<Message | null> {
         let evaled;
         try {
-            if (this.utils.checkForFlag('async', context.flags)) {
+            if (context.checkForFlag('async')) {
                 const func = new AsyncFunction('context', context.args.join(' '));
                 evaled = await func(this);
             } else {
@@ -70,7 +70,7 @@ export default class Eval extends Command {
             evaled = String(evaled);
         }
 
-        if (this.utils.checkForFlag('noreply', context.flags)) {
+        if (context.checkForFlag('noreply')) {
             return null;
         }
 
@@ -82,7 +82,7 @@ export default class Eval extends Command {
             return null;
         }
 
-        if (this.utils.checkForFlag('files.gg', context.flags) || fullLen > 1990) {
+        if (context.checkForFlag('files.gg') || fullLen > 1990) {
             const link = await this.utils.uploadToFilesGG(evaled, 'evaloutput.js');
             return context.reply(link, {
                 storeAsResponseForUser: {
