@@ -38,8 +38,14 @@ export default class Assyst {
 
     constructor(options: IAssystOptions) {
         this.bot = options.bot || new ShardClient(options.config.tokens.bot, {
-            cache: true, gateway: { loadAllMembers: true },
-        } );
+            cache: true,
+            gateway: {
+                loadAllMembers: true,
+                identifyProperties: {
+                    $browser: "Discord iOS"
+                }
+            }
+        });
         this.version = options.config.version;
         this.description = options.config.description;
         this.emotes = options.config.emotes;
