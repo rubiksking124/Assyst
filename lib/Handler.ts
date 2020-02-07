@@ -10,7 +10,7 @@ export default class Handler {
         this.assyst = client;
     }
 
-    public handleMessage(message: Message): void {
+    public async handleMessage(message: Message): Promise<void> {
         if (!message.channel || !message.channel.guild) return;
 
         const { content } = message;
@@ -64,7 +64,7 @@ export default class Handler {
         args = this.removeFlags(args, flags)
 
         try {
-            targetCommand.execute({
+            await targetCommand.execute({
                 args,
                 message,
                 flags,
