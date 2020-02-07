@@ -34,7 +34,8 @@ export default class Assyst {
     public apis: any; // todo: typings
     public reactions: any; // ^
     public errorChannel: string;
-    public embedColour: number
+    public embedColour: number;
+    public searchMessages: number;
 
     constructor(options: IAssystOptions) {
         this.bot = options.bot || new ShardClient(options.config.tokens.bot, {
@@ -55,6 +56,7 @@ export default class Assyst {
         this.errorChannel = options.config.errorChannel
         this.reactions = options.config.reactions;
         this.embedColour = options.config.embedColour
+        this.searchMessages = options.config.searchMessages;
         this.utils = new AssystUtils;
         this.commands = new Map();
         this.responseMessages = new Map();
@@ -159,7 +161,7 @@ export default class Assyst {
     }
 
     public async request(url: string, type: REQUEST_TYPES, set?: any, args?: any): Promise<superagent.Response | null> {
-        if (type === REQUEST_TYPES.GET) {
+        if (type === REQUEST_TYPES.GET || !type) {
             const response: superagent.Response = await superagent.get(url);
             return response;
         } else if (type === REQUEST_TYPES.POST) {

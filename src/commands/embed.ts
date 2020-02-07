@@ -51,8 +51,13 @@ export default class Embed extends Command {
 
     public async execute(context: ICommandContext): Promise<Message | null> {
         const url = new URL(this.assyst.apis.embedLink);
-        if(context.flags.length === 0) {
-            return context.reply(`Usage: \`\`\`md\n${this.assyst.prefix}${this.name} ${this.info.usage}\`\`\``)
+        if (context.flags.length === 0) {
+            return context.reply(`Usage: \`\`\`md\n${this.assyst.prefix}${this.name} ${this.info.usage}\`\`\``, {
+                storeAsResponseForUser: {
+                    user: context.message.author.id,
+                    message: context.message.id
+                }
+            })
         }
         for (const flag of this.validFlags.map(v => v.name)) {
             if (context.checkForFlag(flag)) {
@@ -60,6 +65,11 @@ export default class Embed extends Command {
             }
         }
 
-        return context.reply(url.toString() + "&a=0");
+        return context.reply(url.toString() + "&a=0", {
+            storeAsResponseForUser: {
+                user: context.message.author.id,
+                message: context.message.id
+            }
+        });
     }
 }

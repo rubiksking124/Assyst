@@ -4,7 +4,7 @@ import { IFlag } from './Interfaces';
 import { promisify } from 'util';
 import { unlink, writeFile } from 'fs';
 import superagent from 'superagent';
-import { isTagDirty } from 'git-rev-sync';
+import { Channel, Attachment, Message, MessageEmbedThumbnail } from 'detritus-client/lib/structures'
 
 const promisifyUnlink = promisify(unlink);
 const promisifyWrite = promisify(writeFile);
@@ -47,11 +47,32 @@ export default class Utils {
         return elapsed;
     }
 
-    public async uploadToFilesGG(text: string, filename: string) {
+    public async uploadToFilesGG(text: string, filename: string): Promise<string> {
         const data = new Uint8Array(Buffer.from(text) );
         await promisifyWrite(`${__dirname}/${filename}`, data);
         const response = await superagent.post('https://api.files.gg/files').type('form').attach('file', `${__dirname}/${filename}`);
         await promisifyUnlink(`${__dirname}/${filename}`);
         return response.body.urls.main;
     }  
+
+    public async getRecentAttachmentOrEmbed(message: Message, amtOfMessages: number): Promise<MessageEmbedThumbnail | Attachment | undefined> {
+        if(!message.channel) {
+            return undefined;
+        } else if(message.attachments.length > 0) {
+            return message.attachments.first()
+        }
+        const messages: Array<Message> = await message.channel?.fetchMessages({limit: amtOfMessages})
+        if(!messages) {
+            return undefined;
+        }
+        let attachment: MessageEmbedThumbnail | Attachment | undefined
+        messages.forEach(message => {
+            if(message.attachments.first() !== undefined && attachment === undefined) {
+                attachment = <Attachment>message.attachments.first()
+            } else if(message.embeds.length > 0 && message.embeds.toArray()[0].thumbnail && attachment === undefined) {
+                attachment = <MessageEmbedThumbnail>message.embeds.toArray()[0].thumbnail
+            }
+        })
+        return attachment;
+    }
 }

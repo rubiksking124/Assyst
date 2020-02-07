@@ -41,21 +41,23 @@ export default class Handler {
                 idToCheck = message.channel.guild.id;
                 break;
         }
-
-        const cooldown: ICooldown | null = this.assyst.cooldownManager.getCooldownFromId(idToCheck);
-        if (cooldown && cooldown.endUnix > Date.now()) {
-            if (!cooldown.sentMessage) {
-                this.assyst.sendMsg(message.channel, `This command is on cooldown for ${((cooldown.endUnix - Date.now()) / 1000).toFixed(2)} more seconds.`, { type: MESSAGE_TYPE_EMOTES.ERROR })
-                    .then((m: Message | null) => {
-                        cooldown.sentMessage = true;
-                        setTimeout(() => {
-                            if (m) m.delete();
-                        }, 5000);
-                    });
+        
+        if(permissionLevel < 1) {
+            const cooldown: ICooldown | null = this.assyst.cooldownManager.getCooldownFromId(idToCheck);
+            if (cooldown && cooldown.endUnix > Date.now()) {
+                if (!cooldown.sentMessage) {
+                    this.assyst.sendMsg(message.channel, `This command is on cooldown for ${((cooldown.endUnix - Date.now()) / 1000).toFixed(2)} more seconds.`, { type: MESSAGE_TYPE_EMOTES.ERROR })
+                        .then((m: Message | null) => {
+                            cooldown.sentMessage = true;
+                            setTimeout(() => {
+                                if (m) m.delete();
+                            }, 5000);
+                        });
+                }
+                return;
+            } else {
+                this.assyst.cooldownManager.addCooldown(Date.now() + targetCommand.cooldown.timeout, idToCheck, targetCommand.cooldown.type);
             }
-            return;
-        } else {
-            this.assyst.cooldownManager.addCooldown(Date.now() + targetCommand.cooldown.timeout, idToCheck, targetCommand.cooldown.type);
         }
 
         const flags: Array<IFlag> = this.resolveFlags(args, permissionLevel, targetCommand);
@@ -85,6 +87,7 @@ export default class Handler {
     }
 
     private updateResponseMessages(message: Message) {
+        if(!message) return;
         const responseMessageObject: ICommandResponse[] | undefined = this.assyst.responseMessages.get(message.author.id);
         if (responseMessageObject?.some(i => i.source.includes(message.id))) {
             const responseMessageId: string = <string>responseMessageObject?.find(i => i.source === message.id)?.response;

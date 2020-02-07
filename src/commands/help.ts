@@ -4,7 +4,7 @@ import { COOLDOWN_TYPES, MESSAGE_TYPE_EMOTES } from '../../lib/Enums';
 import { ICommandContext } from '../../lib/CInterfaces';
 import { Message, MessageEmbed } from 'detritus-client/lib/structures';
 
-export default class Cmd extends Command {
+export default class Help extends Command {
     constructor(assyst: Assyst) {
         super({
             name: 'help',
@@ -26,7 +26,7 @@ export default class Cmd extends Command {
 
     public async execute(context: ICommandContext): Promise<Message | null> {
         if (context.args.length === 0) {
-            const paging = await this.assyst.paginator.createReactionPaginator({
+            /*const paging = await this.assyst.paginator.createReactionPaginator({
                 message: context.message,
                 pages: null
             });
@@ -35,7 +35,10 @@ export default class Cmd extends Command {
                 paging.commandMessage.edit(new Date().toLocaleString());
             });
 
-            return null;
+            return null;*/
+            return context.reply({ embed: {
+                description: `${Array.from(this.assyst.commands)}`
+            }})
         } else {
             const command: Command | null = this.assyst.handler.getCommand(context.args[0])
             if (!command) {

@@ -3,7 +3,7 @@ import { tokens } from '../privateConfig.json';
 import { description, version } from '../package.json';
 
 export default class Config {
-    public readonly prefix: string = '>>';
+    public readonly prefix: string = '<<';
     public readonly staff: IStaff = {
         owners: ["233667448887312385", "312715611413413889"],
         admins: [],
@@ -19,7 +19,8 @@ export default class Config {
         fAPI: 'https://fapi.wrmsr.io',
         detritusDocsSearch: 'https://detritus-docs-api.y21.workers.dev',
         shodanSearch: 'https://shodan-search-api.y21.workers.dev',
-        embedLink: 'https://discord-embed.y21.workers.dev'
+        embedLink: 'https://discord-embed.y21.workers.dev',
+        ocr: 'https://api.tsu.sh/google/ocr'
     };
     public readonly reactions = {
         previousPage: "⬅️",
@@ -29,6 +30,7 @@ export default class Config {
     public readonly description: string = description;
     public readonly version: string = version;
     public readonly tokens = tokens;
-    public readonly errorChannel: string = '672509739720114187';
-    public readonly embedColour: number = 0xf4632e
+    public readonly errorChannel: string = '412350028502269973';
+    public readonly embedColour: number = 0xf4632e;
+    public readonly searchMessages: number = 50;
 }

@@ -19,7 +19,7 @@ export default class Resolver {
      */
     resolveUser(str: string): User | undefined {
         return this.client.bot.users.find((u: User) => u.username.toLowerCase() === str.toLowerCase() ||
-            u.username.toLowerCase().includes(str.toLowerCase()));
+            u.username.toLowerCase().includes(str.toLowerCase()) || u.id === str);
     }
 
     /**
