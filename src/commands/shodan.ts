@@ -15,10 +15,11 @@ export default class Shodan extends Command {
                 type: COOLDOWN_TYPES.GUILD
             },
             validFlags: [],
+            argsMin: 1,
             info: {
-                description: '', // todo
-                examples: [],
-                usage: "",
+                description: 'Search shodan for hosts based on a search parameter', // todo
+                examples: ['discord'],
+                usage: "[query]",
                 author: "y21"
             }
         });
@@ -31,10 +32,9 @@ export default class Shodan extends Command {
                 message: context.message.id
             }
         });
-        if (!message) return null;
         const request = await this.request(this.assyst.apis.shodanSearch + "/?query=" + encodeURIComponent(context.args.join(" ")), REQUEST_TYPES.GET)
             .then(v => v?.body);
-
+        if (!message) return null;
         if (request.hosts.length === 0) {
             return context.reply("No hosts were found for given query.", { edit: message.id, type: MESSAGE_TYPE_EMOTES.ERROR });
         } else {

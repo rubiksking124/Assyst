@@ -1,4 +1,4 @@
-import 'node-fetch';
+import fetch from 'node-fetch';
 import { tokens } from '../privateConfig.json';
 import { IFlag } from './Interfaces';
 import { promisify } from 'util';
@@ -10,25 +10,6 @@ const promisifyUnlink = promisify(unlink);
 const promisifyWrite = promisify(writeFile);
 
 export default class Utils {
-    public static fAPI: string = "https://fapi.wrmsr.io/";
-
-    public async sendfAPIRequest(path: string, method: string, images: string[], args: object) {
-        const result = await fetch(Utils.fAPI + path, {
-            method,
-            headers: {
-                Authorization: `Bearer ${tokens.fapi}`
-            },
-            body: JSON.stringify({
-                images,
-                args
-            })
-        });
-
-        if(!result.ok) {
-            throw new Error(await (result).text());
-        }
-        return await (result.headers.get('content-type') === 'application/json' ? result.json() : result.arrayBuffer())
-    }    
 
     public checkForFlag(flags: Array<IFlag>, flagName: string): boolean {
         const flagNames: Array<string> = flags.map((i: IFlag) => {

@@ -19,7 +19,7 @@ export default class OCR extends Command {
             info: {
                 description: 'Run Google Optical Character Recognition on an image',
                 examples: ['https://link.to/the/image.png/', 'Jacher'],
-                usage: "[url|user|attachment]",
+                usage: "<url|user|attachment>",
                 author: "Jacherr"
             }
         });
@@ -51,6 +51,7 @@ export default class OCR extends Command {
             }
         }
         const response = await this.request(`${this.assyst.apis.ocr}?q=${url}`, REQUEST_TYPES.GET);
+        if(!processingMessage) return null;
         if (response?.status !== 200) {
             return context.reply('Google OCR returned an error.', {
                 storeAsResponseForUser: {

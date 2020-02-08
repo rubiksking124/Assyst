@@ -31,7 +31,7 @@ export default class Info extends Command {
     public async execute(context: ICommandContext): Promise<Message | null> {
         const commitHash: string = git_rev_sync.short();
         const version: string = this.assyst.version;
-        const memoryUsage: string = (process.memoryUsage().heapUsed / 1000 / 1000).toFixed(2);
+        const memoryUsage: string = (process.memoryUsage().rss / 1000 / 1000).toFixed(2);
         const guildCount: number = this.bot.guilds.size;
         const userCount: number = this.bot.users.size;
         const uptime: {

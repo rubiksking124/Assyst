@@ -37,7 +37,7 @@ export default class Help extends Command {
 
             return null;*/
             return context.reply({ embed: {
-                description: `${Array.from(this.assyst.commands)}`
+                description: `${Array.from(this.assyst.commands).map(a => `**${a[1].name}** - ${a[1].info.description}`).join('\n')}`
             }})
         } else {
             const command: Command | null = this.assyst.handler.getCommand(context.args[0])
@@ -59,7 +59,7 @@ export default class Help extends Command {
                     title: command.name || '?',
                     color: this.assyst.embedColour || 0,
                     footer: {
-                        text: 'Use the \'-flags\' flag to get more information on this command\'s flags.'
+                        text: 'Use the \'-flags\' flag to get more information on this command\'s flags.\nCommand parameters in <> are optional.'
                     },
                     author: {
                         name: this.bot.user?.username,
@@ -68,7 +68,7 @@ export default class Help extends Command {
                     fields: [
                         {
                             name: 'Usage',
-                            value: `\`\`\`asciidoc\n${this.assyst.prefix}${command.name} ${command.info.usage}\`\`\``,
+                            value: `\`\`\`md\n${this.assyst.prefix}${command.name} ${command.info.usage}\`\`\``,
                             inline: true
                         },
                         {
