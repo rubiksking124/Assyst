@@ -93,8 +93,10 @@ export default class Assyst {
         this.bot.on("messageCreate", (context: Context) => {
             this.handler.handleMessage(context.message)
         });
-        this.bot.on('messageUpdate', (context: Context) => {
-            this.handler.handleEditedMessage(context.message)
+        this.bot.on('messageUpdate', (context: any) => {
+            if(context.differences.content) {
+                this.handler.handleEditedMessage(context.message)
+            }
         })
         this.bot.on('messageDelete', (context: Context) => {
             this.handler.handleDeletedMessage(context.message)
