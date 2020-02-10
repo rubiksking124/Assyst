@@ -94,7 +94,7 @@ export default class Assyst {
             this.handler.handleMessage(context.message)
         });
         this.bot.on('messageUpdate', (context: any) => {
-            if(context.differences.content) {
+            if(context.differences && context.differences.content) {
                 this.handler.handleEditedMessage(context.message)
             }
         })

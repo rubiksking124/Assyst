@@ -50,10 +50,28 @@ export default class OCR extends Command {
                 url = user.avatarUrl;
             }
         }
-        const response = await this.request(`${this.assyst.apis.ocr}?q=${url}`, REQUEST_TYPES.GET);
-        if(!processingMessage) return null;
+        try {
+            const parsedURL: URL = new URL(url)
+            url = parsedURL.origin + parsedURL.pathname
+        } catch (e) {
+            return context.reply(`${e.message}`, {
+                storeAsResponseForUser: {
+                    user: context.message.author.id,
+                    message: context.message.id
+                },
+                edit: processingMessage?.id || undefined,
+                type: MESSAGE_TYPE_EMOTES.ERROR
+            })
+        }
+        const response = await this.request(`${this.assyst.apis.ocr}?q=${url}`, REQUEST_TYPES.GET).catch((e: any) => {
+            return {
+                status: e.status,
+                body: null
+            }
+        });
+        if (!processingMessage) return null;
         if (response?.status !== 200) {
-            return context.reply('Google OCR returned an error.', {
+            return context.reply(`Google OCR returned an error ${response?.status} (most likely file too large or invalid).`, {
                 storeAsResponseForUser: {
                     user: context.message.author.id,
                     message: context.message.id

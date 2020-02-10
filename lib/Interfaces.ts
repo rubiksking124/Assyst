@@ -1,4 +1,5 @@
 import { MESSAGE_TYPE_EMOTES, COOLDOWN_TYPES } from './Enums'
+import Command from './Command'
 
 export interface IStaff {
     owners: Array<string>,
@@ -17,6 +18,7 @@ export interface ICooldown {
     endUnix: number,
     effectiveOn: COOLDOWN_TYPES,
     sentMessage: boolean,
+    command: Command
 }
 export interface ICooldownType {
     type: COOLDOWN_TYPES,

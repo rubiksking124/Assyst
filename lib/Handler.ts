@@ -44,7 +44,7 @@ export default class Handler {
         
         if(permissionLevel < 1) {
             const cooldown: ICooldown | null = this.assyst.cooldownManager.getCooldownFromId(idToCheck);
-            if (cooldown && cooldown.endUnix > Date.now()) {
+            if (cooldown && cooldown.endUnix > Date.now() && targetCommand === cooldown.command) {
                 if (!cooldown.sentMessage) {
                     this.assyst.sendMsg(message.channel, `This command is on cooldown for ${((cooldown.endUnix - Date.now()) / 1000).toFixed(2)} more seconds.`, { type: MESSAGE_TYPE_EMOTES.ERROR })
                         .then((m: Message | null) => {
@@ -56,7 +56,7 @@ export default class Handler {
                 }
                 return;
             } else {
-                this.assyst.cooldownManager.addCooldown(Date.now() + targetCommand.cooldown.timeout, idToCheck, targetCommand.cooldown.type);
+                this.assyst.cooldownManager.addCooldown(Date.now() + targetCommand.cooldown.timeout, idToCheck, targetCommand.cooldown.type, targetCommand);
             }
         }
 
