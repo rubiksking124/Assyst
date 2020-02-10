@@ -20,7 +20,8 @@ export default class Config {
         detritusDocsSearch: 'https://detritus-docs-api.y21.workers.dev',
         shodanSearch: 'https://shodan-search-api.y21.workers.dev',
         embedLink: 'https://discord-embed.y21.workers.dev',
-        ocr: 'https://api.tsu.sh/google/ocr'
+        ocr: 'https://api.tsu.sh/google/ocr',
+        code: 'https://gocode.it/run_code.php'
     };
     public readonly reactions = {
         previousPage: "⬅️",
