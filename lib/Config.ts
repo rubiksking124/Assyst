@@ -3,7 +3,7 @@ import { tokens } from '../privateConfig.json';
 import { description, version } from '../package.json';
 
 export default class Config {
-    public readonly prefix: string = '<<';
+    public readonly prefix: string = '<>';
     public readonly staff: IStaff = {
         owners: ["233667448887312385", "312715611413413889"],
         admins: [],
@@ -21,7 +21,7 @@ export default class Config {
         shodanSearch: 'https://shodan-search-api.y21.workers.dev',
         embedLink: 'https://discord-embed.y21.workers.dev',
         ocr: 'https://api.tsu.sh/google/ocr',
-        code: 'https://gocode.it/run_code.php'
+        code: 'https://api.gocode.it/exec/'
     };
     public readonly reactions = {
         previousPage: "⬅️",
