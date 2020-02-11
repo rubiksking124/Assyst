@@ -29,6 +29,7 @@ export default class Stop extends Command {
     public async execute(context: ICommandContext): Promise<Message | null> {
         // If exit code is non-zero, process will restart
         // `-f` flag can be used to force stop the bot by exiting with code 0
+        await context.reply(':wave:');
         if (context.checkForFlag('f')) {
             process.exit(0);
         } else {
