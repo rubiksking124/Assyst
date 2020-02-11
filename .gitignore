@@ -2,3 +2,4 @@ privateConfig.json
 node_modules
 **/*.js
 JS
+.idea

@@ -40,6 +40,12 @@ export default class Eval extends Command {
                 argumented: false,
                 description: 'Measure the time taken to evaluate the code',
                 permissionLevel: 2
+            },
+            {
+                name: 'dm',
+                argumented: false,
+                description: 'Send Evalution to Direct Messages',
+                permissionLevel: 2
             }
             ],
             info: {
@@ -109,6 +115,13 @@ export default class Eval extends Command {
                     message: context.message.id
                 }
             })
+        }
+
+        if (context.checkForFlag('dm')) {
+            const dmChannel = await context.message.author.createOrGetDm();
+            if (dmChannel.canMessage) {
+                return dmChannel.createMessage(`\`\`\`js\n${evaled}\`\`\``);
+            }
         }
 
         return context.reply(`\`\`\`js\n${evaled}\`\`\``, {
