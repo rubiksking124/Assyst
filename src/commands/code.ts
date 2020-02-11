@@ -85,6 +85,9 @@ export default class Code extends Command {
         if(!processingMessage) {
             return null;
         }
+        if(output.length > 1995) {
+            output = await this.utils.uploadToFilesGG(output, `code.${context.args[0]}`);
+        }
         if (res.status === 200) {
             return context.reply(Markup.codeblock(output, { language: context.args[0], limit: 1990 }), {
                 storeAsResponseForUser: {
