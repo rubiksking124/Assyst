@@ -136,25 +136,24 @@ export default class Assyst {
             msgToSend = Markup.escape.mentions(<string>msgToSend);
         }
         let responseMessage: Message
+        if(options.edit && !this.bot.messages.get(options.edit)) {      // If message has been deleted and it's being edited
+            return null;
+        }
+        let channelId: string;
         switch (typeof channel) {
             case 'object':
-                if (channel.id && !options.edit) {
-                    responseMessage = await this.bot.rest.createMessage(channel.id, msgToSend);
-                } else if (options.edit) {
-                    responseMessage = await this.bot.rest.editMessage(channel.id, options.edit, msgToSend);
-                } else {
-                    throw new Error('Invalid channel object');   
-                }
+                channelId = channel.id
                 break;
             case 'string':
-                if (options.edit) {
-                    responseMessage = await this.bot.rest.editMessage(<string>channel, options.edit, msgToSend);
-                } else {
-                    responseMessage = await this.bot.rest.createMessage(<string>channel, msgToSend);
-                }
+                channelId = channel
                 break;
             default:
                 throw new Error('The channel paramater must either be a channel object or channel ID');     
+        }
+        if (options.edit) {
+            responseMessage = await this.bot.rest.editMessage(channelId, options.edit, msgToSend);
+        } else {
+            responseMessage = await this.bot.rest.createMessage(channelId, msgToSend);
         }
         if(options.storeAsResponseForUser) {
             this.handler.storeCommandResponse(options.storeAsResponseForUser.message, responseMessage.id, options.storeAsResponseForUser.user)

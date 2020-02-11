@@ -26,7 +26,12 @@ export default class OCR extends Command {
     }
 
     public async execute(context: ICommandContext): Promise<Message | null> {
-        const processingMessage: Message | null = await context.reply('Processing...', { type: MESSAGE_TYPE_EMOTES.LOADING })
+        const processingMessage: Message | null = await context.reply('Processing...', {
+            type: MESSAGE_TYPE_EMOTES.LOADING, storeAsResponseForUser: {
+                user: context.message.author.id,
+                message: context.message.id
+            }
+        })
         let url: string;
         if (context.args.length === 0) {
             let attachment: MessageEmbedThumbnail | Attachment | undefined = await this.utils.getRecentAttachmentOrEmbed(context.message, this.assyst.searchMessages);
