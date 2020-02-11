@@ -85,11 +85,19 @@ export default class Code extends Command {
         if(!processingMessage) {
             return null;
         }
+        let codeblock: boolean = true;
         if(output.length > 1995) {
             output = await this.utils.uploadToFilesGG(output, `code.${context.args[0]}`);
+            output = `Output was too long, uploaded to files.gg: ${output}`
+            codeblock = false;
+        } else if(output.length > 200000) {
+            output = `The output exceeded 200,000 characters. It will not be displayed.`
+        }
+        if(codeblock) {
+            output = Markup.codeblock(output, { language: context.args[0], limit: 1990 })
         }
         if (res.status === 200) {
-            return context.reply(Markup.codeblock(output, { language: context.args[0], limit: 1990 }), {
+            return context.reply(output, {
                 storeAsResponseForUser: {
                     user: context.message.author.id,
                     message: context.message.id
