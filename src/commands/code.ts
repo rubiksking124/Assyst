@@ -21,7 +21,7 @@ interface CodeList {
     data: Array<string>
 }
 
-export default class Cmd extends Command {
+export default class Code extends Command {
     constructor(assyst: Assyst) {
         super({
             name: 'code',
@@ -91,7 +91,7 @@ export default class Cmd extends Command {
                     user: context.message.author.id,
                     message: context.message.id
                 },
-                edit: processingMessage.id
+                edit: processingMessage.id || undefined
             });
         } else {
             return context.reply(`HTTP Status: ${res.status} (${res.data.res})`, {
@@ -100,7 +100,7 @@ export default class Cmd extends Command {
                     message: context.message.id
                 },
                 type: MESSAGE_TYPE_EMOTES.ERROR,
-                edit: processingMessage.id
+                edit: processingMessage.id || undefined
             });
         }
     }
