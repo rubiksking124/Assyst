@@ -57,7 +57,7 @@ export default class Assyst {
         this.reactions = options.config.reactions;
         this.embedColour = options.config.embedColour
         this.searchMessages = options.config.searchMessages;
-        this.utils = new AssystUtils;
+        this.utils = new AssystUtils(this);
         this.commands = new Map();
         this.responseMessages = new Map();
         this.handler = new Handler(this);
