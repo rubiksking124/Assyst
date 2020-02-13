@@ -9,8 +9,8 @@ const AsyncFunction = Object.getPrototypeOf(async () => { }).constructor
 export default class Eval extends Command {
     constructor(assyst: Assyst) {
         super({
-            name: 'eval',
-            aliases: ['e'],
+            name: 'e',
+            aliases: [],
             argsMin: 1,
             assyst,
             cooldown: {
