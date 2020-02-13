@@ -1,15 +1,33 @@
-import fetch from 'node-fetch';
 import { tokens } from '../privateConfig.json';
 import { IFlag } from './Interfaces';
 import { promisify } from 'util';
 import { unlink, writeFile } from 'fs';
 import superagent from 'superagent';
 import { Channel, Attachment, Message, MessageEmbedThumbnail } from 'detritus-client/lib/structures'
+import Assyst from './Assyst.js';
 
 const promisifyUnlink = promisify(unlink);
 const promisifyWrite = promisify(writeFile);
 
+export interface CodeResult {
+    data: {
+        res: string,
+        comp: number,
+        timings: any[]
+    },
+    status: number
+}
+
+export interface CodeList {
+    status: number,
+    data: Array<string>
+}
+
 export default class Utils {
+    public assyst: Assyst;
+    constructor(assyst: Assyst) {
+        this.assyst = assyst;
+    }
 
     public checkForFlag(flags: Array<IFlag>, flagName: string): boolean {
         const flagNames: Array<string> = flags.map((i: IFlag) => {
@@ -55,5 +73,24 @@ export default class Utils {
             }
         })
         return attachment;
+    }
+
+    public async runSandboxedCode(language: string, code: string): Promise<CodeResult> {
+        return superagent
+            .post(this.assyst.apis.code)
+            .accept('application/json')
+            .set('Content-Type', 'application/x-www-form-urlencoded')
+            .set('Authorization', tokens.gocodeit)
+            .field('lang', language)
+            .field('code', code)
+            .then((v: any) => JSON.parse(v.text));
+    }
+
+    public async getLanguageList(): Promise<CodeList> {
+        return superagent
+            .options(this.assyst.apis.code)
+            .accept('application/json')
+            .set('Authorization', tokens.gocodeit)
+            .then((v: any) => JSON.parse(v.text));
     }
 }

@@ -3,23 +3,9 @@ import Assyst from '../../lib/Assyst';
 import { COOLDOWN_TYPES, MESSAGE_TYPE_EMOTES } from '../../lib/Enums';
 import { ICommandContext } from '../../lib/CInterfaces';
 import { Message, VoiceCall } from 'detritus-client/lib/structures';
-import superagent from 'superagent';
 import { Markup } from 'detritus-client/lib/utils';
-import { tokens } from '../../privateConfig.json'
+import { CodeResult, CodeList } from '../../lib/Utils';
 
-interface CodeResult {
-    data: {
-        res: string,
-        comp: number,
-        timings: any[]
-    },
-    status: number
-}
-
-interface CodeList {
-    status: number,
-    data: Array<string>
-}
 
 export default class Code extends Command {
     constructor(assyst: Assyst) {
@@ -44,11 +30,7 @@ export default class Code extends Command {
 
     public async execute(context: ICommandContext): Promise<Message | null> {
         if(context.args[0] === 'list') {
-            const langs: CodeList = await superagent
-                .options(this.assyst.apis.code)
-                .accept('application/json')
-                .set('Authorization', tokens.gocodeit)
-                .then((v: any) => JSON.parse(v.text))
+            const langs: CodeList = await this.assyst.utils.getLanguageList();
             return context.reply(`Supported languages: ${langs.data.map((l: string) => `\`${l}\``).join(', ')}`, {
                 storeAsResponseForUser: {
                     user: context.message.author.id,
@@ -66,26 +48,25 @@ export default class Code extends Command {
             type: MESSAGE_TYPE_EMOTES.LOADING
         })
         let output: string;
-        const res: CodeResult = await superagent
-            .post(this.assyst.apis.code)
-            .accept('application/json')
-            .set('Content-Type', 'application/x-www-form-urlencoded')
-            .set('Authorization', tokens.gocodeit)
-            .field('lang', context.args[0])
-            .field('code', context.args
-                .slice(1)
-                .join(' ')
-                .replace(/^```\w*|```$/g, ''))
-            .then((v: any) => JSON.parse(v.text));
+       
+        // run code
+        const res: CodeResult = await this.assyst.utils.runSandboxedCode(
+            context.args[0], 
+            context.args.slice(1).join(' ').replace(/^```\w*|```$/g, "")
+        );
+
         if(res.data.res.length === 0) {
             output = "Empty Response"
         } else {
             output = res.data.res
         }
-        if(!processingMessage) {
+
+        if (!processingMessage) {
             return null;
         }
+
         let codeblock: boolean = true;
+
         if(output.length > 1995) {
             output = await this.utils.uploadToFilesGG(output, `code.${context.args[0]}`);
             output = `Output was too long, uploaded to files.gg: ${output}`
