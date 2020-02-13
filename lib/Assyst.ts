@@ -11,7 +11,8 @@ import { ChannelGuildText, ChannelDM, Message, MessageEmbed } from 'detritus-cli
 import { MESSAGE_TYPE_EMOTES, REQUEST_TYPES } from './Enums'
 import CooldownManager from './CooldownManager'
 import superagent from 'superagent';
-// import { TeamMembershipStates } from 'detritus-client/lib/constants';
+import { Pool, QueryResult } from 'pg';
+import { db } from '../privateConfig.json'
 
 const { Paginator } = require('detritus-pagination'); // TODO: any because I fucked up typings lol, will fix soon
 const { Markup } = Utils;
@@ -28,7 +29,8 @@ export default class Assyst {
     public commands: Map<string, Command>;
     public handler: Handler;
     public resolver: Resolver;
-    public cooldownManager: CooldownManager
+    public cooldownManager: CooldownManager;
+    public db: Pool;
     public responseMessages: Map<string, Array<ICommandResponse>>
     public paginator: any; // todo: typings
     public apis: any; // todo: typings
@@ -67,6 +69,13 @@ export default class Assyst {
             maxTime: options.config.paginatorTimeout,
             pageLoop: true
         });
+        this.db = new Pool({
+            port: 5432,
+            user: 'assyst',
+            database: 'assyst',
+            host: db.host,
+            password: db.password
+        })
 
         this.loadCommands()
             .then((c: Map<string, Command>) => {
@@ -173,5 +182,14 @@ export default class Assyst {
             return response;
         }
         return null;
+    }
+
+    public sql(query: string, values?: any[]): Promise<QueryResult> {
+        return new Promise((resolve, reject) => {
+            this.db.query(query, values || [], (err: any, res: any) => {
+                if (err) reject(err);
+                else resolve(res);
+            })
+        });
     }
 }

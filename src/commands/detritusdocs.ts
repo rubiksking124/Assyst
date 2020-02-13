@@ -19,7 +19,7 @@ export default class DetritusDocs extends Command {
             validFlags: [
                 {
                     name: 'type',
-                    description: '',
+                    description: 'The data type to seach for',
                     argumented: true,
                     permissionLevel: PERMISSION_LEVELS.NORMAL,
                     accepts: [

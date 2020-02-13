@@ -29,7 +29,7 @@ export default class Code extends Command {
     }
 
     public async execute(context: ICommandContext): Promise<Message | null> {
-        if(context.args[0] === 'list') {
+        if (context.args[0] === 'list') {
             const langs: CodeList = await this.assyst.utils.getLanguageList();
             return context.reply(`Supported languages: ${langs.data.map((l: string) => `\`${l}\``).join(', ')}`, {
                 storeAsResponseForUser: {
@@ -48,14 +48,39 @@ export default class Code extends Command {
             type: MESSAGE_TYPE_EMOTES.LOADING
         })
         let output: string;
-       
+        let res: CodeResult
         // run code
-        const res: CodeResult = await this.assyst.utils.runSandboxedCode(
-            context.args[0], 
-            context.args.slice(1).join(' ').replace(/^```\w*|```$/g, "")
-        );
+        try {
+            res = await this.assyst.utils.runSandboxedCode(
+                encodeURIComponent(context.args[0]),
+                context.args.slice(1).join(' ').replace(/^```\w*|```$/g, "")
+            );
+        } catch (e) {
+            let message: string
+            switch(e.status) {
+                case 400:
+                    message = JSON.parse(e.response.text).data.res
+                    break;  
+                case 500:
+                    message = 'The API could not handle this request.'
+                    break;
+                case 404:
+                    message = `Language ${context.args[0]} is not supported.`
+                default:
+                    message = 'An unexpected error occurred.'
+                    break;
+            }
+            return context.reply(`Error: ${e.status} - ${message}`, {
+                storeAsResponseForUser: {
+                    user: context.message.author.id,
+                    message: context.message.id
+                },
+                edit: processingMessage?.id || undefined,
+                type: MESSAGE_TYPE_EMOTES.ERROR
+            })
+        }
 
-        if(res.data.res.length === 0) {
+        if (res.data.res.length === 0) {
             output = "Empty Response"
         } else {
             output = res.data.res
@@ -67,14 +92,14 @@ export default class Code extends Command {
 
         let codeblock: boolean = true;
 
-        if(output.length > 1995) {
+        if (output.length > 1995) {
             output = await this.utils.uploadToFilesGG(output, `code.${context.args[0]}`);
             output = `Output was too long, uploaded to files.gg: ${output}`
             codeblock = false;
-        } else if(output.length > 200000) {
+        } else if (output.length > 200000) {
             output = `The output exceeded 200,000 characters. It will not be displayed.`
         }
-        if(codeblock) {
+        if (codeblock) {
             output = Markup.codeblock(output, { language: context.args[0], limit: 1990 })
         }
         if (res.status === 200) {

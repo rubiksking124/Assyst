@@ -3,5 +3,9 @@
         "bot": "",
         "fapi": "",
         "gocodeit": ""
+    },
+    "db": {
+        "host": "",
+        "password": ""
     }
 }
