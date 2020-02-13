@@ -8,7 +8,7 @@ import { Markup } from 'detritus-client/lib/utils';
 
 
 export default class FakeEval extends Command {
-    public static prependedCode: string = `(function() {
+    public prependedCode: string = `(function() {
         const Collection = Map;
         
         function rand(min, max) {
@@ -22,11 +22,11 @@ export default class FakeEval extends Command {
         }
         
         this.client = {
-            channels: new Collection(new Array(rand(100, 500)).fill().map(populate)),
-            guilds: new Collection(new Array(rand(100, 500)).fill().map(populate)),
-            users: new Collection(new Array(rand(100, 500)).fill().map(populate)),
+            channels: new Collection(new Array(${this.bot.channels.size}).fill().map(populate)),
+            guilds: new Collection(new Array(${this.bot.guilds.size}).fill().map(populate)),
+            users: new Collection(new Array(${this.bot.users.size}).fill().map(populate)),
             token: "NTcxNjYxMjIxODU0NzA3NzEz.Dvl8Dw.aKlcU6mA69pSOI_YBB8RG7nNGUE",
-            uptime: Math.floor(Math.random() * 100000)
+            uptime: process.uptime()
         };
     }).call(global);
     
@@ -52,7 +52,7 @@ export default class FakeEval extends Command {
 
     public async execute(context: ICommandContext): Promise<Message | null> {
         /* FAKE EVAL */
-        const res: CodeResult = await this.assyst.utils.runSandboxedCode('js', FakeEval.prependedCode.replace('{input}', context.args.join(' ').replace(/"/g, '\'')));
+        const res: CodeResult = await this.assyst.utils.runSandboxedCode('js', this.prependedCode.replace('{input}', context.args.join(' ').replace(/"/g, '\'')));
         return context.reply(Markup.codeblock(res.data.res.substr(0, 1980), { language: 'js' }), {
             storeAsResponseForUser: {
                 user: context.message.author.id,
