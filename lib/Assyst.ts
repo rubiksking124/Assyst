@@ -13,6 +13,7 @@ import CooldownManager from './CooldownManager'
 import superagent from 'superagent';
 import { Pool, QueryResult } from 'pg';
 import { db } from '../privateConfig.json'
+import Parser from './Parser';
 
 const { Paginator } = require('detritus-pagination'); // TODO: any because I fucked up typings lol, will fix soon
 const { Markup } = Utils;
@@ -191,5 +192,15 @@ export default class Assyst {
                 else resolve(res);
             })
         });
+    }
+
+    public parseNew(input: string, message: Message) {
+        return new Parser(this.bot, {
+            message,
+            getMemberFromString: this.resolver.resolveMember
+        }, this).parse(input, [], {
+            name: 'test',
+            owner: message.author.id
+        })
     }
 }
