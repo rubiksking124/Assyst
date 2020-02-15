@@ -38,7 +38,7 @@ export default class Tag extends Command {
                 type: MESSAGE_TYPE_EMOTES.INFO
             })
         } else {
-            return context.reply(Markup.escape.mentions(tag.content), {
+            return context.reply(Markup.escape.mentions((await this.assyst.parseNew(tag.content, context.message)).result), {
                 storeAsResponseForUser: {
                     user: context.message.author.id,
                     message: context.message.id

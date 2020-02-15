@@ -93,4 +93,10 @@ export default class Utils {
             .set('Authorization', tokens.gocodeit)
             .then((v: any) => JSON.parse(v.text));
     }
+
+    public snowflakeToTime(snowflake: string): number {
+        const epoch: number = 1420070400000;
+        const binary = (parseInt(snowflake, 10) ).toString(2).padStart(64, '0');
+        return parseInt(binary.substring(0, 42), 2) + epoch;
+    }
 }
