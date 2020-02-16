@@ -204,8 +204,8 @@ export default class Parser {
 
 			case 'nick':
 			case 'nickname': {
-				const member = rawArgs ? this.context.getMemberFromString(rawArgs) : (this.context.message && this.context.message.member);
-				return member && (member.nickname || member.user.username);
+				const member = rawArgs ? this.context.getMemberFromString(rawArgs, this.context.message.channel?.guild) : (this.context.message && this.context.message.member);
+				return member && (member.nick || member.user.username);
 			}
 
 			case 'me':
