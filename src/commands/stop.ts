@@ -35,7 +35,5 @@ export default class Stop extends Command {
         } else {
             process.exit(1);
         }
-        
-        return null;
     }
 }
