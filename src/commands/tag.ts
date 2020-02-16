@@ -90,7 +90,7 @@ export default class Tag extends Command {
                 if(result.length < 200000) result = (await this.utils.uploadToFilesGG(result, `${tag.name}.txt`))
                 else result = ':warning: `The tag output was longer than 200,000 characters, it will not be uploaded.`'
             }
-            return context.reply(`​${result}`, { //zws escape in this result
+            return context.reply(`​${result.trim()}`, { //zws escape in this result
                 storeAsResponseForUser: {
                     user: context.message.author.id,
                     message: context.message.id

@@ -22,7 +22,7 @@ export default class CreateTag extends Command {
                 permissionLevel: PERMISSION_LEVELS.NORMAL
             }],
             info: {
-                description: 'Create a new tag',
+                description: 'Create a new tag. Parser documentation can be found [here](https://github.com/Jacherr/Assyst-TS/blob/master/PARSER_DOCS.md)',
                 examples: ['hello Hello!'],
                 usage: "[name] [content]",
                 author: "Jacherr"

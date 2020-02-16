@@ -3,11 +3,11 @@ import { tokens } from '../privateConfig.json';
 import { description, version } from '../package.json';
 
 export default class Config {
-    public readonly prefix: string = '<>';
+    public readonly prefix: string = '<<';
     public readonly staff: IStaff = {
         owners: ["233667448887312385", "312715611413413889"],
         admins: [],
-        contributors: ["312715611413413889"]
+        contributors: ["312715611413413889", "669784425147531268"]
     };
     public readonly emotes: IEmotes = {
         success: '<:greenTicklol:560210493936238604>',

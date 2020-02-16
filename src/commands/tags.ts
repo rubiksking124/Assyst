@@ -26,6 +26,7 @@ export default class Tags extends Command {
 
     public async execute(context: ICommandContext): Promise<Message | null> {
         let guildTags: { name: string, author: string, uses: number }[] = await this.assyst.sql('select name, author, uses from tags where guild = $1', [context.message.channel?.guild?.id]).then(r => r.rows)
+        const totalTags: number = guildTags.length
         guildTags = guildTags.sort((a, b) => b.uses - a.uses).slice(0, 9)
         if(guildTags.length === 0) {
             return context.reply('This guild has no tags yet.', {
@@ -42,7 +43,10 @@ export default class Tags extends Command {
         return context.reply({embed: {
             title: `Guild tags - ${context.message.channel?.guild?.name}`,
             fields,
-            color: this.assyst.embedColour
+            color: this.assyst.embedColour,
+            footer: {
+                text: `Total guild tags: ${totalTags}`
+            }
         }})
     }
 }
