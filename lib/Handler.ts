@@ -11,7 +11,7 @@ export default class Handler {
     }
 
     public async handleMessage(message: Message): Promise<void> {
-        if (!message.channel || !message.channel.guild) return;
+        if (!message.channel || !message.channel.guild || message.author.bot) return;
 
         const { content } = message;
         if (!content.startsWith(this.assyst.prefix) && !content.startsWith(`<@${this.assyst.bot.user?.id}>`) && !content.startsWith(`<@!${this.assyst.bot.user?.id}>`)) {

@@ -1,6 +1,6 @@
 import Command from '../../lib/Command';
 import Assyst from '../../lib/Assyst';
-import { COOLDOWN_TYPES, MESSAGE_TYPE_EMOTES } from '../../lib/Enums';
+import { COOLDOWN_TYPES, MESSAGE_TYPE_EMOTES, PERMISSION_LEVELS } from '../../lib/Enums';
 import { ICommandContext } from '../../lib/CInterfaces';
 import { Message } from 'detritus-client/lib/structures';
 import { Utils } from 'detritus-client';
@@ -16,7 +16,28 @@ export default class Tag extends Command {
                 timeout: 5000,
                 type: COOLDOWN_TYPES.GUILD
             },
-            validFlags: [],
+            validFlags: [{
+                name: 'raw',
+                description: 'View the raw content of this tag (unparsed)',
+                permissionLevel: PERMISSION_LEVELS.NORMAL,
+                argumented: false
+            },
+            {
+                name: 'raw2',
+                description: 'Upload the raw tag to files.gg',
+                permissionLevel: PERMISSION_LEVELS.NORMAL,
+                argumented: false
+            },{
+                name: 'files.gg',
+                description: 'Upload the tag result to files.gg',
+                permissionLevel: PERMISSION_LEVELS.NORMAL,
+                argumented: false
+            },{
+                name: 'owner',
+                description: 'Check who owns the tag in the current guild',
+                permissionLevel: PERMISSION_LEVELS.NORMAL,
+                argumented: false
+            }],
             info: {
                 description: 'View a tag',
                 examples: ['hello'],
@@ -27,9 +48,9 @@ export default class Tag extends Command {
     }
 
     public async execute(context: ICommandContext): Promise<Message | null> {
-        const guildTags: Array<{name: string, content: string}> = await this.assyst.sql('select name, content from tags where guild = $1', [context.message.channel?.guild?.id]).then(r => r.rows)
-        const tag: {name: string, content: string} | undefined = guildTags.find(i => i.name === context.args[0])
-        if(!tag) {
+        const guildTags: Array<{ name: string, content: string, author: string }> = await this.assyst.sql('select name, content, author from tags where guild = $1', [context.message.channel?.guild?.id]).then(r => r.rows)
+        const tag: { name: string, content: string, author: string } | undefined = guildTags.find(i => i.name === context.args[0])
+        if (!tag) {
             return context.reply('Tag not found.', {
                 storeAsResponseForUser: {
                     user: context.message.author.id,
@@ -38,7 +59,26 @@ export default class Tag extends Command {
                 type: MESSAGE_TYPE_EMOTES.INFO
             })
         } else {
-            return context.reply(Markup.escape.mentions((await this.assyst.parseNew(tag.content, context.message)).result), {
+            const sentArgs: string[] = context.args
+            sentArgs.shift()
+            let result: string
+            if (context.checkForFlag('owner')) {
+                result = `Tag \`${tag.name}\` - owner: ${this.bot.users.get(tag.author) ? this.bot.users.get(tag.author) : `${tag.author} (not in guild)`}`
+            } else if (context.checkForFlag('raw2')) {
+                result = (await this.utils.uploadToFilesGG(tag.content, `${tag.name}.txt`))
+            } else if(context.checkForFlag('raw')) {
+                result = Markup.codeblock(tag.content)
+            } else {
+                result = (await this.assyst.parseNew(tag.content, context.message, context.args, { name: context.args[0], owner: tag.author })).result
+            }
+            if (result.length <= 0 || /^\s$/g.test(result)) {
+                result = ':warning: `Tag returned an empty response.`'
+            }
+            if(context.checkForFlag('files.gg') && !context.checkForFlag('raw') && !context.checkForFlag('raw2')) {
+                if(result.length < 200000) result = (await this.utils.uploadToFilesGG(result, `${tag.name}.txt`))
+                else result = ':warning: `The tag output was longer than 200,000 characters, it will not be uploaded.`'
+            }
+            return context.reply(`​${result}`, { //zws escape in this result
                 storeAsResponseForUser: {
                     user: context.message.author.id,
                     message: context.message.id

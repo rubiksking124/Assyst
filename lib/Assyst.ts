@@ -1,6 +1,6 @@
 import { ShardClient, Utils } from 'detritus-client';
 import { IAssystOptions, ICommandContext } from './CInterfaces'
-import { IEmotes, IStaff, ISendMsgOptions, ICommandResponse } from './Interfaces';
+import { IEmotes, IStaff, ISendMsgOptions, ICommandResponse, ITag } from './Interfaces';
 import Command from './Command'
 import AssystUtils from './Utils'
 import Handler from './Handler';
@@ -194,13 +194,10 @@ export default class Assyst {
         });
     }
 
-    public parseNew(input: string, message: Message) {
+    public parseNew(input: string, message: Message, args: string[] = [], tag: ITag) {
         return new Parser(this.bot, {
             message,
             getMemberFromString: this.resolver.resolveMember
-        }, this).parse(input, [], {
-            name: 'test',
-            owner: message.author.id
-        })
+        }, this).parse(input, args, tag)
     }
 }

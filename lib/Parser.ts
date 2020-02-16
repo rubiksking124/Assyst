@@ -6,6 +6,7 @@ import { REQUEST_TYPES } from './Enums';
 import { tokens } from '../privateConfig.json'
 import { options } from 'superagent'
 import Config from './Config'
+import { ITag } from './Interfaces'
 
 const preParseTags: Array<string> = ['ignore', 'note'];
 const postParseTags: Array<string> = ['attach', 'iscript'];
@@ -17,11 +18,6 @@ let rexLangs: string[]
     .set('Authorization', tokens.gocodeit)
     .then((v: any) => JSON.parse(v.text).data);
 })()
-
-interface tag {
-    name: string,
-    owner: string
-}
 
 export default class Parser {
 
@@ -54,7 +50,7 @@ export default class Parser {
 		this.variables = new Map();
 	}
 
-	async parse(input: string, tagArgs: string[], tag: tag) {
+	async parse(input: string, tagArgs: string[], tag: ITag) {
 		try {
 			const result: string = await this.subParse(input, tagArgs, tag, false, true);
 			return { success: true, nsfw: this.nsfw, attachments: this.attachments, imagescripts: this.imagescripts, result: Parser.unescapeTag(result).replace(/\\{/g, '{').replace(/\\}/g, '}') };
@@ -63,7 +59,7 @@ export default class Parser {
 		}
 	}
 
-	async subParse(input: string, tagArgs: string[], tag: tag, filter: string[] | false, initial: boolean | undefined): Promise<string> {
+	async subParse(input: string, tagArgs: string[], tag: ITag, filter: string[] | false, initial: boolean | undefined): Promise<string> {
 		this.stackSize++;
 		if (this.stackSize > 1000)
 			throw new Error(`Stack size exceeded at: \`${input}\``);
@@ -120,11 +116,10 @@ export default class Parser {
 		return input;
 	}
 
-	async getData(key: string, rawArgs: string, splitArgs: string[], args: string[], tag: tag) {
+	async getData(key: string, rawArgs: string, splitArgs: string[], args: string[], tag: ITag) {
 		key = key.trim();
 		rawArgs = rawArgs.trim();
 		splitArgs = splitArgs.map(arg => arg.trim());
-
 		switch (key) {
 			case 'user':
 			case 'username': {
@@ -528,7 +523,7 @@ export default class Parser {
 
 					const rexResult = await this.assyst.utils.runSandboxedCode(key, rawArgs)
 
-					return Parser.escapeTag(rexResult.toString());
+					return Parser.escapeTag(rexResult.data.res);
 				}
 
 				return `{${key}${rawArgs ? `:${rawArgs}` : ''}}`;

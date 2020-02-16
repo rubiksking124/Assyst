@@ -58,3 +58,8 @@ export interface ICommandResponse {
     source: string,
     response: string
 }
+
+export interface ITag {
+    name: string,
+    owner: string
+}
