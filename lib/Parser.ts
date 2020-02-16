@@ -1,13 +1,15 @@
 import fetch from 'node-fetch';
 import { ShardClient } from 'detritus-client';
-import { Message, Member } from 'detritus-client/lib/structures';
+import { Message, Member, ConnectedAccount } from 'detritus-client/lib/structures';
 import Assyst from './Assyst'
 import { REQUEST_TYPES } from './Enums';
 import { tokens } from '../privateConfig.json'
 import { options } from 'superagent'
 import Config from './Config'
 import { ITag } from './Interfaces'
+import Utils from './Utils'
 
+let utils: Utils
 const preParseTags: Array<string> = ['ignore', 'note'];
 const postParseTags: Array<string> = ['attach', 'iscript'];
 let rexLangs: string[]
@@ -46,7 +48,7 @@ export default class Parser {
 		this.imagescripts = [];
 
 		this.nsfw = false;
-
+		utils = new Utils(this.assyst)
 		this.variables = new Map();
 	}
 
@@ -123,34 +125,31 @@ export default class Parser {
 		switch (key) {
 			case 'user':
 			case 'username': {
-				const member = rawArgs ? this.context.getMemberFromString(rawArgs) : (this.context.message && this.context.message.member);
+				const member = rawArgs ? this.context.getMemberFromString(rawArgs, this.context.message.channel?.guild) : (this.context.message && this.context.message.member);
 				return member ? member.user.username : '';
 			}
 
 			case 'discrim':
 			case 'discriminator': {
-				const member = rawArgs ? this.context.getMemberFromString(rawArgs) : (this.context.message && this.context.message.member);
+				const member = rawArgs ? this.context.getMemberFromString(rawArgs, this.context.message.channel?.guild) : (this.context.message && this.context.message.member);
 				return member ? member.user.discriminator : '';
 			}
 
 			case 'tag':
 			case 'mention': {
-				const member = rawArgs ? this.context.getMemberFromString(rawArgs) : (this.context.message && this.context.message.member);
+				const member = rawArgs ? this.context.getMemberFromString(rawArgs, this.context.message.channel?.guild) : (this.context.message && this.context.message.member);
 				return member ? member.user.tag : '';
 			}
 
 			case 'id':
 			case 'userid': {
-				const member = rawArgs ? this.context.getMemberFromString(rawArgs) : (this.context.message && this.context.message.member);
+				const member = rawArgs ? this.context.getMemberFromString(rawArgs, this.context.message.channel?.guild) : (this.context.message && this.context.message.member);
 				return member && member.user.id;
 			}
 
 			case 'avatar': {
-				const member = rawArgs ? this.context.getMemberFromString(rawArgs) : (this.context.message && this.context.message.member);
-				return member ? member.user.displayAvatarURL({
-					format: (member.user.avatar || '').startsWith('a_') ? 'gif' : 'png',
-					size: 2048
-				}) : '';
+				const member = rawArgs ? this.context.getMemberFromString(rawArgs, this.context.message.channel?.guild) : (this.context.message && this.context.message.member);
+				return member.user.avatarUrl || '';
 			}
 
 			case 'randuser':
@@ -377,7 +376,7 @@ export default class Parser {
 
 			case 'joined':
 			case 'jointime': {
-				const member: Member = splitArgs[1] ? this.context.getMemberFromString(splitArgs[1]) : (this.context.message && this.context.message.member);
+				const member: Member = splitArgs[1] ? this.context.getMemberFromString(splitArgs[1], this.context.message.channel?.guild) : (this.context.message && this.context.message.member);
 				if (!member) return '';
 
 				if (splitArgs[0] === 'discord')
@@ -505,7 +504,7 @@ export default class Parser {
 				    return Math.round((await this.client.ping()).gateway);
 
 			case 'haste':
-			case 'hastebin': {
+			case 'files.gg': {
 				this.hasteCalls++;
 				if (this.hasteCalls > 5) return '[TOO MANY HASTE CALLS]';
 
@@ -612,8 +611,8 @@ export default class Parser {
 	}
 
 	static async createHaste(content: string) {
-		const { key } = await fetch('https://wrmsr.io/documents', { method: 'POST', body: content }).then(res => res.json());
-		return `https://wrmsr.io/${key}`;
+		const res = await utils.uploadToFilesGG(content, 'paste.txt')
+		return res;
 	}
 
 	static async retrieveHaste(key: string) {
