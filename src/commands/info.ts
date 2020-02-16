@@ -44,10 +44,12 @@ export default class Info extends Command {
         const contibutors: Array<string | undefined> = this.assyst.staff.contributors.map((d: string) => this.bot.users.get(d)?.username);
         const processor: string = `${os.cpus().length}x ${os.cpus()[0].model}`;
         const gitRepo: string = homepage;
+        const support: string = 'https://discord.gg/HNvk5UV';
+        const dbSize: string = await this.assyst.sql('select pg_size_pretty(pg_database_size(\'assyst\'))').then(r => r.rows[0].pg_size_pretty)
         return this.sendMsg(context.message.channel, {
             embed: {
                 title: 'Assyst Information',
-                description: `[Git](${gitRepo}) | [Invite](${this.bot.application?.oauth2UrlFormat({ scope: 'bot', permissions: 0 })})`,
+                description: `[Git](${gitRepo}) | [Invite](${this.bot.application?.oauth2UrlFormat({ scope: 'bot', permissions: 0 })}) | [Support](${support})`,
                 color: this.assyst.embedColour,
                 fields: [
                     {
@@ -77,11 +79,17 @@ export default class Info extends Command {
                     },
                     {
                         name: 'Contributors',
-                        value: contibutors.join('\n')
+                        value: contibutors.join('\n'),
+                        inline: true
                     },
                     {
                         name: 'Commit hash',
                         value: commitHash,
+                        inline: true
+                    },
+                    {
+                        name: 'DB size',
+                        value: dbSize,
                         inline: true
                     }
                 ]
