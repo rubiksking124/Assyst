@@ -13,7 +13,7 @@ export default class Tag extends Command {
             aliases: ['t'],
             assyst,
             cooldown: {
-                timeout: 5000,
+                timeout: 3000,
                 type: COOLDOWN_TYPES.GUILD
             },
             validFlags: [{
@@ -48,8 +48,8 @@ export default class Tag extends Command {
     }
 
     public async execute(context: ICommandContext): Promise<Message | null> {
-        const guildTags: Array<{ name: string, content: string, author: string }> = await this.assyst.sql('select name, content, author from tags where guild = $1', [context.message.channel?.guild?.id]).then(r => r.rows)
-        const tag: { name: string, content: string, author: string } | undefined = guildTags.find(i => i.name === context.args[0])
+        const guildTags: Array<{ name: string, content: string, author: string, uses: number }> = await this.assyst.sql('select name, content, author, uses from tags where guild = $1', [context.message.channel?.guild?.id]).then(r => r.rows)
+        const tag: { name: string, content: string, author: string, uses: number } | undefined = guildTags.find(i => i.name === context.args[0])
         if (!tag) {
             return context.reply('Tag not found.', {
                 storeAsResponseForUser: {
@@ -69,6 +69,8 @@ export default class Tag extends Command {
             } else if(context.checkForFlag('raw')) {
                 result = Markup.codeblock(tag.content)
             } else {
+                tag.uses++
+                await this.assyst.sql('update tags set uses = $1 where name = $2 and guild = $3', [tag.uses, tag.name, context.message.channel?.guild?.id])
                 result = (await this.assyst.parseNew(tag.content, context.message, context.args, { name: context.args[0], owner: tag.author })).result
             }
             if (result.length <= 0 || /^\s$/g.test(result)) {
