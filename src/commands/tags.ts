@@ -3,8 +3,10 @@ import Assyst from '../../lib/Assyst';
 import { COOLDOWN_TYPES, MESSAGE_TYPE_EMOTES, PERMISSION_LEVELS } from '../../lib/Enums';
 import { ICommandContext } from '../../lib/CInterfaces';
 import { Message } from 'detritus-client/lib/structures';
+import { Tag } from '../../lib/Interfaces';
 
 export default class Tags extends Command {
+    public static entriesPerPage: number = 9;
     constructor(assyst: Assyst) {
         super({
             name: 'tags',
@@ -30,7 +32,7 @@ export default class Tags extends Command {
     }
 
     public async execute(context: ICommandContext): Promise<Message | null> {
-        let tags: any[];
+        let tags: Tag[];
         if (context.checkForFlag("mine")) {
             tags = await this.assyst.sql('select * from tags where guild = $1 and author = $2', [context.message.guildId, context.message.author.id])
                 .then(v => v.rows);
@@ -50,11 +52,11 @@ export default class Tags extends Command {
         }
 
         const pages = [];
-        for (let i = 0; i < tags.length; i += 10) {
+        for (let i = 0; i < tags.length; i += Tags.entriesPerPage) {
             pages.push({
                 embed: {
                     name: `Guild tags - ${context.message.guild?.name}`,
-                    fields: tags.slice(i, i + 10).map((tag: any) => ({
+                    fields: tags.slice(i, i + Tags.entriesPerPage).map((tag: Tag) => ({
                         name: tag.name || "?",
                         value: `**Owner: ** ${this.bot.users.get(tag.author) ? this.bot.users.get(tag.author) : `${tag.author} (not in this server)`}\n` +
                                `Uses: ${tag.uses}`,
