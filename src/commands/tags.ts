@@ -22,29 +22,25 @@ export default class Tags extends Command {
             }],
             info: {
                 description: 'Get information about the tags in the current guild',
-                examples: [""],
-                usage: "",
-                author: "Jacherr"
+                examples: [],
+                usage: '',
+                author: 'Jacherr'
             }
         });
     }
 
     public async execute(context: ICommandContext): Promise<Message | null> {
-        let guildTags: { name: string, author: string, uses: number }[] 
-        let currentFlag: string = ''
-
-        if(context.checkForFlag('mine')) {
-            currentFlag = 'mine'
-            guildTags = await this.assyst.sql('select name, author, uses from tags where guild = $1 and author = $2', [context.message.channel?.guild?.id, context.message.author.id]).then(r => r.rows)
-        } else { 
-            guildTags = await this.assyst.sql('select name, author, uses from tags where guild = $1', [context.message.channel?.guild?.id]).then(r => r.rows)
+        let tags: any[];
+        if (context.checkForFlag("mine")) {
+            tags = await this.assyst.sql('select * from tags where guild = $1 and author = $2', [context.message.guildId, context.message.author.id])
+                .then(v => v.rows);
+        } else {
+            tags = await this.assyst.sql('select * from tags where guild = $1', [context.message.guildId])
+                .then(v => v.rows);
         }
 
-        const totalTags: number = guildTags.length
-        guildTags = guildTags.sort((a, b) => b.uses - a.uses).slice(0, 9)
-
-        if(guildTags.length === 0) {
-            return context.reply('No tags found.', {
+        if (tags.length === 0) {
+            return context.reply('This guild has no tags yet.', {
                 storeAsResponseForUser: {
                     user: context.message.author.id,
                     message: context.message.id
@@ -53,25 +49,29 @@ export default class Tags extends Command {
             })
         }
 
-        let fields: { name: string, value: string, inline: boolean }[] = guildTags.map(t => {
-            let value: string;
-            switch(currentFlag) {
-                case 'mine':
-                        value = `**Uses:** ${t.uses.toString()}`
-                    break;
-                default:
-                    value = `**Owner:** ${this.bot.users.get(t.author) ? this.bot.users.get(t.author) : `${t.author} (not in guild)`}\n**Uses:** ${t.uses.toString()}`
-            }
-            return { name: t.name, value, inline: true}
-        })
-        
-        return context.reply({embed: {
-            title: `Guild tags - ${context.message.channel?.guild?.name}`,
-            fields,
-            color: this.assyst.embedColour,
-            footer: {
-                text: `Total guild tags: ${totalTags}`
-            }
-        }})
+        const pages = [];
+        for (let i = 0; i < tags.length; i += 10) {
+            pages.push({
+                embed: {
+                    name: `Guild tags - ${context.message.guild?.name}`,
+                    fields: tags.slice(i, i + 10).map((tag: any) => ({
+                        name: tag.name || "?",
+                        value: `**Owner: ** ${this.bot.users.get(tag.author) ? this.bot.users.get(tag.author) : `${tag.author} (not in this server)`}\n` +
+                               `Uses: ${tag.uses}`,
+                        inline: true
+                    })),
+                    color: this.assyst.embedColour,
+                    footer: {
+                        text: `Total guild tags: ${tags.length} | Page: ${(i / 10) + 1}`
+                    }
+                }
+            });
+        }
+
+        const paginator = await this.assyst.paginator.createReactionPaginator({
+            message: context.message,
+            pages
+        });
+        return paginator.commandMessage;
     }
 }
