@@ -63,3 +63,13 @@ export interface ITag {
     name: string,
     owner: string
 }
+
+export interface Tag {
+    id: number,
+    name: string,
+    author: string,
+    createdat: Date,
+    nsfw: boolean,
+    guild: string,
+    uses: number
+}
