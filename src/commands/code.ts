@@ -71,11 +71,7 @@ export default class Code extends Command {
                     break;
             }
             return context.reply(`Error: ${e.status} - ${message}`, {
-                storeAsResponseForUser: {
-                    user: context.message.author.id,
-                    message: context.message.id
-                },
-                edit: processingMessage?.id || undefined,
+                edit: processingMessage?.id,
                 type: MESSAGE_TYPE_EMOTES.ERROR
             })
         }
@@ -104,20 +100,12 @@ export default class Code extends Command {
         }
         if (res.status === 200) {
             return context.reply(output, {
-                storeAsResponseForUser: {
-                    user: context.message.author.id,
-                    message: context.message.id
-                },
-                edit: processingMessage.id || undefined
+                edit: processingMessage.id
             });
         } else {
             return context.reply(`HTTP Status: ${res.status} (${res.data.res})`, {
-                storeAsResponseForUser: {
-                    user: context.message.author.id,
-                    message: context.message.id
-                },
                 type: MESSAGE_TYPE_EMOTES.ERROR,
-                edit: processingMessage.id || undefined
+                edit: processingMessage.id
             });
         }
     }
