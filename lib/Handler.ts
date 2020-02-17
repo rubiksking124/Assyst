@@ -124,22 +124,7 @@ export default class Handler {
                 });
             }
         }
-
         return flags;
-
-        let resolvedFlags: Array<IFlag> =[];
-
-        args.forEach((arg: string, i: number) => {
-            if(arg.startsWith('-')) {
-                const foundFlag: string = arg.slice(1)
-                const commandFlag: IFlagInfo | undefined = command.validFlags.find(i => i.name === foundFlag)
-                let flagArg: string;
-                if(!commandFlag || commandFlag.permissionLevel > authorPermLevel) return;
-                resolvedFlags.push({
-                    name: foundFlag
-                });
-            };
-        });
     }
 
     private removeFlags(args: Array<string>, flagsToRemove: Array<IFlag>) {

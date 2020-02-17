@@ -74,6 +74,7 @@ export default class Tags extends Command {
             message: context.message,
             pages
         });
+        this.assyst.addResponseMessage(context.message, paginator.commandMessage.id)
         return paginator.commandMessage;
     }
 }

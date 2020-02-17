@@ -200,4 +200,8 @@ export default class Assyst {
             getMemberFromString: this.resolver.resolveMember
         }, this).parse(input, args, tag)
     }
+
+    public addResponseMessage(originMessage: Message, responseMessage: string): Map<string, Array<ICommandResponse>> {
+        return this.handler.storeCommandResponse(originMessage.id, responseMessage, originMessage.author.id)
+    }
 }
