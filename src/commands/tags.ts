@@ -64,7 +64,7 @@ export default class Tags extends Command {
                     })),
                     color: this.assyst.embedColour,
                     footer: {
-                        text: `Total guild tags: ${tags.length} | Page: ${(i / 10) + 1}`
+                        text: `Total guild tags: ${tags.length} | Page: ${(i / Tags.entriesPerPage) + 1}`
                     }
                 }
             });
