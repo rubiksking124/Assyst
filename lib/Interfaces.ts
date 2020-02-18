@@ -73,3 +73,13 @@ export interface Tag {
     guild: string,
     uses: number
 }
+
+interface IStatus {
+    name: string,
+    type: 0 | 1 | 2 | 3
+}
+
+export interface IStatusRota {
+    statuses: IStatus[],
+    delay: number
+}

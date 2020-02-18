@@ -49,7 +49,6 @@ export default class Tag extends Command {
 
     public async execute(context: ICommandContext): Promise<Message | null> {
         const guildTags: Array<{ name: string, content: string, author: string, uses: number }> = await this.assyst.sql('select name, content, author, uses from tags where guild = $1', [context.message.channel?.guild?.id]).then(r => r.rows)
-        const currentUserTags: { count: number } = await this.assyst.sql('select count(*) from tags where author = $1 and guild = $2', [context.message.author.id, context.message.channel?.guild?.id]).then(r => r.rows[0])
         const tag: { name: string, content: string, author: string, uses: number } | undefined = guildTags.find(i => i.name === context.args[0])
         if (!tag) {
             return context.reply('Tag not found.', {
@@ -58,14 +57,6 @@ export default class Tag extends Command {
                     message: context.message.id
                 },
                 type: MESSAGE_TYPE_EMOTES.INFO
-            })
-        } else if(currentUserTags.count >= 200) {
-            return context.reply('You already own the maximum of 200 tags in this guild.', {
-                storeAsResponseForUser: {
-                    user: context.message.author.id,
-                    message: context.message.id
-                },
-                type: MESSAGE_TYPE_EMOTES.ERROR
             })
         } else {
             context.message.channel?.triggerTyping()

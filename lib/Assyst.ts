@@ -1,13 +1,13 @@
 import { ShardClient, Utils } from 'detritus-client';
-import { IAssystOptions, ICommandContext } from './CInterfaces'
-import { IEmotes, IStaff, ISendMsgOptions, ICommandResponse, ITag } from './Interfaces';
+import { IAssystOptions } from './CInterfaces'
+import { IEmotes, IStaff, ISendMsgOptions, ICommandResponse, ITag, IStatusRota } from './Interfaces';
 import Command from './Command'
 import AssystUtils from './Utils'
 import Handler from './Handler';
 import Resolver from './Resolver';
 import { readdirSync } from 'fs';
 import { Context } from 'detritus-client/lib/command'
-import { ChannelGuildText, ChannelDM, Message, MessageEmbed } from 'detritus-client/lib/structures'
+import { ChannelGuildText, Message } from 'detritus-client/lib/structures'
 import { MESSAGE_TYPE_EMOTES, REQUEST_TYPES } from './Enums'
 import CooldownManager from './CooldownManager'
 import superagent from 'superagent';
@@ -26,6 +26,7 @@ export default class Assyst {
     public prefix: string;
     public emotes: IEmotes;
     public staff: IStaff;
+    public statusRota: IStatusRota;
     public utils: AssystUtils;
     public commands: Map<string, Command>;
     public handler: Handler;
@@ -60,6 +61,7 @@ export default class Assyst {
         this.reactions = options.config.reactions;
         this.embedColour = options.config.embedColour
         this.searchMessages = options.config.searchMessages;
+        this.statusRota = options.config.statusRotas
         this.utils = new AssystUtils(this);
         this.commands = new Map();
         this.responseMessages = new Map();
@@ -83,6 +85,7 @@ export default class Assyst {
                 console.log(`Loaded ${c.size} commands`);
             });
 
+        this.initStatusRota();
         this.initListeners();
     }
 
@@ -111,6 +114,22 @@ export default class Assyst {
         this.bot.on('messageDelete', (context: Context) => {
             this.handler.handleDeletedMessage(context.message)
         })
+    }
+
+    private initStatusRota() {
+        let currentStatus: number = 0
+        setInterval(() => {
+            this.bot.gateway.setPresence({
+                game: {
+                    name: this.statusRota.statuses[currentStatus].name.replace('{guilds}', this.bot.guilds.size.toString()).replace('{users}', this.bot.users.size.toString()),
+                    type: this.statusRota.statuses[currentStatus].type
+                }
+            })
+            currentStatus += 1
+            if(currentStatus = this.statusRota.statuses.length) {
+                currentStatus = 0
+            }
+        }, this.statusRota.delay)
     }
 
     public async sendMsg(channel: ChannelGuildText | string | null, message: string | object, options?: ISendMsgOptions): Promise<Message | null> {

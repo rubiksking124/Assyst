@@ -1,4 +1,4 @@
-import { IStaff, IEmotes } from './Interfaces';
+import { IStaff, IEmotes, IStatusRota } from './Interfaces';
 import { tokens } from '../privateConfig.json';
 import { description, version } from '../package.json';
 
@@ -34,4 +34,22 @@ export default class Config {
     public readonly errorChannel: string = '412350028502269973';
     public readonly embedColour: number = 0xf4632e;
     public readonly searchMessages: number = 50;
+    public readonly statusRotas: IStatusRota = { statuses: [
+        {
+            name: this.prefix + 'help',
+            type: 2
+        },
+        {
+            name: 'you',
+            type: 3
+        },
+        {
+            name: 'in {guilds} guilds',
+            type: 0
+        },
+        {
+            name: '{users} users',
+            type: 3
+        }
+    ], delay: 15000 }
 }
