@@ -258,6 +258,24 @@ export default class Parser {
 
 			case 'args':
 				return args.join(' ');
+			
+			case 'argsfrom': {
+				if (isNaN(parseInt(splitArgs[0]))) return;
+				const cargs = args.slice(parseInt(splitArgs[0]))
+				return cargs.join(' ')
+			}
+
+			case 'argsto': {
+				if (isNaN(parseInt(splitArgs[0]))) return;
+				const cargs = args.slice(0, parseInt(splitArgs[0]))
+				return cargs.join(' ')
+			}
+
+			case 'argsrange': {
+				if (isNaN(parseInt(splitArgs[0])) || isNaN(parseInt(splitArgs[1]))) return;
+				const cargs = args.slice(parseInt(splitArgs[0]), parseInt(splitArgs[1]))
+				return cargs.join(" ")
+			}
 
 			case 'arg': {
 				if (isNaN(parseInt(splitArgs[0]))) return;
