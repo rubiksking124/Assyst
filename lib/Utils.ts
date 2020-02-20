@@ -83,6 +83,7 @@ export default class Utils {
             .set('Authorization', tokens.gocodeit)
             .field('lang', language)
             .field('code', code)
+            .field('timeout', "60")
             .then((v: any) => JSON.parse(v.text));
     }
 

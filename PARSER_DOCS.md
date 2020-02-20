@@ -125,6 +125,18 @@ Returns the given content without parsing it
 Executes the given contents using the tag parser.  
 Useful with {ignore}  
 
+### `{args}`
+Fetches all comamnd arguments
+
+### `{argsfrom:x}`
+Returns all arguments starting from parameter x
+
+### `{argsto:x}`
+Returns all arguments starting from the first to the xth
+
+### `{argsrange:x|y}`
+Returns arguments in given range (starting from x, ending at y)
+
 ### `{arg:x}`
 Returns the xth argument given by the invoking user (if applicable)  
 
