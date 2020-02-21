@@ -32,17 +32,7 @@ export default class CreateTag extends Command {
 
     public async execute(context: ICommandContext): Promise<Message | null> {
         const currentUserTags: { count: number } = await this.assyst.sql('select count(*) from tags where author = $1 and guild = $2', [context.message.author.id, context.message.channel?.guild?.id]).then(r => r.rows[0])
-        if(!context.message.guild) {
-            return null;
-        }
-        if(context.args.length < 2) {
-            return context.reply(`Usage: \`\`\`md\n${this.assyst.defaultPrefix}${this.name} ${this.info.usage}\`\`\``, {
-                storeAsResponseForUser: {
-                    user: context.message.author.id,
-                    message: context.message.id
-                }
-            })
-        } else if(currentUserTags.count >= 200) {
+        if(currentUserTags.count >= 200) {
             return context.reply('You already own the maximum of 200 tags in this guild.', {
                 storeAsResponseForUser: {
                     user: context.message.author.id,
@@ -52,7 +42,7 @@ export default class CreateTag extends Command {
             })
         }
         const existingTags: Array<{guild: string}> = await this.assyst.sql('select guild from tags where name = $1', [context.args[0]]).then(r => r.rows)
-        if(existingTags.map(i => i.guild).includes(context.message.guild.id)) {
+        if(existingTags.map(i => i.guild).includes(<string>context.message.guild?.id)) {
             return context.reply('This tag already exists in this guild.', {
                 storeAsResponseForUser: {
                     user: context.message.author.id,

@@ -32,17 +32,6 @@ export default class EditTag extends Command {
     }
 
     public async execute(context: ICommandContext): Promise<Message | null> {
-        if(!context.message.guild) {
-            return null;
-        }
-        if(context.args.length < 2) {
-            return context.reply(`Usage: \`\`\`md\n${this.assyst.defaultPrefix}${this.name} ${this.info.usage}\`\`\``, {
-                storeAsResponseForUser: {
-                    user: context.message.author.id,
-                    message: context.message.id
-                }
-            })
-        }
         let nsfw: boolean = false
         if(context.checkForFlag('nsfw')) {
             nsfw = true

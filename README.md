@@ -11,4 +11,3 @@ It has a range of utilitarian commands, ranging from code execution to website s
     - Customisable prefix, with mention support.
 
 [Full parser documentation](https://github.com/Jacherr/Assyst-TS/PARSER_DOCS.md)
-

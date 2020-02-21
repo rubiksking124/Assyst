@@ -86,6 +86,15 @@ export default class Handler {
             }
         }
 
+        if(args.length < targetCommand.argsMin) {
+            return void this.assyst.sendMsg(message.channel.id, `Usage: \`\`\`md\n${prefix}${targetCommand.name} ${targetCommand.info.usage}\`\`\``, {
+                storeAsResponseForUser: {
+                    message: message.id,
+                    user: message.author.id
+                }
+            })
+        }
+
         const flags: Array<IFlag> = this.resolveFlags(args, permissionLevel, targetCommand);
         args = this.removeFlags(args, flags)
 
