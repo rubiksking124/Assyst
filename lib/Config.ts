@@ -38,7 +38,7 @@ export default class Config {
     public readonly prefixCacheExpire: number = 60000;
     public readonly statusRotas: IStatusRota = { statuses: [
         {
-            name: this.defaultPrefix + 'help',
+            name: '@Assyst help',
             type: 2
         },
         {

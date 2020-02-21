@@ -133,7 +133,7 @@ export default class Assyst {
                 }
             })
             currentStatus += 1
-            if(currentStatus = this.statusRota.statuses.length) {
+            if(currentStatus === this.statusRota.statuses.length) {
                 currentStatus = 0
             }
         }, this.statusRota.delay)
