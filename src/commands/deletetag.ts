@@ -27,17 +27,6 @@ export default class DeleteTag extends Command {
     }
 
     public async execute(context: ICommandContext): Promise<Message | null> {
-        if(!context.message.guild) {
-            return null;
-        }
-        if(context.args.length < 1) {
-            return context.reply(`Usage: \`\`\`md\n${this.assyst.defaultPrefix}${this.name} ${this.info.usage}\`\`\``, {
-                storeAsResponseForUser: {
-                    user: context.message.author.id,
-                    message: context.message.id
-                }
-            })
-        }
         let res: QueryResult;
         try {
             res = await this.assyst.sql('delete from tags where guild = $1 and name = $2 and author = $3', [context.message.channel?.guild?.id, context.args[0], context.message.author.id])

@@ -42,9 +42,9 @@ export default class Tags extends Command {
                 argumented: false
             }],
             info: {
-                description: 'Get information about the tags in the current guild',
-                examples: ['', '-mystats'],
-                usage: '',
+                description: 'Get information about the tags in the current guild, or search for tags in the current guild',
+                examples: ['', '-mystats', 'aaa'],
+                usage: '<search param>',
                 author: 'Jacherr'
             }
         });
@@ -89,21 +89,27 @@ export default class Tags extends Command {
         }
         let tags: Tag[];
         let sort: string
+        let ilike: string
         if(context.checkForFlag('alphabetical')) {
             sort = 'name asc'
         } else {
             sort = 'uses desc'
         }
+        if(context.args.length > 0) {
+            ilike = context.args[0]
+        } else {
+            ilike = ''
+        }
         if (context.checkForFlag("mine")) {
-            tags = await this.assyst.sql(`select * from tags where guild = $1 and author = $2 order by ${sort}`, [context.message.guildId, context.message.author.id])
+            tags = await this.assyst.sql(`select * from tags where guild = $1 and author = $2 and name ilike $3 order by ${sort}`, [context.message.guildId, context.message.author.id, `%${ilike}%`])
                 .then(v => v.rows);
         } else {
-            tags = await this.assyst.sql(`select * from tags where guild = $1 order by ${sort}`, [context.message.guildId])
+            tags = await this.assyst.sql(`select * from tags where guild = $1 and name ilike $2 order by ${sort}`, [context.message.guildId, `%${ilike}%`])
                 .then(v => v.rows);
         }
 
         if (tags.length === 0) {
-            return context.reply('This guild has no tags yet.', {
+            return context.reply('This guild has no tags that match your query.', {
                 storeAsResponseForUser: {
                     user: context.message.author.id,
                     message: context.message.id
