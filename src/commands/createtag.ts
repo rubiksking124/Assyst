@@ -36,7 +36,7 @@ export default class CreateTag extends Command {
             return null;
         }
         if(context.args.length < 2) {
-            return context.reply(`Usage: \`\`\`md\n${this.assyst.prefix}${this.name} ${this.info.usage}\`\`\``, {
+            return context.reply(`Usage: \`\`\`md\n${this.assyst.defaultPrefix}${this.name} ${this.info.usage}\`\`\``, {
                 storeAsResponseForUser: {
                     user: context.message.author.id,
                     message: context.message.id

@@ -3,7 +3,8 @@ import { tokens } from '../privateConfig.json';
 import { description, version } from '../package.json';
 
 export default class Config {
-    public readonly prefix: string = '<<';
+    public readonly defaultPrefix: string = '<<';
+    public readonly devModePrefix: string = '<>'
     public readonly staff: IStaff = {
         owners: ["233667448887312385", "312715611413413889"],
         admins: [],
@@ -34,9 +35,10 @@ export default class Config {
     public readonly errorChannel: string = '412350028502269973';
     public readonly embedColour: number = 0xf4632e;
     public readonly searchMessages: number = 50;
+    public readonly prefixCacheExpire: number = 60000;
     public readonly statusRotas: IStatusRota = { statuses: [
         {
-            name: this.prefix + 'help',
+            name: this.defaultPrefix + 'help',
             type: 2
         },
         {

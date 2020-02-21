@@ -37,7 +37,7 @@ export default class OCR extends Command {
             let attachment: MessageEmbedThumbnail | Attachment | undefined = await this.utils.getRecentAttachmentOrEmbed(context.message, this.assyst.searchMessages);
             if (attachment === undefined) {
                 console.log(attachment)
-                return context.reply(`Usage: \`\`\`md\n${this.assyst.prefix}${this.name} ${this.info.usage}\`\`\``, {
+                return context.reply(`Usage: \`\`\`md\n${this.assyst.defaultPrefix}${this.name} ${this.info.usage}\`\`\``, {
                     storeAsResponseForUser: {
                         user: context.message.author.id,
                         message: context.message.id
