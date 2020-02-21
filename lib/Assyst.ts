@@ -14,6 +14,7 @@ import superagent from 'superagent';
 import { Pool, QueryResult } from 'pg';
 import { db } from '../privateConfig.json'
 import Parser from './Parser';
+import { BaseCollection } from 'detritus-client/lib/collections'
 
 const { Paginator } = require('detritus-pagination'); // TODO: any because I fucked up typings lol, will fix soon
 const { Markup } = Utils;
@@ -23,7 +24,7 @@ export default class Assyst {
     public bot: ShardClient;
     public version: string;
     public description: string;
-    public prefix: string;
+    public defaultPrefix: string;
     public emotes: IEmotes;
     public staff: IStaff;
     public statusRota: IStatusRota;
@@ -40,6 +41,8 @@ export default class Assyst {
     public errorChannel: string;
     public embedColour: number;
     public searchMessages: number;
+    public prefixCache: BaseCollection<string, string>
+    public devModePrefix: string
 
     constructor(options: IAssystOptions) {
         this.bot = options.bot || new ShardClient(options.config.tokens.bot, {
@@ -55,18 +58,22 @@ export default class Assyst {
         this.description = options.config.description;
         this.emotes = options.config.emotes;
         this.staff = options.config.staff;
-        this.prefix = options.config.prefix;
+        this.defaultPrefix = options.config.defaultPrefix;
         this.apis = options.config.apis;
         this.errorChannel = options.config.errorChannel
         this.reactions = options.config.reactions;
         this.embedColour = options.config.embedColour
         this.searchMessages = options.config.searchMessages;
         this.statusRota = options.config.statusRotas
+        this.devModePrefix = options.config.devModePrefix
         this.utils = new AssystUtils(this);
         this.commands = new Map();
         this.responseMessages = new Map();
         this.handler = new Handler(this);
         this.resolver = new Resolver(this);
+        this.prefixCache = new BaseCollection({
+            expire: options.config.prefixCacheExpire
+        })
         this.cooldownManager = new CooldownManager()
         this.paginator = new Paginator(this.bot, {
             maxTime: options.config.paginatorTimeout,

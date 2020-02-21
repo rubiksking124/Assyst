@@ -7,5 +7,6 @@
     "db": {
         "host": "",
         "password": ""
-    }
+    },
+    "devMode": false
 }

@@ -112,13 +112,13 @@ export default class Help extends Command {
                     fields: [
                         {
                             name: 'Usage',
-                            value: `\`\`\`md\n${this.assyst.prefix}${command.name} ${command.info.usage}\`\`\``,
+                            value: `\`\`\`md\n${this.assyst.defaultPrefix}${command.name} ${command.info.usage}\`\`\``,
                             inline: true
                         },
                         {
                             name: 'Examples',
                             value: `\`\`\`fix\n${command.info.examples.map((e: string) => {
-                                return `${this.assyst.prefix}${command.name} ${e}`
+                                return `${this.assyst.defaultPrefix}${command.name} ${e}`
                             }).join('\n')}\`\`\``,
                             inline: true,
                         },

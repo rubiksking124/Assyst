@@ -3,6 +3,8 @@ import Assyst from './Assyst'
 import Command from './Command'
 import { IFlag, ICooldown, ICommandResponse, IFlagInfo } from './Interfaces';
 import { PERMISSION_LEVELS, COOLDOWN_TYPES, MESSAGE_TYPE_EMOTES } from './Enums'
+import { QueryResult } from 'pg';
+import { devMode } from '../privateConfig.json'
 export default class Handler {
     public assyst: Assyst;
 
@@ -13,12 +15,36 @@ export default class Handler {
     public async handleMessage(message: Message): Promise<void> {
         if (!message.channel || !message.channel.guild || message.author.bot) return;
 
+        let prefix: string | undefined
+        if(!devMode) {
+            if(!this.assyst.prefixCache.get(message.channel.guild.id)) {
+                prefix = await this.assyst.sql('select prefix from prefixes where guild = $1', [message.channel.guild.id]).then((r: QueryResult) => r.rows[0] ? r.rows[0].prefix : undefined)
+                if(prefix) this.assyst.prefixCache.set(message.channel.guild.id, prefix)
+            } else {
+                prefix = this.assyst.prefixCache.get(message.channel.guild.id)
+            }
+    
+            if(prefix === undefined) {
+                prefix = this.assyst.defaultPrefix
+                await this.assyst.sql('insert into prefixes ("guild", "prefix") values ($1, $2)', [message.channel.guild.id, '<<'])
+            }
+        } else {
+            prefix = this.assyst.devModePrefix
+        }
+
         const { content } = message;
-        if (!content.startsWith(this.assyst.prefix) && !content.startsWith(`<@${this.assyst.bot.user?.id}>`) && !content.startsWith(`<@!${this.assyst.bot.user?.id}>`)) {
+        if (!content.startsWith(prefix) && !content.startsWith(`<@${this.assyst.bot.user?.id}>`) && !content.startsWith(`<@!${this.assyst.bot.user?.id}>`)) {
             return;
         }
 
-        let [command, ...args] = content.substr(this.assyst.prefix.length).split(/ +/);
+        if(content.startsWith(`<@${this.assyst.bot.user?.id}>`)) {
+            prefix = `<@${this.assyst.bot.user?.id}> `
+        } else if(content.startsWith(`<@!${this.assyst.bot.user?.id}>`)) {
+            prefix = `<@!${this.assyst.bot.user?.id}> `
+        }
+
+        let [command, ...args] = content.substr(prefix.length).split(/ +/);
+
         if (!this.getCommand(command)) {
             return;
         }

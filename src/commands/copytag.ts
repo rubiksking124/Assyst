@@ -30,7 +30,7 @@ export default class CopyTag extends Command {
         if(!context.message.channel?.guild) return null;
         const sharedGuildIds: string[] = this.bot.guilds.filter((g: Guild) => g.members.map(i => i.id).includes(context.message.author.id)).map(i => i.id)
         if(context.args.length < 2) {
-            return context.reply(`Usage: \`\`\`md\n${this.assyst.prefix}${this.name} ${this.info.usage}\`\`\``, {
+            return context.reply(`Usage: \`\`\`md\n${this.assyst.defaultPrefix}${this.name} ${this.info.usage}\`\`\``, {
                 storeAsResponseForUser: {
                     user: context.message.author.id,
                     message: context.message.id
