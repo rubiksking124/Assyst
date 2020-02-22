@@ -15,7 +15,12 @@ export default class Stop extends Command {
                 timeout: 0,
                 type: COOLDOWN_TYPES.GUILD
             },
-            validFlags: [],
+            validFlags: [{
+                name: 'f',
+                description: 'Kill the bot and do not restart the process',
+                argumented: false,
+                permissionLevel: PERMISSION_LEVELS.OWNER
+            }],
             info: {
                 description: 'Stops the bot',
                 examples: [''],
