@@ -27,16 +27,8 @@ export default class CopyTag extends Command {
     }
 
     public async execute(context: ICommandContext): Promise<Message | null> {
-        if(!context.message.channel?.guild) return null;
         const sharedGuildIds: string[] = this.bot.guilds.filter((g: Guild) => g.members.map(i => i.id).includes(context.message.author.id)).map(i => i.id)
-        if(context.args.length < 2) {
-            return context.reply(`Usage: \`\`\`md\n${this.assyst.defaultPrefix}${this.name} ${this.info.usage}\`\`\``, {
-                storeAsResponseForUser: {
-                    user: context.message.author.id,
-                    message: context.message.id
-                }
-            })
-        } else if(!sharedGuildIds.includes(context.message.channel.guild.id)) {
+        if(!sharedGuildIds.includes(<string>context.message.guild?.id)) {
             return context.reply('You don\'t share a guild with the bot that has this ID.', {
                 storeAsResponseForUser: {
                     user: context.message.author.id,
@@ -53,7 +45,7 @@ export default class CopyTag extends Command {
         }
         const existingTags: Array<{guild: string, author: string, content: string, nsfw: boolean}> = await this.assyst.sql('select guild, author, content, nsfw from tags where name = $1', [newTagName]).then(r => r.rows)
         const correctTag: {guild: string, author: string, content: string, nsfw: boolean} | undefined = existingTags.find(i => i.guild === context.args[0]) || undefined
-        if(existingTags.map(i => i.guild).includes(context.message.channel.guild.id)) {
+        if(existingTags.map(i => i.guild).includes(<string>context.message.guild?.id)) {
             return context.reply('A tag with this name already exists in the current guild.', {
                 storeAsResponseForUser: {
                     user: context.message.author.id,

@@ -52,6 +52,30 @@ export default class Config {
         {
             name: '{users} users',
             type: 3
+        },
+        {
+            name: 'for nsfw tags',
+            type: 3
+        },
+        {
+            name: 'the ram being eaten',
+            type: 3
+        },
+        {
+            name: 'cbt',
+            type: 3
+        },
+        {
+            name: 'people abuse the tag parser',
+            type: 3
+        },
+        {
+            name: 'message edits',
+            type: 2
+        },
+        {
+            name: '/dev/random',
+            type: 1
         }
     ], delay: 15000 }
 }
