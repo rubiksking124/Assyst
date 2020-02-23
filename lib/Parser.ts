@@ -1,6 +1,6 @@
 import fetch from 'node-fetch';
 import { ShardClient } from 'detritus-client';
-import { Message, Member, ConnectedAccount } from 'detritus-client/lib/structures';
+import { Message, Member, ConnectedAccount, Role } from 'detritus-client/lib/structures';
 import Assyst from './Assyst'
 import { REQUEST_TYPES } from './Enums';
 import { tokens } from '../privateConfig.json'
@@ -152,6 +152,11 @@ export default class Parser {
 				return member.user.avatarUrl || '';
 			}
 
+			case 'avatarhash': {
+				const member = rawArgs ? this.context.getMemberFromString(rawArgs, this.context.message.channel?.guild) : (this.context.message && this.context.message.member);
+				return member.user.avatar || '';
+			}
+
 			case 'randuser':
 				return this.context.message && (this.context.message.guild ? Array.from(this.context.message.guild.members.values())[Math.floor(Math.random() * Array.from(this.context.message.guild.members.values()).length)].username : this.context.message.author.username);
 
@@ -193,6 +198,47 @@ export default class Parser {
 				if (!this.context.message || !this.context.message.guild) return 'N/A';
 				return this.context.message.guild.name;
 
+			case 'serversize': {
+				return this.context.message.guild?.memberCount.toString()
+			}
+
+			case 'haspermission':
+			case 'hasperm': {
+				if(splitArgs.length === 0 || !this.context.message.guild || !this.context.message.member) return null;
+				const permission: string = splitArgs[0]
+				let user: string
+				if(!splitArgs[1]) user = this.context.message.member?.id
+				else user = this.context.getMemberFromString(splitArgs[1], this.context.message.guild)
+
+				if(user === undefined) return;
+
+				try {
+					const hasPermission: boolean = this.context.message.guild?.can(permission, this.context.message.member)
+					return hasPermission.toString()
+				} catch(e) {
+					return e.message
+				}
+			}
+
+			case 'hasrole': {
+				let member: Member
+				if(!this.context.message.member) return;
+				if(splitArgs[1]) {
+					member = this.context.getMemberFromString(splitArgs[1], this.context.message.guild);
+					if(!member) return;
+				} else {
+					member = this.context.message.member
+				}
+				return member.roles.map((i: Role | null) => i?.name).includes(splitArgs[0]).toString()
+			}
+
+			case 'created': {
+				if(splitArgs.length === 0) return;
+				if(splitArgs[0] === 'channel') return this.context.message.channel?.createdAt.toLocaleString()
+				else if (splitArgs[0] === 'server' || splitArgs[0] === 'guild') return this.context.message.guild?.createdAt.toLocaleString()
+				else return;
+			}
+				
 			case 'channelid':
 				if (!this.context.message) return 'N/A';
 				return this.context.message.channel?.id;
@@ -398,7 +444,7 @@ export default class Parser {
 				if (!member) return '';
 
 				if (splitArgs[0] === 'discord')
-					return this.assyst.utils.snowflakeToTime(member.user.id).toLocaleString();
+					return member.createdAt.toLocaleString();
 
 				else if (splitArgs[0] === 'server')
 					return member.joinedAt?.toLocaleString();
