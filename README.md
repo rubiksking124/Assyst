@@ -10,4 +10,4 @@ It has a range of utilitarian commands, ranging from code execution to website s
     - Written in pure TypeScript, with as little dependency on libraries as possible.
     - Customisable prefix, with mention support.
 
-[Full parser documentation](https://github.com/Jacherr/Assyst-TS/PARSER_DOCS.md)
+[Full parser documentation](https://github.com/Jacherr/Assyst-TS/blob/master/PARSER_DOCS.md)
