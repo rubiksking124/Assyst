@@ -1,6 +1,6 @@
 <!-- markdownlint-disable MD022 -->
 # Assyst tag parser
-(Written by matmen)
+(Written by matmen, extended by Jacher)
 
 The general tag layout is `{name:arg1|arg2|...|argN}`  
 
@@ -32,6 +32,10 @@ If no query is provided, the invoking user will be used
 Returns a users avatar URL  
 If no query is provided, the invoking user will be used  
 
+### `{avatarhash:query}`
+Returns a users avatar hash
+If no query is provided, the invoking user will be used  
+
 ### `{randuser}`
 Returns a random users username
 
@@ -40,6 +44,13 @@ Returns the tag owners tag (if applicable)
 
 ### `{me}`
 Returns the bots username  
+
+### `{hasperm:permission|user}`
+Finds if the specified user has the specified permission. The user is optional, it defaults to the invocator.
+[List of permissions](https://github.com/itslukej/discord.d.ts/blob/master/src/Permissions.ts)
+
+### `{hasrole:name|user}`
+Finds if the specified user has the specified role. The user optional, it defaults to the invocator.
 
 ---
 
@@ -224,6 +235,9 @@ Usable `format` keywords:
 ### `{joined:type|user}`
 Returns the join timestamp of the given user (or the invoking user if no user is given)  
 `type`: Either `discord` or `server`
+
+### `{created:server|channel}`
+Returns the creation date of the current channel or current server
 
 ---
 
