@@ -206,14 +206,14 @@ export default class Parser {
 			case 'hasperm': {
 				if(splitArgs.length === 0 || !this.context.message.guild || !this.context.message.member) return null;
 				const permission: string = splitArgs[0]
-				let user: string
-				if(!splitArgs[1]) user = this.context.message.member?.id
+				let user: Member
+				if(!splitArgs[1]) user = this.context.message.member
 				else user = this.context.getMemberFromString(splitArgs[1], this.context.message.guild)
 
 				if(user === undefined) return;
 
 				try {
-					const hasPermission: boolean = this.context.message.guild?.can(permission, this.context.message.member)
+					const hasPermission: boolean = this.context.message.guild?.can(permission, user)
 					return hasPermission.toString()
 				} catch(e) {
 					return e.message
