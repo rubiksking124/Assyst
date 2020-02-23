@@ -5,10 +5,10 @@ import { ICommandContext } from '../../lib/CInterfaces';
 import { Message } from 'detritus-client/lib/structures';
 import { CodeResult } from '../../lib/Utils';
 import { Markup } from 'detritus-client/lib/utils';
+import { ShardClient } from 'detritus-client';
 
-
-export default class FakeEval extends Command {
-    public prependedCode: string = `(function() {
+function getPrependedCode(client: ShardClient): string {
+    return `(function() {
         const Collection = Map;
         
         function rand(min, max) {
@@ -22,15 +22,18 @@ export default class FakeEval extends Command {
         }
         
         this.client = {
-            channels: new Collection(new Array(${this.bot.channels.size}).fill().map(populate)),
-            guilds: new Collection(new Array(${this.bot.guilds.size}).fill().map(populate)),
-            users: new Collection(new Array(${this.bot.users.size}).fill().map(populate)),
+            channels: new Collection(new Array(${client.channels.size}).fill().map(populate)),
+            guilds: new Collection(new Array(${client.guilds.size}).fill().map(populate)),
+            users: new Collection(new Array(${client.users.size}).fill().map(populate)),
             token: "NTcxNjYxMjIxODU0NzA3NzEz.Dvl8Dw.aKlcU6mA69pSOI_YBB8RG7nNGUE",
             uptime: process.uptime()
         };
     }).call(global);
     
     console.log(eval("{input}"));`;
+}
+
+export default class FakeEval extends Command {
     constructor(assyst: Assyst) {
         super({
             name: 'eval',
@@ -52,7 +55,7 @@ export default class FakeEval extends Command {
 
     public async execute(context: ICommandContext): Promise<Message | null> {
         /* FAKE EVAL */
-        const res: CodeResult = await this.assyst.utils.runSandboxedCode('js', this.prependedCode.replace('{input}', context.args.join(' ').replace(/"/g, '\'')));
+        const res: CodeResult = await this.assyst.utils.runSandboxedCode('js', getPrependedCode(this.bot).replace('{input}', context.args.join(' ').replace(/"/g, '\'')));
         return context.reply(Markup.codeblock(res.data.res.substr(0, 1980), { language: 'js' }), {
             storeAsResponseForUser: {
                 user: context.message.author.id,

@@ -38,10 +38,6 @@ export default class OCR extends Command {
             if (attachment === undefined) {
                 console.log(attachment)
                 return context.reply(`Usage: \`\`\`md\n${this.assyst.defaultPrefix}${this.name} ${this.info.usage}\`\`\``, {
-                    storeAsResponseForUser: {
-                        user: context.message.author.id,
-                        message: context.message.id
-                    },
                     edit: processingMessage?.id,
                     type: MESSAGE_TYPE_EMOTES.INFO
                 })
@@ -60,11 +56,7 @@ export default class OCR extends Command {
             url = parsedURL.origin + parsedURL.pathname
         } catch (e) {
             return context.reply(`${e.message}`, {
-                storeAsResponseForUser: {
-                    user: context.message.author.id,
-                    message: context.message.id
-                },
-                edit: processingMessage?.id || undefined,
+                edit: processingMessage?.id,
                 type: MESSAGE_TYPE_EMOTES.ERROR
             })
         }
@@ -77,37 +69,22 @@ export default class OCR extends Command {
         if (!processingMessage) return null;
         if (response?.status !== 200) {
             return context.reply(`Google OCR returned an error ${response?.status} (most likely file too large or invalid).`, {
-                storeAsResponseForUser: {
-                    user: context.message.author.id,
-                    message: context.message.id
-                }, type: MESSAGE_TYPE_EMOTES.ERROR,
+                type: MESSAGE_TYPE_EMOTES.ERROR,
                 edit: processingMessage?.id
             })
         } else {
             if (response.body.text.length > 1990) {
                 const link = await this.utils.uploadToFilesGG(response.body.text, 'ocr.txt');
                 return context.reply(link, {
-                    storeAsResponseForUser: {
-                        user: context.message.author.id,
-                        message: context.message.id
-                    },
                     edit: processingMessage?.id
                 })
             } else if (response.body.text.length === 0) {
                 return context.reply(`No text detected`, {
-                    storeAsResponseForUser: {
-                        user: context.message.author.id,
-                        message: context.message.id
-                    },
                     type: MESSAGE_TYPE_EMOTES.INFO,
                     edit: processingMessage?.id
                 })
             } else {
                 return context.reply(`\`\`\`${response.body.text}\`\`\``, {
-                    storeAsResponseForUser: {
-                        user: context.message.author.id,
-                        message: context.message.id
-                    },
                     edit: processingMessage?.id
                 })
             }

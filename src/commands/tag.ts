@@ -68,7 +68,7 @@ export default class Tag extends Command {
             } else if (context.checkForFlag('raw2')) {
                 result = (await this.utils.uploadToFilesGG(tag.content, `${tag.name}.txt`))
             } else if(context.checkForFlag('raw')) {
-                result = Markup.codeblock(tag.content)
+                result = `**Raw tag ${tag.name}:** ${Markup.codeblock(tag.content)}`
             } else {
                 tag.uses++
                 await this.assyst.sql('update tags set uses = $1 where name = $2 and guild = $3', [tag.uses, tag.name, context.message.channel?.guild?.id])
