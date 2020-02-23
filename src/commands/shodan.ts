@@ -26,7 +26,7 @@ export default class Shodan extends Command {
     }
 
     public async execute(context: ICommandContext): Promise<Message | null> {
-        const message = await this.sendMsg(context.message.channel, 'Querying...', {
+        const message = await context.reply('Querying...', {
             type: MESSAGE_TYPE_EMOTES.LOADING, storeAsResponseForUser: {
                 user: context.message.author.id,
                 message: context.message.id
