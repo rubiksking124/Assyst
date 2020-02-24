@@ -307,7 +307,7 @@ export default class Parser {
 			
 			case 'argsfrom': {
 				if (isNaN(parseInt(splitArgs[0]))) return;
-				const cargs = args.slice(parseInt(splitArgs[0]))
+				const cargs = args.slice(parseInt(splitArgs[0]) - 1)
 				return cargs.join(' ')
 			}
 
@@ -319,7 +319,7 @@ export default class Parser {
 
 			case 'argsrange': {
 				if (isNaN(parseInt(splitArgs[0])) || isNaN(parseInt(splitArgs[1]))) return;
-				const cargs = args.slice(parseInt(splitArgs[0]), parseInt(splitArgs[1]))
+				const cargs = args.slice(parseInt(splitArgs[0]) - 1, parseInt(splitArgs[1]))
 				return cargs.join(" ")
 			}
 
