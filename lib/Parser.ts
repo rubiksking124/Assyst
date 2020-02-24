@@ -311,6 +311,10 @@ export default class Parser {
 				return cargs.join(' ')
 			}
 
+			case 'argindex': {
+				return args.indexOf(splitArgs[0]) + 1
+			}
+
 			case 'argsto': {
 				if (isNaN(parseInt(splitArgs[0]))) return;
 				const cargs = args.slice(0, parseInt(splitArgs[0]))
