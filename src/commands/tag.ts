@@ -77,7 +77,7 @@ export default class Tag extends Command {
             if (result.length <= 0 || /^\s$/g.test(result)) {
                 result = ':warning: `Tag returned an empty response.`'
             }
-            if(context.checkForFlag('files.gg') && !context.checkForFlag('raw') && !context.checkForFlag('raw2') || result.length > 1995) {
+            if(context.checkForFlag('files.gg') && !context.checkForFlag('raw') && !context.checkForFlag('raw2') || Markup.escape.mentions(result).length > 1995) {
                 if(result.length < 200000) result = (await this.utils.uploadToFilesGG(result, `${tag.name}.txt`))
                 else result = ':warning: `The tag output was longer than 200,000 characters, it will not be uploaded.`'
             }
