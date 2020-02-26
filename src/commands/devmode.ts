@@ -5,7 +5,7 @@ import { ICommandContext } from '../../lib/CInterfaces';
 import { Message } from 'detritus-client/lib/structures';
 
 
-export default class Cmd extends Command {
+export default class DevMode extends Command {
     constructor(assyst: Assyst) {
         super({
             name: 'devmode',
