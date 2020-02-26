@@ -11,6 +11,7 @@ export default class CreateTag extends Command {
             name: 'createtag',
             aliases: ['ct'],
             assyst,
+            argsMin: 2,
             cooldown: {
                 timeout: 10000,
                 type: COOLDOWN_TYPES.GUILD
