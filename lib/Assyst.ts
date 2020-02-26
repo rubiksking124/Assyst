@@ -21,6 +21,7 @@ const { Markup } = Utils;
 
 export default class Assyst {
 
+    public devOnly: boolean
     public bot: ShardClient;
     public version: string;
     public description: string;
@@ -45,6 +46,7 @@ export default class Assyst {
     public devModePrefix: string
 
     constructor(options: IAssystOptions) {
+        this.devOnly = false;
         this.bot = options.bot || new ShardClient(options.config.tokens.bot, {
             cache: true,
             gateway: {
@@ -123,14 +125,15 @@ export default class Assyst {
         })
     }
 
-    private initStatusRota() {
+    private initStatusRota(): void {
         let currentStatus: number = 0
         setInterval(() => {
             this.bot.gateway.setPresence({
                 game: {
                     name: this.statusRota.statuses[currentStatus].name.replace('{guilds}', this.bot.guilds.size.toString()).replace('{users}', this.bot.users.size.toString()),
                     type: this.statusRota.statuses[currentStatus].type
-                }
+                },
+                status: this.bot.user?.presence?.status
             })
             currentStatus += 1
             if(currentStatus === this.statusRota.statuses.length) {

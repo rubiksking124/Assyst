@@ -27,14 +27,10 @@ export default class DevMode extends Command {
     }
 
     public async execute(context: ICommandContext): Promise<Message | null> {
-        if(this.bot.user?.presence?.status === 'online') {
-            this.bot.gateway.setPresence({
-                status: 'dnd'
-            })
+        if(!this.assyst.devOnly) {
+            this.assyst.devOnly = true
         } else {
-            this.bot.gateway.setPresence({
-                status: 'online'
-            })
+            this.assyst.devOnly = false
         }
         return context.reply('Toggled dev-only mode.', {
             storeAsResponseForUser: {
