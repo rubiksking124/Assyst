@@ -15,6 +15,8 @@ export default class Handler {
     public async handleMessage(message: Message): Promise<void> {
         if (!message.channel || !message.channel.guild || message.author.bot) return;
 
+        if(this.assyst.bot.user?.presence?.status === 'dnd' && !this.assyst.staff.owners.includes(message.author.id)) return;
+
         let prefix: string | undefined
         if(!devMode) {
             if(!this.assyst.prefixCache.get(message.channel.guild.id)) {
