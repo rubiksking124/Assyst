@@ -95,6 +95,14 @@ export default class Handler {
                     user: message.author.id
                 }
             })
+        } else if(targetCommand.nsfw && !message.channel.nsfw) {
+            return void this.assyst.sendMsg(message.channel.id, `NSFW command, requires channel to be marked as NSFW!`, {
+                storeAsResponseForUser: {
+                    message: message.id,
+                    user: message.author.id
+                },
+                type: MESSAGE_TYPE_EMOTES.ERROR
+            })
         }
 
         const flags: Array<IFlag> = this.resolveFlags(args, permissionLevel, targetCommand);

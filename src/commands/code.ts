@@ -76,6 +76,13 @@ export default class Code extends Command {
             })
         }
 
+        if(!res.data.res) {
+            return context.reply(`Unexpected response from API: ${res.data.res}`, {
+                type: MESSAGE_TYPE_EMOTES.ERROR,
+                edit: processingMessage?.id
+            })
+        }
+
         if (res.data.res.length === 0) {
             output = "Empty Response"
         } else {
