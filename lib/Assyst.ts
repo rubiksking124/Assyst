@@ -48,9 +48,42 @@ export default class Assyst {
     constructor(options: IAssystOptions) {
         this.devOnly = false;
         this.bot = options.bot || new ShardClient(options.config.tokens.bot, {
-            cache: true,
+            cache: {
+                emojis: {
+                    enabled: false
+                },
+                voiceCalls: {
+                    enabled: false
+                },
+                voiceConnections: {
+                    enabled: false
+                },
+                voiceStates: {
+                    enabled: false
+                },
+                presences: {
+                    enabled: false
+                },
+                sessions: {
+                    enabled: false
+                },
+                applications: {
+                    enabled: false
+                },
+                notes: {
+                    enabled: false
+                },
+                connectedAccounts: {
+                    enabled: false
+                },
+                typings: {
+                    enabled: false
+                },
+                users: {
+                    enabled: false
+                },
+            },
             gateway: {
-                loadAllMembers: true,
                 identifyProperties: {
                     $browser: "Discord iOS"
                 }

@@ -33,15 +33,12 @@ export default class Info extends Command {
         const version: string = this.assyst.version;
         const memoryUsage: string = (process.memoryUsage().rss / 1000 / 1000).toFixed(2);
         const guildCount: number = this.bot.guilds.size;
-        const userCount: number = this.bot.users.size;
         const uptime: {
             days: number,
             hours: number,
             minutes: number,
             seconds: number
         } = this.utils.elapsed(process.uptime() * 1000);
-        const developers: Array<string | undefined> = this.assyst.staff.owners.map((d: string) => this.bot.users.get(d)?.username);
-        const contibutors: Array<string | undefined> = this.assyst.staff.contributors.map((d: string) => this.bot.users.get(d)?.username);
         const processor: string = `${os.cpus().length}x ${os.cpus()[0].model}`;
         const gitRepo: string = homepage;
         const support: string = 'https://discord.gg/HNvk5UV';
@@ -54,7 +51,7 @@ export default class Info extends Command {
                 fields: [
                     {
                         name: 'Counts',
-                        value: `\`\`\`ml\nGuilds: ${guildCount}\nUsers: ${userCount}\n\`\`\``,
+                        value: `\`\`\`ml\nGuilds: ${guildCount}\n\`\`\``,
                         inline: false
                     },
                     {
@@ -73,13 +70,8 @@ export default class Info extends Command {
                         inline: true
                     },
                     {
-                        name: 'Developers',
-                        value: developers.join('\n'),
-                        inline: true
-                    },
-                    {
-                        name: 'Contributors',
-                        value: contibutors.join('\n'),
+                        name: 'Version',
+                        value: version,
                         inline: true
                     },
                     {
