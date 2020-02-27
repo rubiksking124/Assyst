@@ -163,7 +163,7 @@ export default class Assyst {
         setInterval(() => {
             this.bot.gateway.setPresence({
                 game: {
-                    name: this.statusRota.statuses[currentStatus].name.replace('{guilds}', this.bot.guilds.size.toString()).replace('{users}', this.bot.users.size.toString()),
+                    name: this.statusRota.statuses[currentStatus].name.replace('{guilds}', this.bot.guilds.size.toString()),
                     type: this.statusRota.statuses[currentStatus].type
                 },
                 status: this.bot.user?.presence?.status
