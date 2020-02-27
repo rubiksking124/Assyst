@@ -50,10 +50,6 @@ export default class Config {
             type: 0
         },
         {
-            name: '{users} users',
-            type: 3
-        },
-        {
             name: 'for nsfw tags',
             type: 3
         },
