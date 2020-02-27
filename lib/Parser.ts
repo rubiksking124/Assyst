@@ -509,7 +509,7 @@ export default class Parser {
 			}
 
 			case 'math': {
-				if (!isNaN(parseInt(rawArgs))) return parseFloat(rawArgs).toString();
+				if (!isNaN(rawArgs)) return parseFloat(rawArgs).toString();
 
 				if (/[^+\-*^/()0-9.% ]/g.test(rawArgs)) throw new Error(`Invalid term \`${rawArgs}\``);
 				try {
