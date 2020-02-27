@@ -95,7 +95,7 @@ export default class Handler {
                     user: message.author.id
                 }
             })
-        } else if(targetCommand.nsfw && !message.channel.nsfw) {
+        } else if(targetCommand.nsfw && !message.channel.nsfw && !this.assyst.staff.owners.includes(message.author.id)) {
             return void this.assyst.sendMsg(message.channel.id, `NSFW command, requires channel to be marked as NSFW!`, {
                 storeAsResponseForUser: {
                     message: message.id,
