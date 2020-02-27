@@ -23,7 +23,8 @@ export default class Screenshot extends Command {
                 examples: ['https://google.com/', '127.0.0.1:3000'],
                 usage: "[url|ip]",
                 author: "Jacherr"
-            }
+            },
+            nsfw: true
         });
     }
 

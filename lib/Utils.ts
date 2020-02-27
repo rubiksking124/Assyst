@@ -79,7 +79,7 @@ export default class Utils {
         return superagent
             .post(this.assyst.apis.code)
             .accept('application/json')
-            .set('Content-Type', 'application/x-www-form-urlencoded')
+            .set('Content-Type', 'application/json')
             .set('Authorization', tokens.gocodeit)
             .field('lang', language)
             .field('code', code)
