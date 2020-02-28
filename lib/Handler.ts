@@ -5,6 +5,8 @@ import { IFlag, ICooldown, ICommandResponse, IFlagInfo } from './Interfaces';
 import { PERMISSION_LEVELS, COOLDOWN_TYPES, MESSAGE_TYPE_EMOTES } from './Enums'
 import { QueryResult } from 'pg';
 import { devMode } from '../privateConfig.json'
+import { DefiniteMessage } from './CInterfaces';
+
 export default class Handler {
     public assyst: Assyst;
 
@@ -111,7 +113,7 @@ export default class Handler {
         try {
             await targetCommand.execute({
                 args,
-                message,
+                message: <DefiniteMessage>message,
                 flags,
                 reply: this.assyst.sendMsg.bind(this.assyst, message.channelId),
                 getFlag: this.assyst.utils.getFlag.bind(this.assyst, flags),

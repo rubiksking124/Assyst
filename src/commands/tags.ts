@@ -52,7 +52,7 @@ export default class Tags extends Command {
 
     public async execute(context: ICommandContext): Promise<Message | null> {
         if(context.checkForFlag('mystats')) {
-            const usertags: Tag[] = await this.assyst.sql('select * from tags where guild = $1 and author = $2', [context.message.channel?.guild?.id, context.message.author.id]).then((r: QueryResult) => r.rows)
+            const usertags: Tag[] = await this.assyst.sql('select * from tags where guild = $1 and author = $2', [context.message.channel.guild?.id, context.message.author.id]).then((r: QueryResult) => r.rows)
             const totalTags: number = usertags.length
             let totalUses: number
             if(usertags.length > 0) {
@@ -142,7 +142,7 @@ export default class Tags extends Command {
                         name: `Guild tags - ${context.message.guild?.name}`,
                         fields: tags.slice(i, i + Tags.entriesPerPage).map((tag: Tag) => ({
                             name: tag.name || "?",
-                            value: `**Owner:** ${context.message.guild.members.get(tag.author) ? context.message.guild.members.get(tag.author).user.username : `${tag.author} (not in this server)`}\n` +
+                            value: `**Owner:** ${context.message.guild?.members.get(tag.author) ? context.message.guild.members.get(tag.author)?.toString() : `${tag.author} (not in this server)`}\n` +
                                 `**Uses:** ${tag.uses}`,
                             inline: true
                         })),
