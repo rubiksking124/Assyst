@@ -6,7 +6,7 @@ import Config from './Config'
 import Assyst from './Assyst'
 import { PERMISSION_LEVELS } from './Enums'
 
-type DefiniteMessage = Message & {
+export type DefiniteMessage = Message & {
     // we are returning from handleMessage function if channel or guild is null
     // so we can safely assume that channel and guild object is not null
     channel: Channel,
