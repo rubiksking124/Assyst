@@ -19,8 +19,8 @@ export default class Shodan extends Command {
             info: {
                 description: 'Search shodan for hosts based on a search parameter', // todo
                 examples: ['discord'],
-                usage: "[query]",
-                author: "y21"
+                usage: '[query]',
+                author: 'y21'
             }
         });
     }
@@ -32,13 +32,13 @@ export default class Shodan extends Command {
                 message: context.message.id
             }
         });
-        const request = await this.request(this.assyst.apis.shodanSearch + "/?query=" + encodeURIComponent(context.args.join(" ")), REQUEST_TYPES.GET)
+        const request = await this.request(this.assyst.apis.shodanSearch + '/?query=' + encodeURIComponent(context.args.join(' ')), REQUEST_TYPES.GET)
             .then(v => v?.body);
         if (!message) return null;
         if (request.hosts.length === 0) {
-            return context.reply("No hosts were found for given query.", { edit: message.id, type: MESSAGE_TYPE_EMOTES.ERROR });
+            return context.reply('No hosts were found for given query.', { edit: message.id, type: MESSAGE_TYPE_EMOTES.ERROR });
         } else {
-            return context.reply(request.hosts.join("\n"), { edit: message.id });
+            return context.reply(request.hosts.join('\n'), { edit: message.id });
         }
     }
 }

@@ -20,17 +20,17 @@ export default class DevMode extends Command {
             info: {
                 description: 'Toggle the dev-only mode of the bot',
                 examples: [''],
-                usage: "",
-                author: "Jacherr"
+                usage: '',
+                author: 'Jacherr'
             }
         });
     }
 
     public async execute(context: ICommandContext): Promise<Message | null> {
         if(!this.assyst.devOnly) {
-            this.assyst.devOnly = true
+            this.assyst.devOnly = true;
         } else {
-            this.assyst.devOnly = false
+            this.assyst.devOnly = false;
         }
         return context.reply('Toggled dev-only mode.', {
             storeAsResponseForUser: {
@@ -38,6 +38,6 @@ export default class DevMode extends Command {
                 message: context.message.id
             },
             type: MESSAGE_TYPE_EMOTES.SUCCESS
-        })
+        });
     }
 }

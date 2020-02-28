@@ -22,7 +22,7 @@ export default class Help extends Command {
             }],
             info: {
                 description: 'Displays help about this bot\'s commands.',
-                examples: ["", "ping", "dd -flags"],
+                examples: ['', 'ping', 'dd -flags'],
                 usage: '<command> <-flags>',
                 author: 'y21'
             }
@@ -56,29 +56,29 @@ export default class Help extends Command {
                     user: context.message.author.id,
                     message: context.message.id
                 }
-            })
+            });
         } else {
-            const command: Command | null = this.assyst.handler.getCommand(context.args[0])
+            const command: Command | null = this.assyst.handler.getCommand(context.args[0]);
             if (!command) {
                 return context.reply('Command not found.', {
                     type: MESSAGE_TYPE_EMOTES.ERROR, storeAsResponseForUser: {
                         user: context.message.author.id,
                         message: context.message.id
                     }
-                })
+                });
             }
             if (context.checkForFlag('flags')) {
                 const flags: string = command.validFlags.map(f => {
-                    let accepts: string
+                    let accepts: string;
                     if (f.accepts && f.accepts?.length > 0) {
-                        accepts = `\n*Accepts:* ${f.accepts.map(a => `\`${a}\``).join(', ')}`
+                        accepts = `\n*Accepts:* ${f.accepts.map(a => `\`${a}\``).join(', ')}`;
                     } else if (f.argumented) {
-                        accepts = '\n*Accepts:* Anything'
+                        accepts = '\n*Accepts:* Anything';
                     } else {
-                        accepts = ''
+                        accepts = '';
                     }
-                    return `**${f.name}** - ${f.description}${accepts}`
-                }).join('\n\n')
+                    return `**${f.name}** - ${f.description}${accepts}`;
+                }).join('\n\n');
                 return context.reply({
                     embed: {
                         title: `${command.name} - flags`,
@@ -94,7 +94,7 @@ export default class Help extends Command {
                         user: context.message.author.id,
                         message: context.message.id
                     }
-                })
+                });
             }
 
             return context.reply({
@@ -118,7 +118,7 @@ export default class Help extends Command {
                         {
                             name: 'Examples',
                             value: `\`\`\`fix\n${command.info.examples.map((e: string) => {
-                                return `${this.assyst.defaultPrefix}${command.name} ${e}`
+                                return `${this.assyst.defaultPrefix}${command.name} ${e}`;
                             }).join('\n')}\`\`\``,
                             inline: true,
                         },
@@ -139,7 +139,7 @@ export default class Help extends Command {
                     user: context.message.author.id,
                     message: context.message.id
                 }
-            })
+            });
         }
         return null;
     }

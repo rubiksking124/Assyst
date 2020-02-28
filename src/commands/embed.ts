@@ -43,8 +43,8 @@ export default class Embed extends Command {
             info: {
                 description: 'Create an embed, based off meta tags',
                 examples: ['--text hello', '\n--image https://link.to.the/image.png', '--footer hello\n--text whats up\n--color abcdef'],
-                usage: "<--text [text]>\n<--footer [footer]>\n<--color [hex color]>\n<--image [image link]>",
-                author: "Jacherr, y21"
+                usage: '<--text [text]>\n<--footer [footer]>\n<--color [hex color]>\n<--image [image link]>',
+                author: 'Jacherr, y21'
             }
         });
     }
@@ -57,7 +57,7 @@ export default class Embed extends Command {
             }
         }
 
-        return context.reply(url.toString() + "&a=0", {
+        return context.reply(url.toString() + '&a=0', {
             storeAsResponseForUser: {
                 user: context.message.author.id,
                 message: context.message.id

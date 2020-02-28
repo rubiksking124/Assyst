@@ -1,6 +1,6 @@
 import { ICooldown } from './Interfaces';
 import { Guild, User, ChannelGuildText } from 'detritus-client/lib/structures';
-import { COOLDOWN_TYPES } from './Enums'
+import { COOLDOWN_TYPES } from './Enums';
 import Command from './Command';
 
 export default class CooldownManager { 
@@ -29,6 +29,6 @@ export default class CooldownManager {
             endUnix: endTime,
             sentMessage: false,
             command
-        })
+        });
     }
 }

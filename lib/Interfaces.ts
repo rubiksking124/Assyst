@@ -1,5 +1,5 @@
-import { MESSAGE_TYPE_EMOTES, COOLDOWN_TYPES } from './Enums'
-import Command from './Command'
+import { MESSAGE_TYPE_EMOTES, COOLDOWN_TYPES } from './Enums';
+import Command from './Command';
 
 export interface IStaff {
     owners: Array<string>,

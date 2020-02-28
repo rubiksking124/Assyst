@@ -25,20 +25,20 @@ export default class EditTag extends Command {
             info: {
                 description: 'Edit an existing tag',
                 examples: ['hello Hello again!'],
-                usage: "[name] [content]",
-                author: "Jacherr"
+                usage: '[name] [content]',
+                author: 'Jacherr'
             }
         });
     }
 
     public async execute(context: ICommandContext): Promise<Message | null> {
-        let nsfw: boolean = false
+        let nsfw: boolean = false;
         if(context.checkForFlag('nsfw')) {
-            nsfw = true
+            nsfw = true;
         }
         let res: QueryResult;
         try {
-            res = await this.assyst.sql('update tags set content = $1, nsfw = $5 where guild = $2 and name = $3 and author = $4', [context.args.slice(1).join(' '), context.message.channel?.guild?.id, context.args[0], context.message.author.id, nsfw])
+            res = await this.assyst.sql('update tags set content = $1, nsfw = $5 where guild = $2 and name = $3 and author = $4', [context.args.slice(1).join(' '), context.message.channel?.guild?.id, context.args[0], context.message.author.id, nsfw]);
             if(res.rowCount === 0) {
                 return context.reply('You don\'t own this tag or it doesn\'t exist in this guild.', {
                     storeAsResponseForUser: {
@@ -46,7 +46,7 @@ export default class EditTag extends Command {
                         message: context.message.id
                     },
                     type: MESSAGE_TYPE_EMOTES.ERROR
-                })
+                });
             }
         } catch(e) {
             return context.reply(e.message, {
@@ -55,7 +55,7 @@ export default class EditTag extends Command {
                     message: context.message.id
                 },
                 type: MESSAGE_TYPE_EMOTES.ERROR
-            })
+            });
         }
         return context.reply('Tag updated successfully.', {
             storeAsResponseForUser: {
@@ -63,6 +63,6 @@ export default class EditTag extends Command {
                 message: context.message.id
             },
             type: MESSAGE_TYPE_EMOTES.SUCCESS
-        })
+        });
     }
 }

@@ -5,7 +5,7 @@ import { ICommandContext } from '../../lib/CInterfaces';
 import { Message } from 'detritus-client/lib/structures';
 import git_rev_sync from 'git-rev-sync';
 import os from 'os';
-import { homepage } from '../../package.json'
+import { homepage } from '../../package.json';
 
 export default class Info extends Command {
     constructor(assyst: Assyst) {
@@ -22,8 +22,8 @@ export default class Info extends Command {
             info: {
                 description: 'Get bot information',
                 examples: [''],
-                usage: "",
-                author: "Jacherr"
+                usage: '',
+                author: 'Jacherr'
             }
         });
     }
@@ -42,7 +42,7 @@ export default class Info extends Command {
         const processor: string = `${os.cpus().length}x ${os.cpus()[0].model}`;
         const gitRepo: string = homepage;
         const support: string = 'https://discord.gg/HNvk5UV';
-        const dbSize: string = await this.assyst.sql('select pg_size_pretty(pg_database_size(\'assyst\'))').then(r => r.rows[0].pg_size_pretty)
+        const dbSize: string = await this.assyst.sql('select pg_size_pretty(pg_database_size(\'assyst\'))').then(r => r.rows[0].pg_size_pretty);
         return this.sendMsg(context.message.channel, {
             embed: {
                 title: 'Assyst Information',

@@ -52,15 +52,15 @@ export default class Tags extends Command {
 
     public async execute(context: ICommandContext): Promise<Message | null> {
         if(context.checkForFlag('mystats')) {
-            const usertags: Tag[] = await this.assyst.sql('select * from tags where guild = $1 and author = $2', [context.message.channel.guild?.id, context.message.author.id]).then((r: QueryResult) => r.rows)
-            const totalTags: number = usertags.length
-            let totalUses: number
+            const usertags: Tag[] = await this.assyst.sql('select * from tags where guild = $1 and author = $2', [context.message.channel.guild?.id, context.message.author.id]).then((r: QueryResult) => r.rows);
+            const totalTags: number = usertags.length;
+            let totalUses: number;
             if(usertags.length > 0) {
-                totalUses = usertags.map(i => i.uses).reduce((ct: number, pt: number) => ct + pt)
+                totalUses = usertags.map(i => i.uses).reduce((ct: number, pt: number) => ct + pt);
             } else {
-                totalUses = 0
+                totalUses = 0;
             }
-            const joinedServer: string = <string>context.message.member?.joinedAt?.toLocaleString()
+            const joinedServer: string = <string>context.message.member?.joinedAt?.toLocaleString();
             return context.reply({embed: {
                 author: {
                     name: context.message.author.username,
@@ -85,22 +85,22 @@ export default class Tags extends Command {
                         inline: false
                     }
                 ]
-            }})
+            }});
         }
         let tags: Tag[];
-        let sort: string
-        let ilike: string
+        let sort: string;
+        let ilike: string;
         if(context.checkForFlag('alphabetical')) {
-            sort = 'name asc'
+            sort = 'name asc';
         } else {
-            sort = 'uses desc'
+            sort = 'uses desc';
         }
         if(context.args.length > 0) {
-            ilike = context.args[0]
+            ilike = context.args[0];
         } else {
-            ilike = ''
+            ilike = '';
         }
-        if (context.checkForFlag("mine")) {
+        if (context.checkForFlag('mine')) {
             tags = await this.assyst.sql(`select * from tags where guild = $1 and author = $2 and name ilike $3 order by ${sort}`, [context.message.guildId, context.message.author.id, `%${ilike}%`])
                 .then(v => v.rows);
         } else {
@@ -115,24 +115,24 @@ export default class Tags extends Command {
                     message: context.message.id
                 },
                 type: MESSAGE_TYPE_EMOTES.INFO
-            })
+            });
         }
 
         const pages = [];
         if(context.checkForFlag('simple')) {
-            let currentEmbedSize: number = 0
-            let currentPageTags: string[] = []
+            let currentEmbedSize: number = 0;
+            let currentPageTags: string[] = [];
             for(const tag of tags) {
                 if((currentEmbedSize + tag.name.length + 2) > 2000 || tag === tags[tags.length - 1]) {
                     pages.push({ embed: {
                         description: currentPageTags.join(', '),
                         color: this.assyst.embedColour
-                    }})
-                    currentPageTags = []
-                    currentEmbedSize = 0
+                    }});
+                    currentPageTags = [];
+                    currentEmbedSize = 0;
                 } else {
-                    currentPageTags.push(tag.name)
-                    currentEmbedSize += tag.name.length + 2
+                    currentPageTags.push(tag.name);
+                    currentEmbedSize += tag.name.length + 2;
                 }
             }
         } else {
@@ -141,7 +141,7 @@ export default class Tags extends Command {
                     embed: {
                         name: `Guild tags - ${context.message.guild?.name}`,
                         fields: tags.slice(i, i + Tags.entriesPerPage).map((tag: Tag) => ({
-                            name: tag.name || "?",
+                            name: tag.name || '?',
                             value: `**Owner:** ${context.message.guild?.members.get(tag.author) ? context.message.guild.members.get(tag.author)?.toString() : `${tag.author} (not in this server)`}\n` +
                                 `**Uses:** ${tag.uses}`,
                             inline: true
@@ -158,7 +158,7 @@ export default class Tags extends Command {
             message: context.message,
             pages
         });
-        this.assyst.addResponseMessage(context.message, paginator.commandMessage.id)
+        this.assyst.addResponseMessage(context.message, paginator.commandMessage.id);
         return paginator.commandMessage;
     }
 }
