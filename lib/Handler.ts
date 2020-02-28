@@ -1,10 +1,18 @@
-import { Message } from 'detritus-client/lib/structures';
+import { Message, Channel, Guild } from 'detritus-client/lib/structures';
 import Assyst from './Assyst'
 import Command from './Command'
 import { IFlag, ICooldown, ICommandResponse, IFlagInfo } from './Interfaces';
 import { PERMISSION_LEVELS, COOLDOWN_TYPES, MESSAGE_TYPE_EMOTES } from './Enums'
 import { QueryResult } from 'pg';
 import { devMode } from '../privateConfig.json'
+
+type DefiniteMessage = Message & {
+    // we are returning from handleMessage function if channel or guild is null
+    // so we can safely assume that channel and guild object is not null
+    channel: Channel,
+    guild: Guild
+};
+
 export default class Handler {
     public assyst: Assyst;
 
@@ -111,7 +119,7 @@ export default class Handler {
         try {
             await targetCommand.execute({
                 args,
-                message,
+                message: <DefiniteMessage>message,
                 flags,
                 reply: this.assyst.sendMsg.bind(this.assyst, message.channelId),
                 getFlag: this.assyst.utils.getFlag.bind(this.assyst, flags),
