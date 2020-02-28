@@ -3,7 +3,8 @@
 while :
 do
         echo "Starting process..."
-        node /home/assyst/JS/index.js
+	cd /home/assyst/JS
+        node index.js
         if [ $? -eq 0 ]
         then
                 echo "Stopping process..." # exit shell script if exit code is 0
