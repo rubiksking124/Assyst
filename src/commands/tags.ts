@@ -142,7 +142,7 @@ export default class Tags extends Command {
                         name: `Guild tags - ${context.message.guild?.name}`,
                         fields: tags.slice(i, i + Tags.entriesPerPage).map((tag: Tag) => ({
                             name: tag.name || "?",
-                            value: `**Owner:** ${this.bot.users.get(tag.author) ? this.bot.users.get(tag.author) : `${tag.author} (not in this server)`}\n` +
+                            value: `**Owner:** ${context.message.guild.members.get(tag.author) ? context.message.guild.members.get(tag.author).user.username : `${tag.author} (not in this server)`}\n` +
                                 `**Uses:** ${tag.uses}`,
                             inline: true
                         })),
