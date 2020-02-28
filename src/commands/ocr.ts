@@ -19,8 +19,8 @@ export default class OCR extends Command {
             info: {
                 description: 'Run Google Optical Character Recognition on an image',
                 examples: ['https://link.to/the/image.png/', 'Jacher'],
-                usage: "<url|user|attachment>",
-                author: "Jacherr"
+                usage: '<url|user|attachment>',
+                author: 'Jacherr'
             }
         });
     }
@@ -31,16 +31,16 @@ export default class OCR extends Command {
                 user: context.message.author.id,
                 message: context.message.id
             }
-        })
+        });
         let url: string;
         if (context.args.length === 0) {
             let attachment: MessageEmbedThumbnail | Attachment | undefined = await this.utils.getRecentAttachmentOrEmbed(context.message, this.assyst.searchMessages);
             if (attachment === undefined) {
-                console.log(attachment)
+                console.log(attachment);
                 return context.reply(`Usage: \`\`\`md\n${this.assyst.defaultPrefix}${this.name} ${this.info.usage}\`\`\``, {
                     edit: processingMessage?.id,
                     type: MESSAGE_TYPE_EMOTES.INFO
-                })
+                });
             }
             url = <string>attachment.url;
         } else {
@@ -52,41 +52,41 @@ export default class OCR extends Command {
             }
         }
         try {
-            const parsedURL: URL = new URL(url)
-            url = parsedURL.origin + parsedURL.pathname
+            const parsedURL: URL = new URL(url);
+            url = parsedURL.origin + parsedURL.pathname;
         } catch (e) {
             return context.reply(`${e.message}`, {
                 edit: processingMessage?.id,
                 type: MESSAGE_TYPE_EMOTES.ERROR
-            })
+            });
         }
         const response = await this.request(`${this.assyst.apis.ocr}?q=${url}`, REQUEST_TYPES.GET).catch((e: any) => {
             return {
                 status: e.status,
                 body: null
-            }
+            };
         });
         if (!processingMessage) return null;
         if (response?.status !== 200) {
             return context.reply(`Google OCR returned an error ${response?.status} (most likely file too large or invalid).`, {
                 type: MESSAGE_TYPE_EMOTES.ERROR,
                 edit: processingMessage?.id
-            })
+            });
         } else {
             if (response.body.text.length > 1990) {
                 const link = await this.utils.uploadToFilesGG(response.body.text, 'ocr.txt');
                 return context.reply(link, {
                     edit: processingMessage?.id
-                })
+                });
             } else if (response.body.text.length === 0) {
-                return context.reply(`No text detected`, {
+                return context.reply('No text detected', {
                     type: MESSAGE_TYPE_EMOTES.INFO,
                     edit: processingMessage?.id
-                })
+                });
             } else {
                 return context.reply(`\`\`\`${response.body.text}\`\`\``, {
                     edit: processingMessage?.id
-                })
+                });
             }
         }
     }

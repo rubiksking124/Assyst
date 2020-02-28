@@ -3,8 +3,8 @@ import Assyst from '../../lib/Assyst';
 import { COOLDOWN_TYPES, MESSAGE_TYPE_EMOTES, REQUEST_TYPES } from '../../lib/Enums';
 import { ICommandContext } from '../../lib/CInterfaces';
 import { Message } from 'detritus-client/lib/structures';
-import { tokens } from '../../privateConfig.json'
-import { createHash } from 'crypto'
+import { tokens } from '../../privateConfig.json';
+import { createHash } from 'crypto';
 
 export default class Screenshot extends Command {
     constructor(assyst: Assyst) {
@@ -21,8 +21,8 @@ export default class Screenshot extends Command {
             info: {
                 description: 'Screenshot a web page',
                 examples: ['https://google.com/', '127.0.0.1:3000'],
-                usage: "[url|ip]",
-                author: "Jacherr"
+                usage: '[url|ip]',
+                author: 'Jacherr'
             },
             nsfw: true
         });
@@ -41,11 +41,11 @@ export default class Screenshot extends Command {
                 'Authorization': tokens.fapi,
                 'Content-Type': 'application/json',
             },
-                {
-                    args: {
-                        text: context.args[0],
-                    },
-                });
+            {
+                args: {
+                    text: context.args[0],
+                },
+            });
         } catch (e) {
             return context.reply(e.response.text, { type: MESSAGE_TYPE_EMOTES.ERROR, edit: processingMessage?.id });
         }
@@ -60,14 +60,14 @@ export default class Screenshot extends Command {
         }
         if(!processingMessage) return null;
         switch (hash) {
-            case 'fcab5a15e2ee436f8694b9777c3cb08b':
-                return context.reply('No DNS records.', { type: MESSAGE_TYPE_EMOTES.ERROR, edit: processingMessage?.id });
-            case '5991482f1a1d321eea4162044abbfd78':
-                return context.reply('The domain does not exist.', { type: MESSAGE_TYPE_EMOTES.ERROR, edit: processingMessage?.id });
-            case 'd4e18d5b499eedb1b3b62d93a669beb8':
-                return context.reply('Connection refused.', { type: MESSAGE_TYPE_EMOTES.ERROR, edit: processingMessage?.id });
-            case 'ab341be5ab990e3179bb6c4db954f702':
-                return context.reply('(104) Connection reset by peer.', { type: MESSAGE_TYPE_EMOTES.ERROR, edit: processingMessage?.id });
+        case 'fcab5a15e2ee436f8694b9777c3cb08b':
+            return context.reply('No DNS records.', { type: MESSAGE_TYPE_EMOTES.ERROR, edit: processingMessage?.id });
+        case '5991482f1a1d321eea4162044abbfd78':
+            return context.reply('The domain does not exist.', { type: MESSAGE_TYPE_EMOTES.ERROR, edit: processingMessage?.id });
+        case 'd4e18d5b499eedb1b3b62d93a669beb8':
+            return context.reply('Connection refused.', { type: MESSAGE_TYPE_EMOTES.ERROR, edit: processingMessage?.id });
+        case 'ab341be5ab990e3179bb6c4db954f702':
+            return context.reply('(104) Connection reset by peer.', { type: MESSAGE_TYPE_EMOTES.ERROR, edit: processingMessage?.id });
         }
         processingMessage?.delete();
         return context.reply({ file: { data: site.body, filename: 'screenshot.png' } }, {

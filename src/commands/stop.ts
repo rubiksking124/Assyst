@@ -24,8 +24,8 @@ export default class Stop extends Command {
             info: {
                 description: 'Stops the bot',
                 examples: [''],
-                usage: "",
-                author: "Jacherr"
+                usage: '',
+                author: 'Jacherr'
             },
             permissionLevel: PERMISSION_LEVELS.OWNER
         });

@@ -20,8 +20,8 @@ export default class DeleteTag extends Command {
             info: {
                 description: 'Delete a tag from the current guild',
                 examples: ['hello'],
-                usage: "[name]",
-                author: "Jacherr"
+                usage: '[name]',
+                author: 'Jacherr'
             }
         });
     }
@@ -29,7 +29,7 @@ export default class DeleteTag extends Command {
     public async execute(context: ICommandContext): Promise<Message | null> {
         let res: QueryResult;
         try {
-            res = await this.assyst.sql('delete from tags where guild = $1 and name = $2 and author = $3', [context.message.channel?.guild?.id, context.args[0], context.message.author.id])
+            res = await this.assyst.sql('delete from tags where guild = $1 and name = $2 and author = $3', [context.message.channel?.guild?.id, context.args[0], context.message.author.id]);
             if(res.rowCount === 0) {
                 return context.reply('You don\'t own this tag or it doesn\'t exist in this guild.', {
                     storeAsResponseForUser: {
@@ -37,7 +37,7 @@ export default class DeleteTag extends Command {
                         message: context.message.id
                     },
                     type: MESSAGE_TYPE_EMOTES.ERROR
-                })
+                });
             }
         } catch(e) {
             return context.reply(e.message, {
@@ -46,7 +46,7 @@ export default class DeleteTag extends Command {
                     message: context.message.id
                 },
                 type: MESSAGE_TYPE_EMOTES.ERROR
-            })
+            });
         }
         return context.reply('Tag deleted successfully.', {
             storeAsResponseForUser: {
@@ -54,6 +54,6 @@ export default class DeleteTag extends Command {
                 message: context.message.id
             },
             type: MESSAGE_TYPE_EMOTES.SUCCESS
-        })
+        });
     }
 }

@@ -6,9 +6,9 @@ export default class Config {
     public readonly defaultPrefix: string = '<<';
     public readonly devModePrefix: string = '<>'
     public readonly staff: IStaff = {
-        owners: ["233667448887312385", "312715611413413889"],
+        owners: ['233667448887312385', '312715611413413889'],
         admins: [],
-        contributors: ["312715611413413889", "669784425147531268"]
+        contributors: ['312715611413413889', '669784425147531268']
     };
     public readonly emotes: IEmotes = {
         success: '<:greenTicklol:560210493936238604>',
@@ -25,8 +25,8 @@ export default class Config {
         code: 'https://api.gocode.it/exec/'
     };
     public readonly reactions = {
-        previousPage: "⬅️",
-        nextPage: "➡️"
+        previousPage: '⬅️',
+        nextPage: '➡️'
     };
     public readonly paginatorTimeout: number = 120000;
     public readonly description: string = description;

@@ -23,8 +23,8 @@ export default class Cmd extends Command {
             info: {
                 description: 'Run sql on the database',
                 examples: ['select count(*) from tags'],
-                usage: "[query]",
-                author: "Jacherr"
+                usage: '[query]',
+                author: 'Jacherr'
             }
         });
     }
@@ -32,12 +32,12 @@ export default class Cmd extends Command {
     public async execute(context: ICommandContext): Promise<Message | null> {
         const query = context.args.join(' ');
         const result = await this.assyst.sql(query);
-        const rows = inspect(result.rows)
+        const rows = inspect(result.rows);
         return context.reply(Markup.codeblock(rows, { language: 'js', limit: 1990 }), {
             storeAsResponseForUser: {
                 message: context.message.id,
                 user: context.message.author.id
             }
-        })
+        });
     }
 }

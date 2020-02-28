@@ -1,7 +1,7 @@
-import { ICommandOptions, ICommandContext } from './CInterfaces'
-import Assyst from './Assyst'
-import { IInfo, IFlagInfo, ICooldownType } from './Interfaces'
-import { Message } from 'detritus-client/lib/structures'
+import { ICommandOptions, ICommandContext } from './CInterfaces';
+import Assyst from './Assyst';
+import { IInfo, IFlagInfo, ICooldownType } from './Interfaces';
+import { Message } from 'detritus-client/lib/structures';
 import { PERMISSION_LEVELS } from './Enums';
 
 export default class Command {
@@ -50,11 +50,11 @@ export default class Command {
     }
 
     get bot() {
-        return this.assyst.bot
+        return this.assyst.bot;
     }
 
     get utils() {
-        return this.assyst.utils
+        return this.assyst.utils;
     }
 
 }

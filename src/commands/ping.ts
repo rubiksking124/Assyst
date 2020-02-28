@@ -17,23 +17,23 @@ export default class Ping extends Command {
             info: {
                 description: 'Ping the bot',
                 examples: [''],
-                usage: "",
-                author: "Jacherr"
+                usage: '',
+                author: 'Jacherr'
             }
         });
     }
 
     public async execute(context: ICommandContext): Promise<Message | null> {
         const message = await this.sendMsg(context.message.channel, 'Pong!', { type: MESSAGE_TYPE_EMOTES.LOADING });
-        let sqlPing: number = 0
+        let sqlPing: number = 0;
         try {
             const { gateway, rest } = await this.bot.ping();
             let start = Date.now();
-            sqlPing = await this.assyst.sql('select now()').then(res => { return Date.now() - start })
+            sqlPing = await this.assyst.sql('select now()').then(res => { return Date.now() - start; });
             return this.sendMsg(context.message.channel, `Pong! Gateway: ${gateway}ms, REST: ${rest}ms, SQL: ${sqlPing}ms`, { edit: message?.id, type: MESSAGE_TYPE_EMOTES.SUCCESS,storeAsResponseForUser: {
                 user: context.message.author.id,
                 message: context.message.id
-            } })
+            } });
         } catch(e) {
             return this.sendMsg(context.message.channel, `Pong! Discord: >1000ms, SQL: ${sqlPing}`, { edit: message?.id, type: MESSAGE_TYPE_EMOTES.SUCCESS, storeAsResponseForUser: {
                 user: context.message.author.id,

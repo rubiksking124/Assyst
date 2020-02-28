@@ -1,10 +1,10 @@
 import { Message } from 'detritus-client/lib/structures';
-import Assyst from './Assyst'
-import Command from './Command'
+import Assyst from './Assyst';
+import Command from './Command';
 import { IFlag, ICooldown, ICommandResponse, IFlagInfo } from './Interfaces';
-import { PERMISSION_LEVELS, COOLDOWN_TYPES, MESSAGE_TYPE_EMOTES } from './Enums'
+import { PERMISSION_LEVELS, COOLDOWN_TYPES, MESSAGE_TYPE_EMOTES } from './Enums';
 import { QueryResult } from 'pg';
-import { devMode } from '../privateConfig.json'
+import { devMode } from '../privateConfig.json';
 import { DefiniteMessage } from './CInterfaces';
 
 export default class Handler {
@@ -19,21 +19,21 @@ export default class Handler {
 
         if(this.assyst.devOnly && !this.assyst.staff.owners.includes(message.author.id)) return;
 
-        let prefix: string | undefined
+        let prefix: string | undefined;
         if(!devMode) {
             if(!this.assyst.prefixCache.get(message.channel.guild.id)) {
-                prefix = await this.assyst.sql('select prefix from prefixes where guild = $1', [message.channel.guild.id]).then((r: QueryResult) => r.rows[0] ? r.rows[0].prefix : undefined)
-                if(prefix) this.assyst.prefixCache.set(message.channel.guild.id, prefix)
+                prefix = await this.assyst.sql('select prefix from prefixes where guild = $1', [message.channel.guild.id]).then((r: QueryResult) => r.rows[0] ? r.rows[0].prefix : undefined);
+                if(prefix) this.assyst.prefixCache.set(message.channel.guild.id, prefix);
             } else {
-                prefix = this.assyst.prefixCache.get(message.channel.guild.id)
+                prefix = this.assyst.prefixCache.get(message.channel.guild.id);
             }
     
             if(prefix === undefined) {
-                prefix = this.assyst.defaultPrefix
-                await this.assyst.sql('insert into prefixes ("guild", "prefix") values ($1, $2)', [message.channel.guild.id, '<<'])
+                prefix = this.assyst.defaultPrefix;
+                await this.assyst.sql('insert into prefixes ("guild", "prefix") values ($1, $2)', [message.channel.guild.id, '<<']);
             }
         } else {
-            prefix = this.assyst.devModePrefix
+            prefix = this.assyst.devModePrefix;
         }
 
         const { content } = message;
@@ -42,9 +42,9 @@ export default class Handler {
         }
 
         if(content.startsWith(`<@${this.assyst.bot.user?.id}>`)) {
-            prefix = `<@${this.assyst.bot.user?.id}> `
+            prefix = `<@${this.assyst.bot.user?.id}> `;
         } else if(content.startsWith(`<@!${this.assyst.bot.user?.id}>`)) {
-            prefix = `<@!${this.assyst.bot.user?.id}> `
+            prefix = `<@!${this.assyst.bot.user?.id}> `;
         }
 
         let [command, ...args] = content.substr(prefix.length).split(/ +/);
@@ -61,15 +61,15 @@ export default class Handler {
 
         let idToCheck: string;
         switch (targetCommand.cooldown.type) {
-            case COOLDOWN_TYPES.CHANNEL:
-                idToCheck = message.channel.id;
-                break;
-            case COOLDOWN_TYPES.USER:
-                idToCheck = message.author.id;
-                break;
-            case COOLDOWN_TYPES.GUILD:
-                idToCheck = message.channel.guild.id;
-                break;
+        case COOLDOWN_TYPES.CHANNEL:
+            idToCheck = message.channel.id;
+            break;
+        case COOLDOWN_TYPES.USER:
+            idToCheck = message.author.id;
+            break;
+        case COOLDOWN_TYPES.GUILD:
+            idToCheck = message.channel.guild.id;
+            break;
         }
         
         if(permissionLevel < 1) {
@@ -96,19 +96,19 @@ export default class Handler {
                     message: message.id,
                     user: message.author.id
                 }
-            })
+            });
         } else if(targetCommand.nsfw && !message.channel.nsfw && !this.assyst.staff.owners.includes(message.author.id)) {
-            return void this.assyst.sendMsg(message.channel.id, `NSFW command, requires channel to be marked as NSFW!`, {
+            return void this.assyst.sendMsg(message.channel.id, 'NSFW command, requires channel to be marked as NSFW!', {
                 storeAsResponseForUser: {
                     message: message.id,
                     user: message.author.id
                 },
                 type: MESSAGE_TYPE_EMOTES.ERROR
-            })
+            });
         }
 
         const flags: Array<IFlag> = this.resolveFlags(args, permissionLevel, targetCommand);
-        args = this.removeFlags(args, flags)
+        args = this.removeFlags(args, flags);
 
         try {
             await targetCommand.execute({
@@ -120,7 +120,7 @@ export default class Handler {
                 checkForFlag: this.assyst.utils.checkForFlag.bind(this.assyst, flags)
             });
         } catch (e) {
-            message.channel.createMessage(`:warning: Command raised an exception: \`\`\`js\n${e.stack}\n\`\`\``)
+            message.channel.createMessage(`:warning: Command raised an exception: \`\`\`js\n${e.stack}\n\`\`\``);
         }
     }
 
@@ -141,7 +141,7 @@ export default class Handler {
             const responseMessage: Message | undefined = message.channel?.messages.get(responseMessageId);
             if (responseMessage) {
                 responseMessage.delete();
-                this.removeResponseMessage(<ICommandResponse>this.assyst.responseMessages.get(message.author.id)?.find(i => i.source === message.id))
+                this.removeResponseMessage(<ICommandResponse>this.assyst.responseMessages.get(message.author.id)?.find(i => i.source === message.id));
             }
         }
     }
@@ -198,7 +198,7 @@ export default class Handler {
     public storeCommandResponse(sourceMessageId: string, responseMessageId: string, user: string): Map<string, ICommandResponse[]> {
         let responseArray: Array<ICommandResponse>;
         if (this.assyst.responseMessages.get(user)) {
-            responseArray = <Array<ICommandResponse>>this.assyst.responseMessages.get(user)
+            responseArray = <Array<ICommandResponse>>this.assyst.responseMessages.get(user);
             responseArray.push({
                 source: sourceMessageId,
                 response: responseMessageId
@@ -209,8 +209,8 @@ export default class Handler {
                 response: responseMessageId
             }];
         }
-        this.assyst.responseMessages.set(user, responseArray)
-        return this.assyst.responseMessages
+        this.assyst.responseMessages.set(user, responseArray);
+        return this.assyst.responseMessages;
     }
 
     public getCommand(str: string): Command | null {

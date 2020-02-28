@@ -21,8 +21,8 @@ export default class Exec extends Command {
             info: {
                 description: 'Execute bash commands',
                 examples: ['lscpu'],
-                usage: "[command]",
-                author: "Jacherr"
+                usage: '[command]',
+                author: 'Jacherr'
             }
         });
     }
@@ -35,7 +35,7 @@ export default class Exec extends Command {
                     user: context.message.author.id,
                     message: context.message.id
                 }
-            })
+            });
 
             if (stderr) return context.reply(`\`\`\`bash\n${stderr.toString()}\`\`\``, {
                 storeAsResponseForUser: {
@@ -44,7 +44,7 @@ export default class Exec extends Command {
                 }
             });
 
-            if (stdout === undefined) stdout = "undefined";
+            if (stdout === undefined) stdout = 'undefined';
 
             if (stdout.length > 1990) {
                 const file: string = await this.utils.uploadToFilesGG(stdout, 'execoutput.js');

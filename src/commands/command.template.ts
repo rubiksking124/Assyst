@@ -19,13 +19,13 @@ export default class Cmd extends Command {
             info: {
                 description: '',
                 examples: [],
-                usage: "",
-                author: ""
+                usage: '',
+                author: ''
             }
         });
     }
 
     public async execute(context: ICommandContext): Promise<Message | null> {
-        return context.message
+        return context.message;
     }
 }

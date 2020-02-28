@@ -31,8 +31,8 @@ export default class DetritusDocs extends Command {
             info: {
                 description: 'Get information on an interface or class for detritusjs',
                 examples: ['ShardClient', 'CallOptions --type interface', 'Message --type class'],
-                usage: "[class|interface]",
-                author: "a"
+                usage: '[class|interface]',
+                author: 'a'
             }
         });
     }
@@ -41,7 +41,7 @@ export default class DetritusDocs extends Command {
         //const response: superagent.Response | undefined = await this.request(`${this.assyst.apis.detritusDocsSearch}?query=${encodeURIComponent(context.args[0])}`, REQUEST_TYPE.GET)
         //    .then(v => v?.body);
 
-        const pages: any[] = ["test1", "test2"];
+        const pages: any[] = ['test1', 'test2'];
 
         const paginator = await this.assyst.paginator.createReactionPaginator({
             reactions: this.assyst.reactions,

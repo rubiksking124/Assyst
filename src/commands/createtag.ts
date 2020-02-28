@@ -25,14 +25,14 @@ export default class CreateTag extends Command {
             info: {
                 description: 'Create a new tag. Parser documentation can be found [here](https://github.com/Jacherr/Assyst-TS/blob/master/PARSER_DOCS.md)',
                 examples: ['hello Hello!'],
-                usage: "[name] [content]",
-                author: "Jacherr"
+                usage: '[name] [content]',
+                author: 'Jacherr'
             }
         });
     }
 
     public async execute(context: ICommandContext): Promise<Message | null> {
-        const currentUserTags: { count: number } = await this.assyst.sql('select count(*) from tags where author = $1 and guild = $2', [context.message.author.id, context.message.channel?.guild?.id]).then(r => r.rows[0])
+        const currentUserTags: { count: number } = await this.assyst.sql('select count(*) from tags where author = $1 and guild = $2', [context.message.author.id, context.message.channel?.guild?.id]).then(r => r.rows[0]);
         if(currentUserTags.count >= 200) {
             return context.reply('You already own the maximum of 200 tags in this guild.', {
                 storeAsResponseForUser: {
@@ -40,9 +40,9 @@ export default class CreateTag extends Command {
                     message: context.message.id
                 },
                 type: MESSAGE_TYPE_EMOTES.ERROR
-            })
+            });
         }
-        const existingTags: Array<{guild: string}> = await this.assyst.sql('select guild from tags where name = $1', [context.args[0]]).then(r => r.rows)
+        const existingTags: Array<{guild: string}> = await this.assyst.sql('select guild from tags where name = $1', [context.args[0]]).then(r => r.rows);
         if(existingTags.map(i => i.guild).includes(<string>context.message.guild?.id)) {
             return context.reply('This tag already exists in this guild.', {
                 storeAsResponseForUser: {
@@ -50,14 +50,14 @@ export default class CreateTag extends Command {
                     message: context.message.id
                 },
                 type: MESSAGE_TYPE_EMOTES.ERROR
-            })
+            });
         }
-        let nsfw: boolean = false
+        let nsfw: boolean = false;
         if(context.checkForFlag('nsfw')) {
-            nsfw = true
+            nsfw = true;
         }
         try {
-            await this.assyst.sql('insert into tags ("name", "content", "author", "createdat", "nsfw", "guild") values ($1, $2, $3, $4, $5, $6)', [context.args[0], context.args.splice(1).join(' '), context.message.author.id, new Date(), nsfw, context.message.guild?.id])
+            await this.assyst.sql('insert into tags ("name", "content", "author", "createdat", "nsfw", "guild") values ($1, $2, $3, $4, $5, $6)', [context.args[0], context.args.splice(1).join(' '), context.message.author.id, new Date(), nsfw, context.message.guild?.id]);
         } catch(e) {
             return context.reply(e.message, {
                 storeAsResponseForUser: {
@@ -65,7 +65,7 @@ export default class CreateTag extends Command {
                     message: context.message.id
                 },
                 type: MESSAGE_TYPE_EMOTES.ERROR
-            })
+            });
         }
         return context.reply('Tag created successfully.', {
             storeAsResponseForUser: {
@@ -73,6 +73,6 @@ export default class CreateTag extends Command {
                 message: context.message.id
             },
             type: MESSAGE_TYPE_EMOTES.SUCCESS
-        })
+        });
     }
 }

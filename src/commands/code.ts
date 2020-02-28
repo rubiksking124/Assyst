@@ -37,7 +37,7 @@ export default class Code extends Command {
                     message: context.message.id
                 },
                 type: MESSAGE_TYPE_EMOTES.INFO
-            })
+            });
         }
 
         const processingMessage: Message | null = await context.reply('Processing...', {
@@ -46,47 +46,48 @@ export default class Code extends Command {
                 message: context.message.id
             },
             type: MESSAGE_TYPE_EMOTES.LOADING
-        })
+        });
         let output: string;
-        let res: CodeResult
+        let res: CodeResult;
         // run code
         try {
             res = await this.assyst.utils.runSandboxedCode(
                 encodeURIComponent(context.args[0]),
-                context.args.slice(1).join(' ').replace(/^```\w*|```$/g, "")
+                context.args.slice(1).join(' ').replace(/^```\w*|```$/g, '')
             );
         } catch (e) {
-            let message: string
+            let message: string;
             switch(e.status) {
-                case 400:
-                    message = JSON.parse(e.response.text).data.res
-                    break;  
-                case 500:
-                    message = 'The API could not handle this request.'
-                    break;
-                case 404:
-                    message = `Language ${context.args[0]} is not supported.`
-                default:
-                    message = 'An unexpected error occurred.'
-                    break;
+            case 400:
+                message = JSON.parse(e.response.text).data.res;
+                break;  
+            case 500:
+                message = 'The API could not handle this request.';
+                break;
+            case 404:
+                message = `Language ${context.args[0]} is not supported.`;
+                break;
+            default:
+                message = 'An unexpected error occurred.';
+                break;
             }
             return context.reply(`Error: ${e.status} - ${message}`, {
                 edit: processingMessage?.id,
                 type: MESSAGE_TYPE_EMOTES.ERROR
-            })
+            });
         }
 
         if(!res.data.res) {
             return context.reply(`Unexpected response from API: ${res.data.res}`, {
                 type: MESSAGE_TYPE_EMOTES.ERROR,
                 edit: processingMessage?.id
-            })
+            });
         }
 
         if (res.data.res.length === 0) {
-            output = "Empty Response"
+            output = 'Empty Response';
         } else {
-            output = res.data.res
+            output = res.data.res;
         }
 
         if (!processingMessage) {
@@ -97,13 +98,13 @@ export default class Code extends Command {
 
         if (output.length > 1995) {
             output = await this.utils.uploadToFilesGG(output, `code.${context.args[0]}`);
-            output = `Output was too long, uploaded to files.gg: ${output}`
+            output = `Output was too long, uploaded to files.gg: ${output}`;
             codeblock = false;
         } else if (output.length > 200000) {
-            output = `The output exceeded 200,000 characters. It will not be displayed.`
+            output = 'The output exceeded 200,000 characters. It will not be displayed.';
         }
         if (codeblock) {
-            output = Markup.codeblock(output, { language: context.args[0], limit: 1990 })
+            output = Markup.codeblock(output, { language: context.args[0], limit: 1990 });
         }
         if (res.status === 200) {
             return context.reply(output, {

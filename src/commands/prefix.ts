@@ -21,16 +21,16 @@ export default class Prefix extends Command {
             info: {
                 description: 'Edit the guild prefix (requires admin)',
                 examples: ['<>', ''],
-                usage: "[new prefix]",
-                author: "Jacherr"
+                usage: '[new prefix]',
+                author: 'Jacherr'
             }
         });
     }
 
     public async execute(context: ICommandContext): Promise<Message | null> {
         if(context.args.length === 0) {
-            const prefix = this.assyst.prefixCache.get(<string>context.message.channel?.guild?.id) || await this.assyst.sql('select prefix from prefixes where guild = $1', [ context.message.channel?.guild?.id ]).then((r: QueryResult) => r.rows[0].prefix)
-            return context.reply(`Current prefix in **${context.message.channel?.guild?.name}**: \`${prefix}\``)
+            const prefix = this.assyst.prefixCache.get(<string>context.message.channel?.guild?.id) || await this.assyst.sql('select prefix from prefixes where guild = $1', [ context.message.channel?.guild?.id ]).then((r: QueryResult) => r.rows[0].prefix);
+            return context.reply(`Current prefix in **${context.message.channel?.guild?.name}**: \`${prefix}\``);
         }
         if(!context.message.channel?.guild?.can('ADMINISTRATOR', context.message.member) && !this.assyst.staff.owners.includes(context.message.author.id)) {
             return null;
@@ -42,17 +42,17 @@ export default class Prefix extends Command {
                     message: context.message.id,
                     user: context.message.author.id
                 }
-            })
+            });
         }
         const newPrefix: string = context.args[0];
         await this.assyst.sql('update prefixes set prefix = $1 where guild = $2', [newPrefix, <string>context.message.channel?.guild?.id]);
-        this.assyst.prefixCache.set(<string>context.message.channel?.guild?.id, newPrefix)
+        this.assyst.prefixCache.set(<string>context.message.channel?.guild?.id, newPrefix);
         return context.reply(`Prefix is now: \`${newPrefix}\``, {
             type: MESSAGE_TYPE_EMOTES.SUCCESS,
             storeAsResponseForUser: {
                 message: context.message.id,
                 user: context.message.author.id
             }
-        })
+        });
     }
 }

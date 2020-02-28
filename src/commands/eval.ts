@@ -4,7 +4,7 @@ import { PERMISSION_LEVELS, MESSAGE_TYPE_EMOTES, COOLDOWN_TYPES } from '../../li
 import { ICommandContext } from '../../lib/CInterfaces';
 import { Message } from 'detritus-client/lib/structures';
 
-const AsyncFunction = Object.getPrototypeOf(async () => { }).constructor
+const AsyncFunction = Object.getPrototypeOf(async () => { }).constructor;
 
 export default class Eval extends Command {
     constructor(assyst: Assyst) {
@@ -51,8 +51,8 @@ export default class Eval extends Command {
             info: {
                 description: 'Evaluate js code',
                 examples: ['1+1', 'this'],
-                usage: "[code]",
-                author: "Jacherr"
+                usage: '[code]',
+                author: 'Jacherr'
             },
             permissionLevel: PERMISSION_LEVELS.OWNER
         });
@@ -61,7 +61,7 @@ export default class Eval extends Command {
     public async execute(context: ICommandContext): Promise<Message | null> {
         let evaled;
         let start: number = Date.now();
-        let time: number
+        let time: number;
         try {
             if (context.checkForFlag('async')) {
                 const func = new AsyncFunction('context', context.args.join(' '));
@@ -69,7 +69,7 @@ export default class Eval extends Command {
             } else {
                 evaled = await Promise.resolve(eval(context.args.join(' '))); // eslint-disable-line no-eval
             }
-            time = Date.now() - start
+            time = Date.now() - start;
         } catch (err) {
             return this.sendMsg(context.message.channel, err.message, {
                 type: MESSAGE_TYPE_EMOTES.ERROR, storeAsResponseForUser: {
@@ -104,7 +104,7 @@ export default class Eval extends Command {
                     message: context.message.id
                 },
                 type: MESSAGE_TYPE_EMOTES.INFO
-            })
+            });
         }
 
         if (context.checkForFlag('files.gg') || fullLen > 1990) {
@@ -114,7 +114,7 @@ export default class Eval extends Command {
                     user: context.message.author.id,
                     message: context.message.id
                 }
-            })
+            });
         }
 
         if (context.checkForFlag('dm')) {

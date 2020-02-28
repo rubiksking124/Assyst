@@ -3,7 +3,7 @@ import { IFlag } from './Interfaces';
 import { promisify } from 'util';
 import { unlink, writeFile } from 'fs';
 import superagent from 'superagent';
-import { Channel, Attachment, Message, MessageEmbedThumbnail } from 'detritus-client/lib/structures'
+import { Attachment, Message, MessageEmbedThumbnail } from 'detritus-client/lib/structures';
 import Assyst from './Assyst.js';
 
 const promisifyUnlink = promisify(unlink);
@@ -31,9 +31,9 @@ export default class Utils {
 
     public checkForFlag(flags: Array<IFlag>, flagName: string): boolean {
         const flagNames: Array<string> = flags.map((i: IFlag) => {
-            return i.name
-        })
-        return flagNames.includes(flagName)
+            return i.name;
+        });
+        return flagNames.includes(flagName);
     }
 
     public getFlag(flags: Array<IFlag>, flagName: string): IFlag | null {
@@ -58,20 +58,20 @@ export default class Utils {
         if(!message.channel) {
             return undefined;
         } else if(message.attachments.length > 0) {
-            return message.attachments.first()
+            return message.attachments.first();
         }
-        const messages: Array<Message> = await message.channel?.fetchMessages({limit: amtOfMessages})
+        const messages: Array<Message> = await message.channel?.fetchMessages({limit: amtOfMessages});
         if(!messages) {
             return undefined;
         }
-        let attachment: MessageEmbedThumbnail | Attachment | undefined
+        let attachment: MessageEmbedThumbnail | Attachment | undefined;
         messages.forEach(message => {
             if(message.attachments.first() !== undefined && attachment === undefined) {
-                attachment = <Attachment>message.attachments.first()
+                attachment = <Attachment>message.attachments.first();
             } else if(message.embeds.length > 0 && message.embeds.toArray()[0].thumbnail && attachment === undefined) {
-                attachment = <MessageEmbedThumbnail>message.embeds.toArray()[0].thumbnail
+                attachment = <MessageEmbedThumbnail>message.embeds.toArray()[0].thumbnail;
             }
-        })
+        });
         return attachment;
     }
 
@@ -83,7 +83,7 @@ export default class Utils {
             .set('Authorization', tokens.gocodeit)
             .field('lang', language)
             .field('code', code)
-            .field('timeout', "60")
+            .field('timeout', '60')
             .then((v: any) => JSON.parse(v.text));
     }
 
