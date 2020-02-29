@@ -77,7 +77,7 @@ export default class Utils {
 
     public async runSandboxedCode(language: string, code: string): Promise<CodeResult> {
         return superagent
-            .post(this.assyst.apis.code)
+            .post(this.assyst.config.apis.code)
             .accept('application/json')
             .set('Content-Type', 'application/json')
             .set('Authorization', tokens.gocodeit)
@@ -89,7 +89,7 @@ export default class Utils {
 
     public async getLanguageList(): Promise<CodeList> {
         return superagent
-            .options(this.assyst.apis.code)
+            .options(this.assyst.config.apis.code)
             .accept('application/json')
             .set('Authorization', tokens.gocodeit)
             .then((v: any) => JSON.parse(v.text));

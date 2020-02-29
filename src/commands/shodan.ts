@@ -32,7 +32,7 @@ export default class Shodan extends Command {
                 message: context.message.id
             }
         });
-        const request = await this.request(this.assyst.apis.shodanSearch + '/?query=' + encodeURIComponent(context.args.join(' ')), REQUEST_TYPES.GET)
+        const request = await this.request(this.assyst.config.apis.shodanSearch + '/?query=' + encodeURIComponent(context.args.join(' ')), REQUEST_TYPES.GET)
             .then(v => v?.body);
         if (!message) return null;
         if (request.hosts.length === 0) {

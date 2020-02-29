@@ -66,7 +66,7 @@ export default class Tags extends Command {
                     name: context.message.author.username,
                     iconUrl: context.message.author.avatarUrl
                 },
-                color: this.assyst.embedColour,
+                color: this.assyst.config.embedColour,
                 title: `Tag stats: ${context.message.channel?.guild?.name}`,
                 fields: [
                     {
@@ -126,7 +126,7 @@ export default class Tags extends Command {
                 if((currentEmbedSize + tag.name.length + 2) > 2000 || tag === tags[tags.length - 1]) {
                     pages.push({ embed: {
                         description: currentPageTags.join(', '),
-                        color: this.assyst.embedColour
+                        color: this.assyst.config.embedColour
                     }});
                     currentPageTags = [];
                     currentEmbedSize = 0;
@@ -146,7 +146,7 @@ export default class Tags extends Command {
                                 `**Uses:** ${tag.uses}`,
                             inline: true
                         })),
-                        color: this.assyst.embedColour,
+                        color: this.assyst.config.embedColour,
                         footer: {
                             text: `Total guild tags: ${tags.length} | Page: ${(i / Tags.entriesPerPage) + 1}`
                         }

@@ -50,7 +50,7 @@ export default class Embed extends Command {
     }
 
     public async execute(context: ICommandContext): Promise<Message | null> {
-        const url = new URL(this.assyst.apis.embedLink);
+        const url = new URL(this.assyst.config.apis.embedLink);
         for (const flag of this.validFlags.map(v => v.name)) {
             if (context.checkForFlag(flag)) {
                 url.searchParams.set(flag, <string>context.getFlag(flag)?.value);

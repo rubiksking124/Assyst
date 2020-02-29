@@ -34,10 +34,9 @@ export default class OCR extends Command {
         });
         let url: string;
         if (context.args.length === 0) {
-            let attachment: MessageEmbedThumbnail | Attachment | undefined = await this.utils.getRecentAttachmentOrEmbed(context.message, this.assyst.searchMessages);
+            let attachment: MessageEmbedThumbnail | Attachment | undefined = await this.utils.getRecentAttachmentOrEmbed(context.message, this.assyst.config.searchMessages);
             if (attachment === undefined) {
-                console.log(attachment);
-                return context.reply(`Usage: \`\`\`md\n${this.assyst.defaultPrefix}${this.name} ${this.info.usage}\`\`\``, {
+                return context.reply(`Usage: \`\`\`md\n${this.assyst.config.defaultPrefix}${this.name} ${this.info.usage}\`\`\``, {
                     edit: processingMessage?.id,
                     type: MESSAGE_TYPE_EMOTES.INFO
                 });
@@ -60,7 +59,7 @@ export default class OCR extends Command {
                 type: MESSAGE_TYPE_EMOTES.ERROR
             });
         }
-        const response = await this.request(`${this.assyst.apis.ocr}?q=${url}`, REQUEST_TYPES.GET).catch((e: any) => {
+        const response = await this.request(`${this.assyst.config.apis.ocr}?q=${url}`, REQUEST_TYPES.GET).catch((e: any) => {
             return {
                 status: e.status,
                 body: null
