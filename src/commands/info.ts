@@ -30,7 +30,7 @@ export default class Info extends Command {
 
     public async execute(context: ICommandContext): Promise<Message | null> {
         const commitHash: string = git_rev_sync.short();
-        const version: string = this.assyst.version;
+        const version: string = this.assyst.config.version;
         const memoryUsage: string = (process.memoryUsage().rss / 1000 / 1000).toFixed(2);
         const guildCount: number = this.bot.guilds.size;
         const uptime: {
@@ -47,7 +47,7 @@ export default class Info extends Command {
             embed: {
                 title: 'Assyst Information',
                 description: `[Git](${gitRepo}) | [Invite](${this.bot.application?.oauth2UrlFormat({ scope: 'bot', permissions: 0 })}) | [Support](${support})`,
-                color: this.assyst.embedColour,
+                color: this.assyst.config.embedColour,
                 fields: [
                     {
                         name: 'Counts',

@@ -257,7 +257,7 @@ export default class Parser {
             return this.client.user?.username;
 
         case 'prefix':
-            return (this.context.message && this.assyst.defaultPrefix) || 'N/A';
+            return (this.context.message && this.assyst.config.defaultPrefix) || 'N/A';
 
         case 'range': {
             const lower: number = Math.min(...splitArgs.map((i: string) => parseInt(i))) || 0;

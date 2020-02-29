@@ -28,6 +28,7 @@ export interface ICommandOptions {
     nsfw?: boolean,
     visibleInHelp?: boolean,
     argsMin?: number,
+    canBeDisabled?: boolean
 }
 export interface ICommandContext {
     args: string[],

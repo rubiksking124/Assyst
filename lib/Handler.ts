@@ -15,32 +15,37 @@ export default class Handler {
     }
 
     public async handleMessage(message: Message): Promise<void> {
-        if (!message.channel || !message.channel.guild || message.author.bot) return;
+        // Checks that message originated from guild text channel and author is not a bot
+        if (!message.channel || !message.channel.guild || message.author.bot || !message.guild) return;
 
-        if(this.assyst.devOnly && !this.assyst.staff.owners.includes(message.author.id)) return;
+        // Checks that the bot is not dev-only
+        if(this.assyst.devOnly && !this.assyst.config.staff.owners.includes(message.author.id)) return;
 
+        // Checks the current guild prefix (and sets if none exists)
         let prefix: string | undefined;
         if(!devMode) {
-            if(!this.assyst.prefixCache.get(message.channel.guild.id)) {
+            if(!this.assyst.caches.prefixes.get(message.channel.guild.id)) {
                 prefix = await this.assyst.sql('select prefix from prefixes where guild = $1', [message.channel.guild.id]).then((r: QueryResult) => r.rows[0] ? r.rows[0].prefix : undefined);
-                if(prefix) this.assyst.prefixCache.set(message.channel.guild.id, prefix);
+                if(prefix) this.assyst.caches.prefixes.set(message.channel.guild.id, prefix);
             } else {
-                prefix = this.assyst.prefixCache.get(message.channel.guild.id);
+                prefix = this.assyst.caches.prefixes.get(message.channel.guild.id);
             }
     
             if(prefix === undefined) {
-                prefix = this.assyst.defaultPrefix;
+                prefix = this.assyst.config.defaultPrefix;
                 await this.assyst.sql('insert into prefixes ("guild", "prefix") values ($1, $2)', [message.channel.guild.id, '<<']);
             }
         } else {
-            prefix = this.assyst.devModePrefix;
+            prefix = this.assyst.config.devModePrefix;
         }
 
+        // Checks that message starts with correct prefix or mention
         const { content } = message;
         if (!content.startsWith(prefix) && !content.startsWith(`<@${this.assyst.bot.user?.id}>`) && !content.startsWith(`<@!${this.assyst.bot.user?.id}>`)) {
             return;
         }
 
+        // Sets current prefix to mention if the prefix is a mention
         if(content.startsWith(`<@${this.assyst.bot.user?.id}>`)) {
             prefix = `<@${this.assyst.bot.user?.id}> `;
         } else if(content.startsWith(`<@!${this.assyst.bot.user?.id}>`)) {
@@ -49,6 +54,7 @@ export default class Handler {
 
         let [command, ...args] = content.substr(prefix.length).split(/ +/);
 
+        // If command does not exist then return
         if (!this.getCommand(command)) {
             return;
         }
@@ -59,6 +65,21 @@ export default class Handler {
             return;
         }
 
+        // Check that command is not disabled
+        if(this.assyst.caches.disabledCommands.get(message.guild?.id + targetCommand.name) && this.assyst.caches.disabledCommands.get(message.guild?.id + targetCommand.name) === true) {
+            return;
+        } else if(!this.assyst.caches.disabledCommands.get(message.guild?.id + targetCommand.name)) {
+            const checkIfDisabled = await this.assyst.sql('select command from disabled_commands where guild = $1', [message.guild.id]).then((r: QueryResult) => r.rows.map((i: { command: string }) => i.command));
+            if(checkIfDisabled.includes(targetCommand.name)) {
+                this.assyst.caches.disabledCommands.set(message.guild.id + targetCommand.name, true);
+                return;
+            } else {
+                this.assyst.caches.disabledCommands.set(message.guild.id + targetCommand.name, false);
+            }
+        }
+        
+
+        // Checks type of cooldown to get correct id
         let idToCheck: string;
         switch (targetCommand.cooldown.type) {
         case COOLDOWN_TYPES.CHANNEL:
@@ -97,7 +118,7 @@ export default class Handler {
                     user: message.author.id
                 }
             });
-        } else if(targetCommand.nsfw && !message.channel.nsfw && !this.assyst.staff.owners.includes(message.author.id)) {
+        } else if(targetCommand.nsfw && !message.channel.nsfw && !this.assyst.config.staff.owners.includes(message.author.id)) {
             return void this.assyst.sendMsg(message.channel.id, 'NSFW command, requires channel to be marked as NSFW!', {
                 storeAsResponseForUser: {
                     message: message.id,
@@ -186,9 +207,9 @@ export default class Handler {
     }
 
     private checkPermissions(id: string): number {
-        if (this.assyst.staff.owners.includes(id)) {
+        if (this.assyst.config.staff.owners.includes(id)) {
             return PERMISSION_LEVELS.OWNER;
-        } else if (this.assyst.staff.admins.includes(id)) {
+        } else if (this.assyst.config.staff.admins.includes(id)) {
             return PERMISSION_LEVELS.ADMIN;
         } else {
             return PERMISSION_LEVELS.NORMAL;

@@ -1,6 +1,6 @@
 import Command from '../../lib/Command';
 import Assyst from '../../lib/Assyst';
-import { COOLDOWN_TYPES, PERMISSION_LEVELS } from '../../lib/Enums';
+import { COOLDOWN_TYPES, PERMISSION_LEVELS, MESSAGE_TYPE_EMOTES } from '../../lib/Enums';
 import { ICommandContext } from '../../lib/CInterfaces';
 import { Message } from 'detritus-client/lib/structures';
 import { inspect } from 'util';
@@ -31,7 +31,18 @@ export default class Cmd extends Command {
 
     public async execute(context: ICommandContext): Promise<Message | null> {
         const query = context.args.join(' ');
-        const result = await this.assyst.sql(query);
+        let result;
+        try {
+            result = await this.assyst.sql(context.args.join(' '));
+        } catch(e) {
+            return context.reply(e.message, {
+                storeAsResponseForUser: {
+                    message: context.message.id,
+                    user: context.message.author.id
+                },
+                type: MESSAGE_TYPE_EMOTES.ERROR
+            });
+        }
         const rows = inspect(result.rows);
         return context.reply(Markup.codeblock(rows, { language: 'js', limit: 1990 }), {
             storeAsResponseForUser: {

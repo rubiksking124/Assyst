@@ -45,7 +45,7 @@ export default class Help extends Command {
                 embed: {
                     title: `${this.bot.user?.username}'s command list`,
                     description: `${Array.from(this.assyst.commands).filter(c => c[1].permissionLevel === 0).map(a => `**${a[1].name}** - ${a[1].info.description}`).join('\n')}`,
-                    color: this.assyst.embedColour,
+                    color: this.assyst.config.embedColour,
                     author: {
                         name: this.bot.user?.username,
                         iconUrl: this.bot.user?.avatarUrl
@@ -83,7 +83,7 @@ export default class Help extends Command {
                     embed: {
                         title: `${command.name} - flags`,
                         description: flags,
-                        color: this.assyst.embedColour,
+                        color: this.assyst.config.embedColour,
                         author: {
                             name: this.bot.user?.username,
                             iconUrl: this.bot.user?.avatarUrl
@@ -101,7 +101,7 @@ export default class Help extends Command {
                 embed: {
                     description: command.info.description || '?',
                     title: command.name || '?',
-                    color: this.assyst.embedColour || 0,
+                    color: this.assyst.config.embedColour || 0,
                     footer: {
                         text: 'Use the \'-flags\' flag to get more information on this command\'s flags.\nCommand parameters in <> are optional.'
                     },
@@ -112,13 +112,13 @@ export default class Help extends Command {
                     fields: [
                         {
                             name: 'Usage',
-                            value: `\`\`\`md\n${this.assyst.defaultPrefix}${command.name} ${command.info.usage}\`\`\``,
+                            value: `\`\`\`md\n${this.assyst.config.defaultPrefix}${command.name} ${command.info.usage}\`\`\``,
                             inline: true
                         },
                         {
                             name: 'Examples',
                             value: `\`\`\`fix\n${command.info.examples.map((e: string) => {
-                                return `${this.assyst.defaultPrefix}${command.name} ${e}`;
+                                return `${this.assyst.config.defaultPrefix}${command.name} ${e}`;
                             }).join('\n')}\`\`\``,
                             inline: true,
                         },

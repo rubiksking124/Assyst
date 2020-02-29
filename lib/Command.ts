@@ -15,6 +15,7 @@ export default class Command {
     public visibleInHelp: boolean;
     public info: IInfo;
     public assyst: Assyst;
+    public canBeDisabled: boolean
 
     constructor(options: ICommandOptions) {
         this.name = options.name;
@@ -35,6 +36,7 @@ export default class Command {
         }
         this.validFlags = options.validFlags || [];
         this.permissionLevel = options.permissionLevel || PERMISSION_LEVELS.NORMAL;
+        this.canBeDisabled = options.canBeDisabled || true;
     }
 
     public execute(context: ICommandContext): Promise<Message | null> {
