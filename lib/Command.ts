@@ -36,7 +36,11 @@ export default class Command {
         }
         this.validFlags = options.validFlags || [];
         this.permissionLevel = options.permissionLevel || PERMISSION_LEVELS.NORMAL;
-        this.canBeDisabled = options.canBeDisabled || true;
+        if(options.canBeDisabled === undefined) {
+            this.canBeDisabled = false;
+        } else {
+            this.canBeDisabled = options.canBeDisabled;
+        }
     }
 
     public execute(context: ICommandContext): Promise<Message | null> {
