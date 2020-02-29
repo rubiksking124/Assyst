@@ -22,7 +22,8 @@ export default class Command_ extends Command {
                 examples: ['shodan'],
                 usage: '[command]',
                 author: 'Jacherr'
-            }
+            },
+            canBeDisabled: false
         });
     }
 

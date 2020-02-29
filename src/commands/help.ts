@@ -25,7 +25,8 @@ export default class Help extends Command {
                 examples: ['', 'ping', 'dd -flags'],
                 usage: '<command> <-flags>',
                 author: 'y21'
-            }
+            },
+            canBeDisabled: false
         });
     }
 

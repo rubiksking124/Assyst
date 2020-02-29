@@ -23,7 +23,8 @@ export default class Prefix extends Command {
                 examples: ['<>', ''],
                 usage: '[new prefix]',
                 author: 'Jacherr'
-            }
+            },
+            canBeDisabled: false
         });
     }
 
