@@ -37,7 +37,7 @@ export default class Command {
         this.validFlags = options.validFlags || [];
         this.permissionLevel = options.permissionLevel || PERMISSION_LEVELS.NORMAL;
         if(options.canBeDisabled === undefined) {
-            this.canBeDisabled = false;
+            this.canBeDisabled = true;
         } else {
             this.canBeDisabled = options.canBeDisabled;
         }
