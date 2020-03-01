@@ -80,6 +80,9 @@ export default class Parser {
         if (this.stackSize > 1000)
             throw new Error(`Stack size exceeded at: \`${input}\``);
 
+        if (input.length > 10000)
+            throw new Error(`Memory exceeded at: \`${input}\``);
+
         if (initial && this.parsedStatements < this.parseLimit) input = await this.subParse(input, tagArgs, tag, preParseTags, undefined);
 
         let tagEnd, tagStart;
@@ -325,9 +328,9 @@ export default class Parser {
         case 'note':
             return;
 
-            /* case 'eval':
+        case 'eval':
             if(this.parseLimit > this.parsedStatements ) return await this.subParse(rawArgs.replace(/\0/g, ''), args, tag, false, undefined);
-            else return rawArgs; */
+            else return rawArgs; 
             
         case 'args':
             return args.join(' ');
