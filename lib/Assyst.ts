@@ -59,8 +59,8 @@ export default class Assyst {
             gateway: {
                 identifyProperties: {
                     $browser: 'Discord iOS'
-                }
-            }
+                },
+            },
         });
 
         this.utils = new AssystUtils(this);

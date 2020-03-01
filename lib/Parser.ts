@@ -34,6 +34,10 @@ export default class Parser {
     private nsfw: boolean;
     private variables: Map<string, string>
     private lastIfResult: boolean = false
+    private totalRepeats: number
+    private repeatLimit: number
+    private parseLimit: number
+    private parsedStatements: number
 
     constructor(client: ShardClient, context: { message: Message, getMemberFromString: Function }, assyst: Assyst) {
         this.client = client;
@@ -46,6 +50,12 @@ export default class Parser {
 
         this.attachments = [];
         this.imagescripts = [];
+
+        this.totalRepeats = 0;
+        this.repeatLimit = 2000;
+
+        this.parseLimit = 100;
+        this.parsedStatements = 0;
 
         this.nsfw = false;
         utils = new Utils(this.assyst);
@@ -62,21 +72,25 @@ export default class Parser {
     }
 
     async subParse(input: string, tagArgs: string[], tag: ITag, filter: string[] | false, initial: boolean | undefined): Promise<string> {
+        if(this.parsedStatements > this.parseLimit) {
+            return input;
+        }
+
         this.stackSize++;
         if (this.stackSize > 1000)
             throw new Error(`Stack size exceeded at: \`${input}\``);
 
-        if (initial) input = await this.subParse(input, tagArgs, tag, preParseTags, undefined);
+        if (initial && this.parsedStatements < this.parseLimit) input = await this.subParse(input, tagArgs, tag, preParseTags, undefined);
 
         let tagEnd, tagStart;
 
         for (let i = 0; i < input.length; i++) {
 
-            if (input[i] === '}' && (input[i + 1] !== '\\' && input[i - 1] !== '\0')) {
+            if (input[i] === '}' && (input[i + 1] !== '\\' && input[i - 1] !== '\0') && this.parsedStatements < this.parseLimit) {
                 tagEnd = i;
 
                 for (let e = tagEnd; e >= 0; e--) {
-                    if (input[e] === '{' && (input[i - 1] !== '\\' && input[e + 1] !== '\0')) {
+                    if (input[e] === '{' && (input[i - 1] !== '\\' && input[e + 1] !== '\0') && this.parsedStatements < this.parseLimit) {
                         tagStart = e + 1;
 
                         const toParse: string = input.slice(tagStart, tagEnd).trim();
@@ -113,12 +127,14 @@ export default class Parser {
             }
         }
 
-        if (initial) input = await this.subParse(input, tagArgs, tag, postParseTags, undefined);
+        if (initial && this.parsedStatements < this.parseLimit) input = await this.subParse(input, tagArgs, tag, postParseTags, undefined);
 
         return input;
     }
 
     async getData(key: string, rawArgs: string, splitArgs: string[], args: string[], tag: ITag) {
+        this.parsedStatements++;
+        if(this.parsedStatements > this.parseLimit) return rawArgs;
         key = key.trim();
         rawArgs = rawArgs.trim();
         splitArgs = splitArgs.map(arg => arg.trim());
@@ -265,6 +281,16 @@ export default class Parser {
             return Math.round(Math.random() * (upper - lower)) + lower;
         }
 
+        case 'repeat': {
+            if(isNaN(parseInt(splitArgs[0]))) return;
+            let amtOfRepeats: number;
+            if(parseInt(splitArgs[0]) > this.repeatLimit) amtOfRepeats = this.repeatLimit;
+            else if(parseInt(splitArgs[0]) + this.totalRepeats > this.repeatLimit) amtOfRepeats = this.repeatLimit - (parseInt(splitArgs[0]) + this.totalRepeats);
+            else if(this.totalRepeats >= this.repeatLimit) amtOfRepeats = 1;
+            else amtOfRepeats = parseInt(splitArgs[0]);
+            return splitArgs[1].repeat(amtOfRepeats);
+        }
+
         case 'random':
         case 'choose':
             return splitArgs[Math.floor(Math.random() * splitArgs.length)];
@@ -300,8 +326,8 @@ export default class Parser {
             return;
 
         case 'eval':
-            return await this.subParse(rawArgs.replace(/\0/g, ''), args, tag, false, undefined);
-
+            if(this.parseLimit > this.parsedStatements ) return await this.subParse(rawArgs.replace(/\0/g, ''), args, tag, false, undefined);
+            else return rawArgs;
         case 'args':
             return args.join(' ');
 			
@@ -590,9 +616,9 @@ export default class Parser {
 
                 return Parser.escapeTag(rexResult.data.res);
             }
-
+            this.parsedStatements--;
             return `{${key}${rawArgs ? `:${rawArgs}` : ''}}`;
-        }
+        } 
     }
 
     static timespanToMillis(timespan: string) {
