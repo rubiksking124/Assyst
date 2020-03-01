@@ -325,9 +325,10 @@ export default class Parser {
         case 'note':
             return;
 
-        case 'eval':
+            /* case 'eval':
             if(this.parseLimit > this.parsedStatements ) return await this.subParse(rawArgs.replace(/\0/g, ''), args, tag, false, undefined);
-            else return rawArgs;
+            else return rawArgs; */
+            
         case 'args':
             return args.join(' ');
 			
