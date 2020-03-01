@@ -1,13 +1,13 @@
 import fetch from 'node-fetch';
 import { ShardClient } from 'detritus-client';
-import { Message, Member, ConnectedAccount, Role } from 'detritus-client/lib/structures';
+import { Message, Member, Role } from 'detritus-client/lib/structures';
 import Assyst from './Assyst';
-import { REQUEST_TYPES } from './Enums';
 import { tokens } from '../privateConfig.json';
 import { options } from 'superagent';
 import Config from './Config';
 import { ITag } from './Interfaces';
 import Utils from './Utils';
+import { Permissions } from 'detritus-client/lib/constants';
 
 let utils: Utils;
 const preParseTags: Array<string> = ['ignore', 'note'];
@@ -237,6 +237,10 @@ export default class Parser {
             } catch(e) {
                 return e.message;
             }
+        }
+
+        case 'permconvert': {
+            return Object(Permissions)[<string>rawArgs.toString()] || '';
         }
 
         case 'hasrole': {

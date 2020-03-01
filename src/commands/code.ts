@@ -77,7 +77,7 @@ export default class Code extends Command {
             });
         }
 
-        if(!res.data.res) {
+        if(!res.data.res && res.data.res !== '') {
             return context.reply(`Unexpected response from API: ${res.data.res}`, {
                 type: MESSAGE_TYPE_EMOTES.ERROR,
                 edit: processingMessage?.id

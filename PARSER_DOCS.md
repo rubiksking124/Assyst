@@ -49,8 +49,14 @@ Returns the bots username
 Finds if the specified user has the specified permission. The user is optional, it defaults to the invocator.
 [List of permissions](https://github.com/itslukej/discord.d.ts/blob/master/src/Permissions.ts)
 
+### `{permconvert:int}`
+Returns the permission name for specified integer or vice versa.
+
 ### `{hasrole:name|user}`
 Finds if the specified user has the specified role. The user optional, it defaults to the invocator.
+
+### `{repeat:amount|text}`
+Repeat the specified text by the amount of times specified. Max repeats in 1 tag is 2000.
 
 ---
 
