@@ -60,7 +60,7 @@ export default class Trace extends Command {
                             },
                             {
                                 name: 'Args',
-                                value: trace.context.args.join(' '),
+                                value: trace.context.args.join(' ') || 'None',
                                 inline: true
                             },
                             {
@@ -70,10 +70,49 @@ export default class Trace extends Command {
                             }
                         ]
                     }
+                }, {
+                    storeAsResponseForUser: {
+                        user: context.message.author.id,
+                        message: context.message.id
+                    }
                 });
             }
         } else {
-            return null;
+            let pages: any[] = [];
+            for(let i = 0; i < this.assyst.traces.length; i += 5) {
+                let fields: any[] = [];
+                this.assyst.traces.slice(i, i + 5).forEach((trace) => {
+                    fields.push({
+                        name: trace.identifier,
+                        value: `\`\`\`${trace.error.message}\`\`\``,
+                        inline: false
+                    });
+                });
+                pages.push({embed: {
+                    title: `Traces: Page ${(i / 5) + 1}`,
+                    fields,
+                    color: this.assyst.config.embedColour,
+                    author: {
+                        name: this.bot.user?.username,
+                        iconUrl: this.bot.user?.avatarUrl
+                    }
+                }});
+            }
+            if(pages.length === 0) {
+                return context.reply('There are no stored traces.', {
+                    type: MESSAGE_TYPE_EMOTES.INFO,
+                    storeAsResponseForUser: {
+                        user: context.message.author.id,
+                        message: context.message.id
+                    }
+                });
+            }
+            const paginator = await this.assyst.paginator.createReactionPaginator({
+                message: context.message,
+                pages
+            });
+            this.assyst.addResponseMessage(context.message, paginator.commandMessage.id);
+            return paginator.commandMessage;
         }
     }
 }
