@@ -1,6 +1,6 @@
 import { ShardClient } from 'detritus-client';
+import Command from './Command';
 import { Message, Channel, Guild } from 'detritus-client/lib/structures';
-import { PERMISSIONS_ALL } from 'detritus-client/lib/constants';
 import { IFlagInfo, IInfo, IFlag, ICooldownType, ISendMsgOptions } from './Interfaces';
 import Config from './Config';
 import Assyst from './Assyst';
@@ -37,4 +37,11 @@ export interface ICommandContext {
     flags: Array<IFlag>,
     getFlag: (flagName: string) => IFlag | null,
     checkForFlag: (flagName: string) => boolean
+}
+export interface ITraceOptions {
+    guild: string,
+    thrownAt: Date,
+    command: Command,
+    context: ICommandContext,
+    error: Error
 }

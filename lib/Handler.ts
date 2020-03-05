@@ -6,6 +6,7 @@ import { PERMISSION_LEVELS, COOLDOWN_TYPES, MESSAGE_TYPE_EMOTES } from './Enums'
 import { QueryResult } from 'pg';
 import { devMode } from '../privateConfig.json';
 import { DefiniteMessage } from './CInterfaces';
+import Trace from './Trace';
 
 export default class Handler {
     public assyst: Assyst;
@@ -141,7 +142,22 @@ export default class Handler {
                 checkForFlag: this.assyst.utils.checkForFlag.bind(this.assyst, flags)
             });
         } catch (e) {
-            message.channel.createMessage(`:warning: Command raised an exception: \`\`\`js\n${e.stack}\n\`\`\``);
+            let trace: Trace = new Trace({
+                thrownAt: new Date(),
+                guild: message.guild.id,
+                context: {
+                    args,
+                    message: <DefiniteMessage>message,
+                    flags,
+                    reply: this.assyst.sendMsg.bind(this.assyst, message.channelId),
+                    getFlag: this.assyst.utils.getFlag.bind(this.assyst, flags),
+                    checkForFlag: this.assyst.utils.checkForFlag.bind(this.assyst, flags)
+                },
+                command: targetCommand,
+                error: e
+            });
+            this.assyst.traces.push(trace);
+            message.channel.createMessage(`:warning: Command raised an exception: \`\`\`js\n${e.message}\n\`\`\`You can join the support server (in the info command) to report this, and if you do, quote this exception ID: \`${trace.identifier}\``);
         }
     }
 

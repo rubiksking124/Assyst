@@ -16,6 +16,7 @@ import { db } from '../privateConfig.json';
 import Parser from './Parser';
 import { BaseCollection } from 'detritus-client/lib/collections';
 import Config from './Config';
+import Trace from './Trace';
 
 const { Paginator } = require('detritus-pagination'); // TODO: any because I fucked up typings lol, will fix soon
 const { Markup } = Utils;
@@ -38,6 +39,7 @@ export default class Assyst {
         disabledCommands: BaseCollection<string, boolean>
     }
     public config: Config
+    public traces: Trace[]
 
     constructor(options: IAssystOptions) {
         this.devOnly = false;
@@ -68,6 +70,7 @@ export default class Assyst {
         this.responseMessages = new Map();
         this.handler = new Handler(this);
         this.resolver = new Resolver(this);
+        this.traces = [];
 
         this.caches = {
             prefixes: new BaseCollection({
@@ -77,6 +80,7 @@ export default class Assyst {
                 expire: 60000
             })
         };
+        
         this.config = options.config;
 
         this.cooldownManager = new CooldownManager();
@@ -115,6 +119,17 @@ export default class Assyst {
 
         return this.commands;
     }
+
+    /* private async initMee6RoleCheckInterval(): Promise<void> {
+        const roleRewardInfo = <[{
+            guild: string,
+            role: string,
+            level: number
+        }]>await this.sql('select * from mee6_role_rewards').then((r: QueryResult) => r.rows);
+        roleRewardInfo.forEach(row => {
+            
+        });
+    } */
 
     private initListeners(): void {
         this.bot.on('messageCreate', (context: Context) => {

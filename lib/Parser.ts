@@ -487,6 +487,11 @@ export default class Parser {
             else if (splitArgs[0] === 'server')
                 return member.joinedAt?.toLocaleString();
 
+            else if (splitArgs[0] === 'discordunix')
+                return member.user.createdAtUnix;
+            
+            else if (splitArgs[0] === 'serverunix')
+                return member.joinedAtUnix;
             else return '';
         }
 

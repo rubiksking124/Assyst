@@ -74,14 +74,14 @@ export default class Tag extends Command {
                 await this.assyst.sql('update tags set uses = $1 where name = $2 and guild = $3', [tag.uses, tag.name, context.message.channel?.guild?.id]);
                 result = (await this.assyst.parseNew(tag.content, context.message, context.args, { name: context.args[0], owner: tag.author })).result;
             }
-            if (result.length <= 0 || /^\s$/g.test(result)) {
+            if (result.trim().length <= 0 || /^\s$/g.test(result)) {
                 result = ':warning: `Tag returned an empty response.`';
             }
             if(context.checkForFlag('files.gg') && !context.checkForFlag('raw') && !context.checkForFlag('raw2') || Markup.escape.mentions(result).length > 1995) {
                 if(result.length < 200000) result = (await this.utils.uploadToFilesGG(result, `${tag.name}.txt`));
                 else result = ':warning: `The tag output was longer than 200,000 characters, it will not be uploaded.`';
             }
-            return context.reply(result.trim(), { //zws escape in this result
+            return context.reply(`\u200b${result.trim()}`, { //zws escape in this result
                 storeAsResponseForUser: {
                     user: context.message.author.id,
                     message: context.message.id

@@ -240,7 +240,7 @@ Usable `format` keywords:
 
 ### `{joined:type|user}`
 Returns the join timestamp of the given user (or the invoking user if no user is given)  
-`type`: Either `discord` or `server`
+`type`: Either `discord`, `server`, `discordunix` or `serverunix`
 
 ### `{created:server|channel}`
 Returns the creation date of the current channel or current server
