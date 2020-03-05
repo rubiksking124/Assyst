@@ -37,7 +37,7 @@ export default class Screenshot extends Command {
             }
         });
         try {
-            site = await this.request(this.assyst.config.apis.fAPI, REQUEST_TYPES.POST, {
+            site = await this.request(this.assyst.config.apis.fAPI + '/screenshot', REQUEST_TYPES.POST, {
                 'Authorization': tokens.fapi,
                 'Content-Type': 'application/json',
             },
