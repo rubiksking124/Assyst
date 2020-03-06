@@ -77,7 +77,7 @@ export default class Assyst {
                 expire: options.config.prefixCacheExpire
             }),
             disabledCommands: new BaseCollection({
-                expire: 60000
+                expire: 86400000
             })
         };
         

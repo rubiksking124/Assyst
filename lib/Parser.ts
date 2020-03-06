@@ -54,7 +54,7 @@ export default class Parser {
         this.totalRepeats = 0;
         this.repeatLimit = 2000;
 
-        this.parseLimit = 100;
+        this.parseLimit = 1000;
         this.parsedStatements = 0;
 
         this.nsfw = false;

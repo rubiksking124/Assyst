@@ -7,7 +7,7 @@ import { inspect } from 'util';
 import { Utils } from 'detritus-client';
 const { Markup } = Utils;
 
-export default class Cmd extends Command {
+export default class SQL extends Command {
     constructor(assyst: Assyst) {
         super({
             name: 'sql',

@@ -35,7 +35,7 @@ export default class Config {
     public readonly errorChannel: string = '412350028502269973';
     public readonly embedColour: number = 0xf4632e;
     public readonly searchMessages: number = 50;
-    public readonly prefixCacheExpire: number = 60000;
+    public readonly prefixCacheExpire: number = 86400000;
     public readonly statusRotas: IStatusRota = { statuses: [
         {
             name: '@Assyst help',
