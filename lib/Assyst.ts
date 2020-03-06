@@ -63,6 +63,7 @@ export default class Assyst {
                 identifyProperties: {
                     $browser: 'Discord iOS'
                 },
+                loadAllMembers: true
             },
         });
 
