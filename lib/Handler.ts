@@ -133,6 +133,7 @@ export default class Handler {
         args = this.removeFlags(args, flags);
 
         try {
+            this.assyst.metrics.commands++;
             await targetCommand.execute({
                 args,
                 message: <DefiniteMessage>message,

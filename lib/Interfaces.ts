@@ -83,3 +83,8 @@ export interface IStatusRota {
     statuses: IStatus[],
     delay: number
 }
+
+export interface IMetrics {
+    eventRate: number,
+    commands: number
+}

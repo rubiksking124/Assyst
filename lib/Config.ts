@@ -22,7 +22,8 @@ export default class Config {
         shodanSearch: 'https://shodan-search-api.y21.workers.dev',
         embedLink: 'https://discord-embed.y21.workers.dev',
         ocr: 'https://api.tsu.sh/google/ocr',
-        code: 'https://api.gocode.it/exec/'
+        code: 'https://api.gocode.it/exec/',
+        identify: 'https://captionbot.azurewebsites.net/api/messages?language=en-US'
     };
     public readonly reactions = {
         previousPage: '⬅️',

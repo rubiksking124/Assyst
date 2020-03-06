@@ -51,7 +51,7 @@ export default class Info extends Command {
                 fields: [
                     {
                         name: 'Counts',
-                        value: `\`\`\`ml\nGuilds: ${guildCount}\n\`\`\``,
+                        value: `\`\`\`ml\nGuilds: ${guildCount}\nEvents: ${this.assyst.metrics.eventRate}/sec\nCommands: ${this.assyst.metrics.commands} (this session)\`\`\``,
                         inline: false
                     },
                     {

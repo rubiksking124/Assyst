@@ -1,6 +1,6 @@
 import { ShardClient, Utils } from 'detritus-client';
 import { IAssystOptions } from './CInterfaces';
-import { ISendMsgOptions, ICommandResponse, ITag } from './Interfaces';
+import { ISendMsgOptions, ICommandResponse, ITag, IMetrics } from './Interfaces';
 import Command from './Command';
 import AssystUtils from './Utils';
 import Handler from './Handler';
@@ -40,6 +40,7 @@ export default class Assyst {
     }
     public config: Config
     public traces: Trace[]
+    public metrics: IMetrics
 
     constructor(options: IAssystOptions) {
         this.devOnly = false;
@@ -65,6 +66,10 @@ export default class Assyst {
             },
         });
 
+        this.metrics = {
+            eventRate: 0,
+            commands: 0
+        };
         this.utils = new AssystUtils(this);
         this.commands = new Map();
         this.responseMessages = new Map();
@@ -103,6 +108,7 @@ export default class Assyst {
                 console.log(`Loaded ${c.size} commands`);
             });
 
+        this.initEventCounter();
         this.initStatusRota();
         this.initListeners();
     }
@@ -130,6 +136,17 @@ export default class Assyst {
             
         });
     } */
+
+    private initEventCounter(): void {
+        let currentEventsInInterval: number = 0;
+        this.bot.on('raw', () => {
+            currentEventsInInterval++;
+        });
+        setInterval(() => {
+            this.metrics.eventRate = currentEventsInInterval;
+            currentEventsInInterval = 0;
+        }, 1000);
+    }
 
     private initListeners(): void {
         this.bot.on('messageCreate', (context: Context) => {
