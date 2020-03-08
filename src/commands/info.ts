@@ -41,7 +41,7 @@ export default class Info extends Command {
         } = this.utils.elapsed(process.uptime() * 1000);
         const processor: string = `${os.cpus().length}x ${os.cpus()[0].model}`;
         const gitRepo: string = homepage;
-        const support: string = 'https://discord.gg/HNvk5UV';
+        const support: string = 'https://jacher.io/assyst/';
         const dbSize: string = await this.assyst.sql('select pg_size_pretty(pg_database_size(\'assyst\'))').then(r => r.rows[0].pg_size_pretty);
         return this.sendMsg(context.message.channel, {
             embed: {

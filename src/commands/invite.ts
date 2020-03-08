@@ -26,7 +26,7 @@ export default class Cmd extends Command {
     }
 
     public async execute(context: ICommandContext): Promise<Message | null> {
-        return context.reply(`Invite the bot with this link: <${this.bot.application?.oauth2UrlFormat({ scope: 'bot', permissions: 0 })}>\nJoin the support server with this link: <https://discord.gg/HNvk5UV>`, {
+        return context.reply(`Invite the bot with this link: <${this.bot.application?.oauth2UrlFormat({ scope: 'bot', permissions: 0 })}>\nJoin the support server with this link: <https://jacher.io/assyst>`, {
             storeAsResponseForUser: {
                 user: context.message.author.id,
                 message: context.message.id
