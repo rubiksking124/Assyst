@@ -28,6 +28,12 @@ export default class Screenshot extends Command {
     }
 
     public async execute(context: ICommandContext): Promise<Message | null> {
+        let nsfw: string;
+        if(context.message.channel.nsfw) {
+            nsfw = 'true';
+        } else {
+            nsfw = 'false';
+        }
         let site: any;
         const processingMessage: Message | null = await context.reply('Processing...', {
             type: MESSAGE_TYPE_EMOTES.LOADING, storeAsResponseForUser: {
@@ -36,7 +42,7 @@ export default class Screenshot extends Command {
             }
         });
         try {
-            site = await this.request(this.assyst.config.apis.fAPI + '/screenshot', REQUEST_TYPES.POST, {
+            site = await this.request(this.assyst.config.apis.fAPI + '/screenshot?allow_nsfw=' + nsfw, REQUEST_TYPES.POST, {
                 'Authorization': tokens.fapi,
                 'Content-Type': 'application/json',
             },
