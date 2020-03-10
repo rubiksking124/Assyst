@@ -1,24 +1,35 @@
-import { ShardClient, Utils } from 'detritus-client';
+// structures
 import { IAssystOptions } from './CInterfaces';
 import { ISendMsgOptions, ICommandResponse, ITag, IMetrics } from './Interfaces';
+
+import { MESSAGE_TYPE_EMOTES, REQUEST_TYPES } from './Enums';
+
+// misc
+import { readdirSync } from 'fs';
+import superagent from 'superagent';
+
+// detritus stuff
+import { ShardClient, Utils } from 'detritus-client';
+import { Context } from 'detritus-client/lib/command';
+import { ChannelGuildText, Message } from 'detritus-client/lib/structures';
+import { BaseCollection } from 'detritus-client/lib/collections';
+
+// database stuff
+import { Pool, QueryResult } from 'pg';
+import { db } from '../privateConfig.json';
+
+// classes defined in lib
+import CooldownManager from './CooldownManager';
 import Command from './Command';
 import AssystUtils from './Utils';
 import Handler from './Handler';
 import Resolver from './Resolver';
-import { readdirSync } from 'fs';
-import { Context } from 'detritus-client/lib/command';
-import { ChannelGuildText, Message } from 'detritus-client/lib/structures';
-import { MESSAGE_TYPE_EMOTES, REQUEST_TYPES } from './Enums';
-import CooldownManager from './CooldownManager';
-import superagent from 'superagent';
-import { Pool, QueryResult } from 'pg';
-import { db } from '../privateConfig.json';
-import Parser from './Parser';
-import { BaseCollection } from 'detritus-client/lib/collections';
 import Config from './Config';
 import Trace from './Trace';
+import Parser from './Parser';
 
 const { Paginator } = require('detritus-pagination'); // TODO: any because I fucked up typings lol, will fix soon
+
 const { Markup } = Utils;
 
 export default class Assyst {
@@ -71,6 +82,7 @@ export default class Assyst {
             eventRate: 0,
             commands: 0
         };
+        
         this.utils = new AssystUtils(this);
         this.commands = new Map();
         this.responseMessages = new Map();

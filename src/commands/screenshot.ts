@@ -24,7 +24,6 @@ export default class Screenshot extends Command {
                 usage: '[url|ip]',
                 author: 'Jacherr'
             },
-            nsfw: true
         });
     }
 
