@@ -35,6 +35,10 @@ export default class Utils {
         });
         return flagNames.includes(flagName);
     }
+    
+    public removeCodeblock(src: string): string {
+        return src.replace(/^```\w*|```$/g, '');
+    }
 
     public getFlag(flags: Array<IFlag>, flagName: string): IFlag | null {
         return flags.find(i => i.name === flagName) || null;
