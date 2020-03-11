@@ -53,7 +53,7 @@ export default class Code extends Command {
         try {
             res = await this.assyst.utils.runSandboxedCode(
                 encodeURIComponent(context.args[0]),
-                context.args.slice(1).join(' ').replace(/^```\w*|```$/g, '')
+                this.utils.removeCodeblock(context.args.slice(1).join(' '))
             );
         } catch (e) {
             let message: string;
