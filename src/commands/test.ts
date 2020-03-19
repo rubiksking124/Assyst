@@ -43,7 +43,7 @@ export default class Test extends Command {
         }).then(v => v?.body).catch(v => v.response.body);
 
         
-        return context.reply((((res.success ? '' : ':warning:') + res.result) || '​:warning: `Tag returned an empty response.`') + '\n\n:stopwatch: Time taken: ' + (res.timeTaken / 1000) + ' µs', {
+        return context.reply((((res.success ? '' : ':warning:') + res.result) || '​:warning: `Tag returned an empty response.`') + '\n\n:stopwatch: Time taken: ' + res.timeTaken + ' µs', {
             storeAsResponseForUser: {
                 user: context.message.author.id,
                 message: context.message.id
