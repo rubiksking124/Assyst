@@ -39,10 +39,10 @@ export default class Test extends Command {
     public async execute(context: ICommandContext): Promise<Message | null> {
         const res: ParseResult = await this.assyst.request(this.assyst.config.apis.parser, REQUEST_TYPES.POST, {}, {
             input: context.args.join(' ')
-        }).then(v => v?.body);
+        }).then(v => v?.body).catch(v => v.response.body);
 
         
-        return context.reply((res.success ? '' : ':warning:') + res.result, {
+        return context.reply(((res.success ? '' : ':warning:') + res.result) || '​:warning: `Tag returned an empty response.`', {
             storeAsResponseForUser: {
                 user: context.message.author.id,
                 message: context.message.id
