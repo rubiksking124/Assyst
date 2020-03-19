@@ -23,7 +23,8 @@ export default class Config {
         embedLink: 'https://discord-embed.y21.workers.dev',
         ocr: 'https://api.tsu.sh/google/ocr',
         code: 'https://api.gocode.it/exec/',
-        identify: 'https://captionbot.azurewebsites.net/api/messages?language=en-US'
+        identify: 'https://captionbot.azurewebsites.net/api/messages?language=en-US',
+        parser: 'https://assyst.axonteam.org/api/parse'
     };
     public readonly reactions = {
         previousPage: '⬅️',
