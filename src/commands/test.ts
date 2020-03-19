@@ -9,7 +9,8 @@ interface ParseResult {
     nsfw: boolean,
     attachments: Array<any> | null,
     imagescripts: Array<any> | null,
-    result: string
+    result: string,
+    timeTaken: number
 }
 
 export default class Test extends Command {
@@ -42,7 +43,7 @@ export default class Test extends Command {
         }).then(v => v?.body).catch(v => v.response.body);
 
         
-        return context.reply(((res.success ? '' : ':warning:') + res.result) || '​:warning: `Tag returned an empty response.`', {
+        return context.reply((((res.success ? '' : ':warning:') + res.result) || '​:warning: `Tag returned an empty response.`') + '\n\n:stopwatch: Time taken: ' + (res.timeTaken / 1000) + ' µs', {
             storeAsResponseForUser: {
                 user: context.message.author.id,
                 message: context.message.id
