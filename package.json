@@ -1,40 +1,36 @@
 {
-  "name": "assyst-ts",
-  "version": "1.0.3",
-  "description": "Dev-helper discord bot",
-  "main": "index.js",
-  "directories": {
-    "lib": "lib"
+  "name": "axoncore-app",
+  "version": "1.0.0",
+  "description": "Boilerplate AxonCore app [eris-esm].",
+  "author": "KhaaZ",
+  "link": "https://github.com/Khaazz/AxonCore",
+  "license": "MIT",
+  "engines": {
+    "node": ">=8.0.0"
   },
+  "dependencies": {
+    "axoncore": "git+https://www.github.com/khaazz/axoncore.git#dev",
+    "chalk": "^2.4.2",
+    "eris": "git+https://www.github.com/khaazz/eris.git#axoncore",
+    "esm": "^3.2.25",
+    "pm2": "^4.2.1"
+  },
+  "devDependencies": {
+    "@axonteam/eslint-config": "^2.2.1",
+    "eslint": "^6.8.0"
+  },
+  "main": "./index.js",
   "scripts": {
-    "test": "node index.js"
+    "start": "node -r esm src/index.js",
+    "start:pm2": "pm2 start scripts/start.config.js"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Jacherr/Assyst-TS.git"
+    "url": "git+https://github.com/Khaazz/AxonCore.git"
   },
-  "author": "Jacherr",
-  "license": "ISC",
   "bugs": {
-    "url": "https://github.com/Jacherr/Assyst-TS/issues"
+    "url": "https://github.com/Khaazz/AxonCore/issues"
   },
-  "homepage": "https://github.com/Jacherr/Assyst-TS#readme",
-  "dependencies": {
-    "@types/git-rev-sync": "^1.12.0",
-    "@types/node-fetch": "^2.5.5",
-    "@types/pg": "^7.14.1",
-    "@types/superagent": "^4.1.7",
-    "detritus-client": "^0.9.44",
-    "detritus-pagination": "^1.0.5",
-    "git-rev-sync": "^2.0.0",
-    "node-fetch": "^2.6.0",
-    "pg": "^7.18.2",
-    "superagent": "^5.2.2"
-  },
-  "devDependencies": {
-    "@typescript-eslint/eslint-plugin": "^2.21.0",
-    "@typescript-eslint/parser": "^2.21.0",
-    "eslint": "^6.8.0",
-    "typescript": "^3.8.2"
-  }
+  "homepage": "https://github.com/Khaazz/AxonCore#readme"
 }
+  
