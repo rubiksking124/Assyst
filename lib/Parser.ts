@@ -625,7 +625,7 @@ export default class Parser {
                 this.rexCalls++;
                 if (this.rexCalls > 2) return '[TOO MANY REX CALLS]';
 
-                const rexResult = await this.assyst.utils.runSandboxedCode(key, rawArgs);
+                const rexResult = await this.assyst.utils.runSandboxedCode(key, Parser.unescapeTag(rawArgs));
 
                 return Parser.escapeTag(rexResult.data.res);
             }
