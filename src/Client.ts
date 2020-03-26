@@ -1,10 +1,14 @@
 import { AxonClient, AxonOptions, GuildConfig, Command, CommandEnvironment } from 'axoncore';
 
+import { db } from './configs/secret.json'
+
 import { ShardClient } from 'detritus-client';
 
 import { Message } from 'detritus-client/lib/structures/message'
 
 import * as modules from './modules/index';
+
+import { Pool } from 'pg';
 
 /**
  * Example - Client constructor
@@ -15,8 +19,12 @@ import * as modules from './modules/index';
  * @extends AxonCore.AxonClient
  */
 class Client extends AxonClient {
+
+    public db: Pool
+
     constructor(client: ShardClient, axonOptions: AxonOptions) {
         super(client, axonOptions, modules);
+        this.db = new Pool(db)
     }
 
     onInit(): true {

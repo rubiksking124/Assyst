@@ -34,11 +34,7 @@ secret.webhooks,
     guildConfig: null,
 } );
 
-/**
- * new AxonClient(token, erisOptions, AxonOptions, modules)
- *
- * new Client(token, erisOptions, AxonOptions) => Modules imported in Client
- */
+
 const client = new ShardClient(
     secret.bot.token,
     {

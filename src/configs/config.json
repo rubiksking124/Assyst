@@ -1,9 +1,9 @@
 {
     "info": {
-        "name": "AxonCore",
-        "description": "AxonCore - Bot framework",
+        "name": "Assyst",
+        "description": "Dev-utilitarian bot",
         "version": "1.0.0",
-        "library": ""
+        "library": "Detritus"
     },
 
     "settings": {
@@ -11,28 +11,27 @@
         "debugMode": true,
         "library": 0,
         "logger": 0,
-        "db": 1,
+        "db": 2,
         "guildConfigCache": 1000
     },
     "prefixes": {
-        "general": "a!",
-        "owner": "!!",
-        "admin": "a."
+        "general": "<<",
+        "owner": "<<",
+        "admin": "<<"
     },
 
     "staff": {
         "owners": [
             {
-                "name": "",
-                "id": ""
+                "name": "Jacher",
+                "id": "233667448887312385"
+            },
+            {
+                "name": "y21",
+                "id": "312715611413413889"
             }
         ],
-        "admins": [
-            {
-                "name": "",
-                "id": ""
-            }
-        ]
+        "admins": []
     },
 
     "template": {
