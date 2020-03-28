@@ -4,12 +4,12 @@ import Assyst from '../structures/Assyst';
 import { RequestTypes } from 'detritus-client-rest';
 
 export default class RestController {
-    public clients: ClientBase[]
+    public clients: Map<string, ClientBase>
     public assyst: Assyst
 
     constructor (assyst: Assyst) {
       this.assyst = assyst;
-      this.clients = [];
+      this.clients = new Map();
       this.loadClients();
     }
 
@@ -19,7 +19,7 @@ export default class RestController {
         const ClientImport: any = await import(`./clients/${file}`).then((m: any) => m.default);
         const client: ClientBase = new ClientImport();
         client.setController(this);
-        this.clients.push(client);
+        this.clients.set(client.clientName, client);
         this.assyst.logger.info(`Loaded REST client: ${client.clientName}`);
       });
     }

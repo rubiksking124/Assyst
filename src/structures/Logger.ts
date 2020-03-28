@@ -6,6 +6,6 @@ export default class Logger {
     }
 
     public info (content: string) {
-      console.info(`${'='.repeat(this.spacing)} [INFO] ${content} ${'='.repeat(this.spacing)}`);
+      console.info(`${'='.repeat(this.spacing)} [INFO] ${content}`);
     }
 }

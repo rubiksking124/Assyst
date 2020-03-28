@@ -2,6 +2,8 @@ import { CommandClient } from 'detritus-client';
 
 import { Pool, QueryResult } from 'pg';
 
+import { readdirSync } from 'fs';
+
 import {
   token,
   db,
@@ -21,6 +23,7 @@ export default class Assyst {
       this.db = new Pool(db);
       this.rest = new RestController(this);
       this.logger = new Logger();
+      this.loadCommands();
     }
 
     public sql (query: string, values?: any[]): Promise<QueryResult> {
@@ -29,6 +32,18 @@ export default class Assyst {
           if (err) reject(err);
           else resolve(res);
         });
+      });
+    }
+
+    private loadCommands () {
+      const files = readdirSync('./src/commands');
+      files.forEach(async (file: string) => {
+        const command: any = await import(`../commands/${file}`).then((v: any) => v.default);
+        this.commandClient.add({
+          ...command,
+          run: command.run.bind(null, this)
+        });
+        this.logger.info(`Loaded command: ${command.name}`);
       });
     }
 

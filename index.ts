@@ -5,7 +5,7 @@ import { webhooks } from './config.json';
 const client = new Assyst();
 
 client.commandClient.client.on('gatewayReady', () => {
-  console.info('Assyst is ready');
+  client.logger.info('Assyst is ready');
 });
 
 process.on('unhandledRejection', (err: any) => {
@@ -24,3 +24,7 @@ process.on('unhandledRejection', (err: any) => {
     }
   });
 });
+
+(async () => {
+  await client.commandClient.client.run();
+})();
