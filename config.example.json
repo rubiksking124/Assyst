@@ -15,5 +15,11 @@
         "imageFormat": "",
         "ignoreMe": true,
         "cache": false
+    },
+    "webhooks": {
+        "unhandledRejection": {
+            "id": "",
+            "token": ""
+        }
     }
 }
