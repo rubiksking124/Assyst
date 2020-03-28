@@ -1,0 +1,19 @@
+{
+    "token": "",
+    "db": {
+        "host": "",
+        "username": "",
+        "password": "",
+        "db": "",
+        "port": 1234
+    },
+    "commandClientOptions": {
+        "prefix": "",
+        "maxEditDuration": 10000,
+        "mentionsEnabled": false,
+        "activateOnEdits": true,
+        "imageFormat": "",
+        "ignoreMe": true,
+        "cache": false
+    }
+}

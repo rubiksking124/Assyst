@@ -1,6 +1,0 @@
-{
-    "english": {
-        "ERR_BOT_PERM": "I lack the following permissions to do this: {{permissions}}",
-        "ERR_COOLDOWN": "Wait {{cooldown}} more seconds."
-    }
-}
