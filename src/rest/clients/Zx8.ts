@@ -8,4 +8,16 @@ export default class Zx8RestClient extends ClientBase {
       baseUrl: 'zx8.jacher.io'
     });
   }
+
+  public getAllHosts (): string[] { // Todo
+    return [];
+  }
+
+  public searchHosts (query: string): any { // Todo
+    return null;
+  }
+
+  public getHost (quary: string): any { // Todo
+    return null;
+  }
 }

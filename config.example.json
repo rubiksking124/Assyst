@@ -20,6 +20,14 @@
         "unhandledRejection": {
             "id": "",
             "token": ""
+        },
+        "commandOnError": {
+            "id": "",
+            "token": ""
+        },
+        "commandOnRunError": {
+            "id": "",
+            "token": "" 
         }
     }
 }

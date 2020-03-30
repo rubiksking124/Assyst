@@ -4,19 +4,22 @@ import { inspect } from 'util';
 
 import Assyst from '../structures/Assyst';
 
+import { Utils } from 'detritus-client';
+const { Markup } = Utils;
+
 export default {
   name: 'eval',
+  aliases: ['e'],
   responseOptional: true,
   editOrReply: true,
   onBefore: (context: Context) => context.client.isOwner(context.userId),
-  run: async (assyst: Assyst, context: Context, args: any) => {
+  run: async (assyst: Assyst, ctx: Context, args: any) => {
     let evaled: any;
-
     try {
-      // eslint-disable-next-line no-eval
+    // eslint-disable-next-line no-eval
       evaled = await Promise.resolve(eval(args.eval));
     } catch (e) {
-      return context.editOrReply(e.message);
+      return ctx.editOrReply(Markup.codeblock(e.message, { limit: 1990, language: 'js' }));
     }
 
     if (typeof evaled === 'object') {
@@ -25,8 +28,8 @@ export default {
       evaled = String(evaled);
     }
 
-    evaled = evaled.split(context.client.token).join(' ');
+    evaled = evaled.split(ctx.client.token).join(' ');
 
-    return context.editOrReply(`\`\`\`js\n${evaled}\`\`\``);
+    return ctx.editOrReply(Markup.codeblock(evaled, { language: 'js', limit: 1990 }));
   }
 };
