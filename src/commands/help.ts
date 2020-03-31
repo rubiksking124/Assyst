@@ -21,7 +21,7 @@ export default {
     duration: 5000
   },
   run: async (_assyst: Assyst, ctx: Context, args: any) => {
-    if (!args.help) return ctx.editOrReply('Command list will be available on website soon');
+    if (!args || !args.help) return ctx.editOrReply('<https://assyst.axonteam.org/api/commands>');
     const command = ctx.commandClient.commands.find(i => i.name === args.help || i.aliases.includes(args.help));
     if (!command) return ctx.editOrReply('No command found');
     ctx.editOrReply({
