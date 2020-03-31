@@ -2,7 +2,7 @@ import { Context } from 'detritus-client/lib/command';
 
 import { inspect } from 'util';
 
-import Assyst from '../structures/Assyst';
+import Assyst from '../../structures/Assyst';
 
 import { Utils } from 'detritus-client';
 

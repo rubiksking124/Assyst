@@ -4,7 +4,7 @@ import { exec, ExecException } from 'child_process';
 
 import { promisify } from 'util';
 
-import Assyst from '../structures/Assyst';
+import Assyst from '../../structures/Assyst';
 
 import { Utils } from 'detritus-client';
 

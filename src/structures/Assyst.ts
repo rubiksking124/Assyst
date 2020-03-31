@@ -8,7 +8,8 @@ import { readdirSync } from 'fs';
 
 import {
   db,
-  webhooks
+  webhooks,
+  prefixOverride
 } from '../../config.json';
 import RestController from '../rest/Rest';
 import Logger from './Logger';
@@ -63,54 +64,64 @@ export default class Assyst extends CommandClient {
     }
 
     private loadCommands () {
-      const files = readdirSync('./src/commands');
-      files.forEach(async (file: string) => {
-        if (file.includes('template')) return;
-        const command: any = await import(`../commands/${file}`).then((v: any) => v.default);
-        this.add({
-          ...command,
+      const folders = readdirSync('./src/commands');
+      folders.forEach(async (folder: string) => {
+        if (folder.includes('template')) return;
+        if (folder.includes('.js')) throw new Error('Commands must be within subfolders for their category');
+        const files = readdirSync(`./src/commands/${folder}`);
+        files.forEach(async (file) => {
+          if (file.includes('template')) return;
+          const command: any = await import(`../commands/${file}`).then((v: any) => v.default);
+          this.add({
+            ...command,
 
-          disableDm: true,
+            metadata: {
+              ...command.metadata,
+              category: folder
+            },
 
-          run: command.run.bind(null, this),
+            disableDm: true,
 
-          onRatelimit: (ctx: Context, ratelimits: any[]) => {
-            if (ratelimits[0].item.replied === false) {
-              ctx.editOrReply(`Cooldown - you need to wait ${(ratelimits[0].remaining / 1000).toFixed(2)} seconds.`);
-              ratelimits[0].item.replied = true;
+            run: command.run.bind(null, this),
+
+            onRatelimit: (ctx: Context, ratelimits: any[]) => {
+              if (ratelimits[0].item.replied === false) {
+                ctx.editOrReply(`Cooldown - you need to wait ${(ratelimits[0].remaining / 1000).toFixed(2)} seconds.`);
+                ratelimits[0].item.replied = true;
+              }
+              console.log(ratelimits);
+            },
+
+            onRunError: (ctx: Context, _args: any, error: any) => {
+              ctx.editOrReply(Markup.codeblock(`Error: ${error.message}`, { language: 'js', limit: 1990 }));
+              this.fireErrorWebhook(webhooks.commandOnError.id, webhooks.commandOnError.token, 'Command Run Error Fired', 0xDD5522, error);
+            },
+
+            onError: (ctx: Context, _args: any, error: any) => {
+              ctx.editOrReply(Markup.codeblock(`Error: ${error.message}`, { language: 'js', limit: 1990 }));
+              this.fireErrorWebhook(webhooks.commandOnError.id, webhooks.commandOnError.token, 'Command Error Fired', 0xBBAA00, error);
+            },
+
+            onTypeError: (ctx: Context, _args: any, error: any) => {
+              ctx.editOrReply(Markup.codeblock(`Error: ${error.message}`, { language: 'js', limit: 1990 }));
+              this.fireErrorWebhook(webhooks.commandOnError.id, webhooks.commandOnError.token, 'Command Type Error Fired', 0xCC2288, error);
+            },
+
+            onSuccess: async (ctx: Context) => {
+              if (!ctx.command) return;
+              const registeredCommandUses: FoundCommandRow[] = await this.sql('select command, uses from command_uses where guild = $1', [ctx.guildId]).then((r: QueryResult) => r.rows);
+              this.metrics.commands++;
+              const foundCommand: FoundCommandRow | undefined = registeredCommandUses.find((c: FoundCommandRow) => c.command === ctx.command?.name);
+              if (!foundCommand) {
+                await this.sql('insert into command_uses("guild", "command", "uses") values ($1, $2, $3)', [ctx.guildId, ctx.command.name, 1]);
+              } else {
+                foundCommand.uses++;
+                await this.sql('update command_uses set uses = $1 where guild = $2 and command = $3', [foundCommand.uses, ctx.guildId, foundCommand.command]);
+              }
             }
-            console.log(ratelimits);
-          },
-
-          onRunError: (ctx: Context, _args: any, error: any) => {
-            ctx.editOrReply(Markup.codeblock(`Error: ${error.message}`, { language: 'js', limit: 1990 }));
-            this.fireErrorWebhook(webhooks.commandOnError.id, webhooks.commandOnError.token, 'Command Run Error Fired', 0xDD5522, error);
-          },
-
-          onError: (ctx: Context, _args: any, error: any) => {
-            ctx.editOrReply(Markup.codeblock(`Error: ${error.message}`, { language: 'js', limit: 1990 }));
-            this.fireErrorWebhook(webhooks.commandOnError.id, webhooks.commandOnError.token, 'Command Error Fired', 0xBBAA00, error);
-          },
-
-          onTypeError: (ctx: Context, _args: any, error: any) => {
-            ctx.editOrReply(Markup.codeblock(`Error: ${error.message}`, { language: 'js', limit: 1990 }));
-            this.fireErrorWebhook(webhooks.commandOnError.id, webhooks.commandOnError.token, 'Command Type Error Fired', 0xCC2288, error);
-          },
-
-          onSuccess: async (ctx: Context) => {
-            if (!ctx.command) return;
-            const registeredCommandUses: FoundCommandRow[] = await this.sql('select command, uses from command_uses where guild = $1', [ctx.guildId]).then((r: QueryResult) => r.rows);
-            this.metrics.commands++;
-            const foundCommand: FoundCommandRow | undefined = registeredCommandUses.find((c: FoundCommandRow) => c.command === ctx.command?.name);
-            if (!foundCommand) {
-              await this.sql('insert into command_uses("guild", "command", "uses") values ($1, $2, $3)', [ctx.guildId, ctx.command.name, 1]);
-            } else {
-              foundCommand.uses++;
-              await this.sql('update command_uses set uses = $1 where guild = $2 and command = $3', [foundCommand.uses, ctx.guildId, foundCommand.command]);
-            }
-          }
+          });
+          this.logger.info(`Loaded command: ${command.name}`);
         });
-        this.logger.info(`Loaded command: ${command.name}`);
       });
     }
 
@@ -132,7 +143,7 @@ export default class Assyst extends CommandClient {
     }
 
     public async onPrefixCheck (ctx: Context) {
-      if (!ctx.user.bot && ctx.guildId) {
+      if (!ctx.user.bot && ctx.guildId && prefixOverride.enabled === false) {
         let prefix = this.prefixCache.get(ctx.guildId);
         if (!prefix) {
           prefix = await this.sql('select prefix from prefixes where guild = $1', [ctx.guildId]).then((r: QueryResult) => r.rows[0].prefix);
@@ -143,7 +154,8 @@ export default class Assyst extends CommandClient {
         }
         return prefix;
       }
-      return this.prefixes.custom;
+      if (prefixOverride.enabled === false) return this.prefixes.custom;
+      else return prefixOverride.prefix;
     }
 
     private async initMetricsChecks (): Promise<void> {

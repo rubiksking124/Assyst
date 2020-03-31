@@ -1,12 +1,12 @@
 import { Context } from 'detritus-client/lib/command';
 
-import Assyst from '../structures/Assyst';
+import Assyst from '../../structures/Assyst';
 
 import os from 'os';
 
 import { short } from 'git-rev-sync';
 
-import { version, homepage } from '../../package.json';
+import { version, homepage } from '../../../package.json';
 import { Markup } from 'detritus-client/lib/utils';
 
 export default {

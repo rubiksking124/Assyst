@@ -1,6 +1,6 @@
 import { Context } from 'detritus-client/lib/command';
 
-import Assyst from '../structures/Assyst';
+import Assyst from '../../structures/Assyst';
 
 import { QueryResult } from 'pg';
 
