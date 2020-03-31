@@ -24,7 +24,7 @@ export default class Handler {
 
         // Checks the current guild prefix (and sets if none exists)
         let prefix: string | undefined;
-        if(!devMode) {
+        if(!this.assyst.devOnly) {
             if(!this.assyst.caches.prefixes.get(message.channel.guild.id)) {
                 prefix = await this.assyst.sql('select prefix from prefixes where guild = $1', [message.channel.guild.id]).then((r: QueryResult) => r.rows[0] ? r.rows[0].prefix : undefined);
                 if(prefix) this.assyst.caches.prefixes.set(message.channel.guild.id, prefix);

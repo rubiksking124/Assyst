@@ -152,7 +152,7 @@ export default class Assyst {
 
     private initEventCounter(): void {
         let currentEventsInInterval: number = 0;
-        this.bot.on('raw', () => {
+        this.bot.gateway.on('packet', () => {
             currentEventsInInterval++;
         });
         setInterval(() => {
