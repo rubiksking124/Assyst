@@ -17,7 +17,7 @@ export default {
     duration: 3000
   },
   run: async (assyst: Assyst, ctx: Context) => {
-    ctx.editOrReply('Pong');
+    await ctx.editOrReply('Pong');
     const start = Date.now();
     let finish: number;
     await assyst.sql('select now()');
