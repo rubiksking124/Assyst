@@ -1,27 +1,25 @@
 {
-  "name": "axoncore-app",
-  "version": "1.0.0",
-  "description": "Boilerplate AxonCore app [eris-esm].",
-  "author": "KhaaZ",
-  "link": "https://github.com/Khaazz/AxonCore",
+  "name": "assyst",
+  "version": "0.2.0",
+  "description": "Assyst Rewrite",
+  "author": "Jacher",
+  "link": "https://github.com/AssystDev/Assyst",
   "license": "MIT",
   "engines": {
     "node": ">=8.0.0"
   },
   "dependencies": {
+    "@types/git-rev-sync": "^1.12.0",
     "@types/node-fetch": "^2.5.5",
     "@types/pg": "^7.14.3",
-    "axoncore": "git+https://www.github.com/khaazz/axoncore.git#dev",
-    "chalk": "^2.4.2",
     "detritus-client": "^0.10.1",
-    "eris": "git+https://www.github.com/khaazz/eris.git#axoncore",
     "esm": "^3.2.25",
+    "git-rev-sync": "^2.0.0",
     "node-fetch": "^2.6.0",
     "pg": "^7.18.2",
-    "pm2": "^4.2.1"
+    "polka": "^0.5.2"
   },
   "devDependencies": {
-    "@axonteam/eslint-config": "^2.2.1",
     "@typescript-eslint/eslint-plugin": "^2.25.0",
     "@typescript-eslint/parser": "^2.25.0",
     "eslint": "^6.8.0",
@@ -31,17 +29,17 @@
     "eslint-plugin-promise": "^4.2.1",
     "eslint-plugin-standard": "^4.0.1"
   },
-  "main": "./index.js",
+  "main": "./index.ts",
   "scripts": {
-    "start": "node -r esm src/index.js",
-    "start:pm2": "pm2 start scripts/start.config.js"
+    "start": "tsc && cd JS && node .",
+    "start:script": ""
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Khaazz/AxonCore.git"
+    "url": "git+https://github.com/AssystDev/Assyst.git"
   },
   "bugs": {
-    "url": "https://github.com/Khaazz/AxonCore/issues"
+    "url": "https://github.com/AssystDev/Assyst/issues"
   },
-  "homepage": "https://github.com/Khaazz/AxonCore#readme"
+  "homepage": "https://github.com/AssystDev/Assyst"
 }

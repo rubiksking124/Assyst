@@ -8,11 +8,37 @@ import fetch from 'node-fetch';
 const promisifyUnlink = promisify(unlink);
 const promisifyWrite = promisify(writeFile);
 
+interface MetricItem {
+  name: string,
+  value: string
+}
+
+interface ElapsedTime {
+  seconds: number,
+  minutes: number,
+  hours: number,
+  days: number
+}
+
 export default class Utils {
     private assyst: Assyst
 
     constructor (assyst: Assyst) {
       this.assyst = assyst;
+    }
+
+    public elapsed (value: number): ElapsedTime {
+      const date: Date = new Date(value);
+      const elapsed = { days: date.getUTCDate() - 1, hours: date.getUTCHours(), minutes: date.getUTCMinutes(), seconds: date.getUTCSeconds() };
+      return elapsed;
+    }
+
+    public formatMetricList (items: MetricItem[], separatorValue: number = 15): string {
+      let returnString = '';
+      items.forEach((i: MetricItem) => {
+        returnString += `${i.name} ${'-'.repeat(separatorValue - i.name.length)} ${i.value}\n`;
+      });
+      return returnString;
     }
 
   /* public async uploadToFilesGG (text: string, filename: string): Promise<string> { // TODO: fix this

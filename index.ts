@@ -1,10 +1,10 @@
 import Assyst from './src/structures/Assyst';
 
-import { webhooks } from './config.json';
+import { webhooks, token, commandClientOptions } from './config.json';
 
-const client = new Assyst();
+const client = new Assyst(token, commandClientOptions);
 
-client.commandClient.client.on('gatewayReady', () => {
+client.client.on('gatewayReady', () => {
   client.logger.info('Assyst is ready');
 });
 
@@ -13,5 +13,5 @@ process.on('unhandledRejection', (err: any) => {
 });
 
 (async () => {
-  await client.commandClient.client.run();
+  await client.client.run();
 })();

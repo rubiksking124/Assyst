@@ -5,14 +5,52 @@ import { inspect } from 'util';
 import Assyst from '../structures/Assyst';
 
 import { Utils } from 'detritus-client';
+
 const { Markup } = Utils;
 
 export default {
   name: 'help',
   responseOptional: true,
-  editOrReply: true,
-  onBefore: (context: Context) => context.client.isOwner(context.userId),
-  run: async (assyst: Assyst, ctx: Context) => {
-    ctx.editOrReply(`there is ${ctx.prefix}eval and that is it`);
+  metadata: {
+    description: 'Get help on the bot\'s commands or a specific command',
+    usage: '<command>'
+  },
+  ratelimit: {
+    type: 'guild',
+    limit: 1,
+    duration: 5000
+  },
+  run: async (_assyst: Assyst, ctx: Context, args: any) => {
+    if (!args.help) return ctx.editOrReply('Command list will be available on website soon');
+    const command = ctx.commandClient.commands.find(i => i.name === args.help || i.aliases.includes(args.help));
+    if (!command) return ctx.editOrReply('No command found');
+    ctx.editOrReply({
+      embed: {
+        title: `Help: ${command.name}`,
+        description: command.metadata.description,
+        color: 0xf4632e,
+        fields: [
+          {
+            name: 'Usage',
+            value: command.metadata.usage !== undefined
+              ? Markup.codeblock(`${ctx.prefix}${command.name} ${command.metadata.usage}`, {
+                language: 'css', limit: 1990
+              })
+              : 'No usage information found...',
+            inline: false
+          },
+          {
+            name: 'Examples',
+            value: command.metadata.examples
+              ? Markup.codeblock(command.metadata.examples.map((e: string) => `${ctx.prefix}${command.name} ${e}`).join('\n'), {
+                language: 'css',
+                limit: 1990
+              })
+              : 'No examples found...',
+            inline: false
+          }
+        ]
+      }
+    });
   }
 };

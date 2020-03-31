@@ -1,19 +1,24 @@
-import { Context } from 'detritus-client/lib/command';
+import { Context, Command } from 'detritus-client/lib/command';
 
 import { inspect } from 'util';
 
 import Assyst from '../structures/Assyst';
 
 import { Utils } from 'detritus-client';
+
 const { Markup } = Utils;
 
 export default {
   name: 'eval',
   aliases: ['e'],
   responseOptional: true,
-  editOrReply: true,
-  onBefore: (context: Context) => context.client.isOwner(context.userId),
-  run: async (assyst: Assyst, ctx: Context, args: any) => {
+  metadata: {
+    description: 'Evaluate some code',
+    usage: '[code]',
+    examples: ['1', 'process.reallyExit()']
+  },
+  onBefore: (ctx: Context) => ctx.client.isOwner(ctx.userId),
+  run: async (_assyst: Assyst, ctx: Context, args: any) => {
     let evaled: any;
     try {
     // eslint-disable-next-line no-eval

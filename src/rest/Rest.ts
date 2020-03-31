@@ -25,6 +25,6 @@ export default class RestController {
     }
 
     public async request (options: RequestTypes.RequestOptions) {
-      return await this.assyst.commandClient.client.rest.request(options);
+      return await this.assyst.client.rest.request(options);
     }
 }
