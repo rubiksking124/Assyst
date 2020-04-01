@@ -71,7 +71,7 @@ export default class Assyst extends CommandClient {
         const files = readdirSync(`./src/commands/${folder}`);
         files.forEach(async (file) => {
           if (file.includes('template')) return;
-          const command: any = await import(`./src/commands/${folder}/${file}`).then((v: any) => v.default);
+          const command: any = await import(`../commands/${folder}/${file}`).then((v: any) => v.default);
           this.add({
             ...command,
 

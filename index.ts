@@ -10,6 +10,7 @@ client.client.on('gatewayReady', () => {
 
 process.on('unhandledRejection', (err: any) => {
   client.fireErrorWebhook(webhooks.unhandledRejection.id, webhooks.unhandledRejection.token, 'Unhandled Rejection', 0xFF0000, err);
+  console.error(err);
 });
 
 (async () => {
