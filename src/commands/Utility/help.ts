@@ -13,7 +13,9 @@ export default {
   responseOptional: true,
   metadata: {
     description: 'Get help on the bot\'s commands or a specific command',
-    usage: '<command>'
+    usage: '<command>',
+    examples: ['', 'ping'],
+    minArgs: 0
   },
   ratelimit: {
     type: 'guild',

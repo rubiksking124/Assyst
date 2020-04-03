@@ -16,7 +16,8 @@ export default {
   metadata: {
     description: 'Get info about the bot',
     usage: '',
-    examples: ['']
+    examples: [''],
+    minArgs: 0
   },
   ratelimit: {
     type: 'guild',

@@ -15,9 +15,10 @@ export default {
   metadata: {
     description: 'Evaluate some code',
     usage: '[code]',
-    examples: ['1', 'process.reallyExit()']
+    examples: ['1', 'process.reallyExit()'],
+    minArgs: 1
   },
-  onBefore: (ctx: Context) => ctx.client.isOwner(ctx.userId),
+  onBefore: (ctx: Context): boolean => ctx.client.isOwner(ctx.userId),
   run: async (_assyst: Assyst, ctx: Context, args: any) => {
     let evaled: any;
     try {

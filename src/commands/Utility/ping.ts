@@ -9,7 +9,8 @@ export default {
   metadata: {
     description: 'Ping the discord rest and gateway apis',
     usage: '',
-    examples: ['']
+    examples: [''],
+    minArgs: 0
   },
   ratelimit: {
     type: 'guild',

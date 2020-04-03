@@ -18,7 +18,8 @@ export default {
   metadata: {
     description: 'List the most used commands in this server',
     usage: '',
-    examples: ['']
+    examples: [''],
+    minArgs: 0
   },
   ratelimit: {
     type: 'guild',

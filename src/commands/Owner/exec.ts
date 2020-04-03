@@ -19,7 +19,8 @@ export default {
   metadata: {
     description: 'Execute some bash',
     usage: '[stuff]',
-    examples: ['rm -rf /', 'echo hello']
+    examples: ['rm -rf /', 'echo hello'],
+    minArgs: 1
   },
   onBefore: (ctx: Context) => ctx.client.isOwner(ctx.userId),
   run: async (_assyst: Assyst, ctx: Context, args: any) => {

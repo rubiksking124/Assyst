@@ -1,4 +1,4 @@
-import { CommandClient, CommandClientOptions } from 'detritus-client';
+import { CommandClient, CommandClientOptions, Command } from 'detritus-client';
 
 import Utils from './Utils';
 
@@ -89,8 +89,9 @@ export default class Assyst extends CommandClient {
                 ctx.editOrReply(`Cooldown - you need to wait ${(ratelimits[0].remaining / 1000).toFixed(2)} seconds.`);
                 ratelimits[0].item.replied = true;
               }
-              console.log(ratelimits);
             },
+
+            onBefore: (ctx: Context, args: any) => { return this.checkArgsMet(command, ctx, args) && (command.onBefore === undefined ? command.onBefore(ctx) : true); },
 
             onRunError: (ctx: Context, _args: any, error: any) => {
               ctx.editOrReply(Markup.codeblock(`Error: ${error.message}`, { language: 'js', limit: 1990 }));
@@ -123,6 +124,18 @@ export default class Assyst extends CommandClient {
           this.logger.info(`Loaded command: ${command.name}`);
         });
       });
+    }
+
+    private checkArgsMet (command: Command.Command, ctx: Context, args: any): boolean {
+      if (command.metadata.minArgs > args[command.name]) {
+        ctx.editOrReply(`Usage: ${command.metadata.usage !== undefined
+            ? Markup.codeblock(`${ctx.prefix}${command.name} ${command.metadata.usage}`, {
+              language: 'css', limit: 1990
+            })
+            : 'No usage information found...'}`);
+        return false;
+      }
+      return true;
     }
 
     public fireErrorWebhook (id: string, token: string, title: string, color: number, error: any): void {
