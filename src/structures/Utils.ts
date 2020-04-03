@@ -8,7 +8,7 @@ import fetch from 'node-fetch';
 const promisifyUnlink = promisify(unlink);
 const promisifyWrite = promisify(writeFile);
 
-interface MetricItem {
+export interface MetricItem {
   name: string,
   value: string
 }
@@ -34,6 +34,11 @@ export default class Utils {
     }
 
     public formatMetricList (items: MetricItem[], separatorValue: number = 15): string {
+      let longestVal = 0;
+      items.forEach((item: MetricItem) => {
+        if (item.name.length > longestVal) longestVal = item.name.length;
+      });
+      if (longestVal > separatorValue) separatorValue = longestVal;
       let returnString = '';
       items.forEach((i: MetricItem) => {
         returnString += `${i.name} ${'-'.repeat(separatorValue - i.name.length)} ${i.value}\n`;
