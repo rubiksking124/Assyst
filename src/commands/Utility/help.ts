@@ -57,9 +57,9 @@ export default {
     } else if (readdirSync('./src/commands').map(j => j.toLowerCase()).includes(args.help)) {
       let info: { description: string | undefined };
       try {
-        info = await import(`../${args.help[0].toUpperCase() + args.help.slice(1).toLowerCase()}/info.json`);
+        info = await import(`../${args.help[0].toUpperCase() + args.help.slice(1).toLowerCase()}/category_info.js`).then(i => i.default);
       } catch (e) {
-        throw new Error(`No info.json file found for category ${args.help}`);
+        throw new Error(`No category_info.ts file found for category ${args.help}`);
       }
       ctx.editOrReply({
         embed: {
@@ -71,7 +71,7 @@ export default {
               value: ctx.commandClient.commands.filter((c: Command.Command) => {
                 return c.metadata.category.toLowerCase() === args.help.toLowerCase();
               }).map((c: Command.Command) => {
-                return `**${c.name}** - *${c.metadata.description || 'No description found...'}`;
+                return `**${c.name}** - *${c.metadata.description || 'No description found...'}*`;
               }).join('\n')
             }
           ]

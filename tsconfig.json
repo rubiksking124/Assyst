@@ -8,6 +8,7 @@
     "noImplicitAny": true,                    
     "alwaysStrict": true,                     
     "esModuleInterop": true,                  
-    "forceConsistentCasingInFileNames": true  
-  }
+    "forceConsistentCasingInFileNames": true,
+    "rootDir": "."
+  },
 }

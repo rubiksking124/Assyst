@@ -3,7 +3,10 @@ import Assyst from './Assyst';
 import { promisify } from 'util';
 import { unlink, writeFile, createReadStream } from 'fs';
 
+import { Message, MessageEmbedThumbnail, Attachment } from 'detritus-client/lib/structures';
+
 import fetch from 'node-fetch';
+import { Context } from 'detritus-client/lib/command';
 
 const promisifyUnlink = promisify(unlink);
 const promisifyWrite = promisify(writeFile);
@@ -55,6 +58,44 @@ export default class Utils {
       return returnString;
     }
 
+    public async getRecentAttachmentOrEmbed (message: Message, amtOfMessages: number): Promise<string | undefined> {
+      if (!message.channel) {
+        return undefined;
+      } else if (message.attachments.length > 0) {
+        return message.attachments.first()?.url;
+      }
+      const messages: Array<Message> = await message.channel?.fetchMessages({ limit: amtOfMessages });
+      if (!messages) {
+        return undefined;
+      }
+      let attachment: string | undefined;
+      messages.forEach(message => {
+        if (message.attachments.first() !== undefined && attachment === undefined) {
+          attachment = message.attachments.first()?.url;
+        } else if (message.embeds.length > 0 && message.embeds.first()?.image && attachment === undefined) {
+          attachment = message.embeds.first()?.image?.url;
+        } else if (message.embeds.length > 0 && message.embeds.first()?.thumbnail && attachment === undefined) {
+          attachment = message.embeds.first()?.thumbnail?.url;
+        }
+      });
+      return attachment;
+    }
+
+    public async getUrlFromChannel (ctx: Context, args?: string): Promise<string | undefined> {
+      let imageUrl: string | undefined;
+      if (args) {
+        imageUrl = args;
+        try {
+          const parsedURL: URL = new URL(<string>imageUrl);
+          imageUrl = parsedURL.origin + parsedURL.pathname;
+        } catch (e) {
+          return undefined;
+        }
+      } else {
+        imageUrl = await this.assyst.utils.getRecentAttachmentOrEmbed(ctx.message, 50);
+      }
+      return imageUrl;
+    }
   /* public async uploadToFilesGG (text: string, filename: string): Promise<string> { // TODO: fix this
       const fd = new FormData();
       fd.append('file', createReadStream(`${__dirname}/${filename}`));

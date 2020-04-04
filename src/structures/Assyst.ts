@@ -54,9 +54,6 @@ export default class Assyst extends CommandClient {
       });
       this.initMetricsChecks();
       this.loadCommands();
-      this.on('commandRan', (event: CommandEvents.CommandRan) => {
-        if (event.command.metadata.sendTyping === true) event.context.triggerTyping();
-      });
     }
 
     public sql (query: string, values?: any[]): Promise<QueryResult> {
@@ -75,7 +72,7 @@ export default class Assyst extends CommandClient {
         if (folder.includes('.js')) throw new Error('Commands must be within subfolders for their category');
         const files = readdirSync(`./src/commands/${folder}`);
         files.forEach(async (file) => {
-          if (file.includes('template')) return;
+          if (file.includes('template') || file.includes('category_info')) return;
           const command: any = await import(`../commands/${folder}/${file}`).then((v: any) => v.default);
           this.add({
             ...command,
