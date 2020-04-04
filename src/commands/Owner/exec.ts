@@ -24,7 +24,7 @@ export default {
   },
   onBefore: (ctx: Context) => ctx.client.isOwner(ctx.userId),
   run: async (_assyst: Assyst, ctx: Context, args: any) => {
-    execAsync(args.exec, { timeout: 10000 })
+    execAsync(args.exec, { timeout: 20000 })
       .then(({ stdout, stderr }) => {
         const contentToSend = stderr || stdout;
         return ctx.editOrReply(Markup.codeblock(contentToSend, {
