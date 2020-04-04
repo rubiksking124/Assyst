@@ -6,11 +6,11 @@ import { MetricItem } from '../../structures/Utils';
 import { Markup } from 'detritus-client/lib/utils';
 
 export default {
-  name: 'zx8 host',
-  aliases: ['zx8 h'],
+  name: 'zx8 hosts',
+  aliases: ['zx8 hs'],
   responseOptional: true,
   metadata: {
-    description: 'Get a host from the zx8 search engine',
+    description: 'Search for hosts using the zx8 search engine',
     usage: '<search param>',
     examples: ['hello', 'bruh']
   },
@@ -22,32 +22,24 @@ export default {
   run: async (assyst: Assyst, ctx: Context, args: any) => {
     const client: Zx8RestClient | undefined = <Zx8RestClient | undefined>assyst.customRest.clients.get('zx8');
     if (!client) throw new Error('There is no zx8 client present in the rest controller');
-    if (!args || !args['zx8 host']) {
+    if (!args || !args['zx8 hosts']) {
       return ctx.editOrReply('You need to supply a search parameter');
     }
-    const res = await client.getHost(args['zx8 host']);
-    if (res === undefined) {
-      return ctx.editOrReply('No host found for this query');
+    const res = await client.searchHosts(args['zx8 hosts'], 10);
+    if (res.length === 0) {
+      return ctx.editOrReply('No hosts found for this query');
     }
     const rows: MetricItem[] = [];
-    Object.entries(res).forEach(([key, value]) => {
-      key = key[0].toUpperCase() + key.slice(1);
-      if (key !== 'Headers' && key !== 'LastResponseTime') {
-        rows.push({
-          name: `${key}:`,
-          value
-        });
-      }
+    res.forEach((host, i) => {
+      rows.push({
+        name: `${i + 1}:`,
+        value: host.url
+      });
     });
     return ctx.editOrReply({
       embed: {
-        title: `zx8 Host: ${res.host}`,
-        description: Markup.codeblock(assyst.utils.formatMetricList(rows, 20, [
-          {
-            item: 'LastRequest:',
-            format: (item: string) => { return new Date(parseInt(item)).toLocaleString(); }
-          }
-        ]), { language: 'ml' }),
+        title: 'zx8 Hosts',
+        description: assyst.utils.formatMetricList(rows, 5),
         color: 0x0fbcf9
       }
     });

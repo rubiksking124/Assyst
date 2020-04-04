@@ -62,7 +62,14 @@ export default {
     return ctx.editOrReply({
       embed: {
         title: embedTitle,
-        description: Markup.codeblock(assyst.utils.formatMetricList(rows, 20), { language: 'ml' }),
+        description: Markup.codeblock(assyst.utils.formatMetricList(rows, 20, [{
+          item: 'Ping:',
+          format: (item: number) => { return `${item.toString()} ms`; }
+        },
+        {
+          item: 'Memory:',
+          format: (item: number) => { return `${item.toString()} MB`; }
+        }]), { language: 'ml' }),
         color: 0x0fbcf9
       }
     });

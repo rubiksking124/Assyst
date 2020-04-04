@@ -27,14 +27,36 @@ export default {
     Object.entries(res).forEach(([key, value]) => {
       key = key[0].toUpperCase() + key.slice(1);
       rows.push({
-        name: `${key}:`, // FIX NEEDED: Handle ContentTypes properly here
+        name: `${key}:`,
         value
       });
     });
     return ctx.editOrReply({
       embed: {
         title: 'zx8 Information',
-        description: Markup.codeblock(assyst.utils.formatMetricList(rows, 20), { language: 'ml' }),
+        description: Markup.codeblock(assyst.utils.formatMetricList(rows, 20, [{
+          item: 'TableSize:',
+          format: (item: number) => { return `${item.toString()} MB`; }
+        },
+        {
+          item: 'Rss:',
+          format: (item: number) => { return `${item.toString()} MB`; }
+        },
+        {
+          item: 'QueryCache:',
+          format: (item: number) => { return `${item.toString()} entries`; }
+        },
+        {
+          item: 'ContentTypes:',
+          format: (item: any) => {
+            return `
+ -- Images: ${item.image}
+ -- Animated: ${item.animated}
+ -- Videos: ${item.video}
+ -- HTML: ${item.html}
+ -- Other: ${item.other}`;
+          }
+        }]), { language: 'ml' }),
         color: 0x0fbcf9
       }
     });
