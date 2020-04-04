@@ -13,6 +13,11 @@ export interface MetricItem {
   value: string
 }
 
+export interface MetricItemFormat {
+  item: string,
+  format: Function
+}
+
 interface ElapsedTime {
   seconds: number,
   minutes: number,
@@ -33,7 +38,7 @@ export default class Utils {
       return elapsed;
     }
 
-    public formatMetricList (items: MetricItem[], separatorValue: number = 15): string {
+    public formatMetricList (items: MetricItem[], separatorValue: number = 15, formatItems?: MetricItemFormat[]): string {
       let longestVal = 0;
       items.forEach((item: MetricItem) => {
         if (item.name.length > longestVal) longestVal = item.name.length;
@@ -41,7 +46,11 @@ export default class Utils {
       if (longestVal > separatorValue) separatorValue = longestVal;
       let returnString = '';
       items.forEach((i: MetricItem) => {
-        returnString += `${i.name} ${'-'.repeat(separatorValue - i.name.length)} ${i.value}\n`;
+        if (!formatItems || !formatItems.map(i => i.item).includes(i.name)) {
+          returnString += `${i.name} ${'-'.repeat(separatorValue - i.name.length)} ${i.value}\n`;
+        } else {
+          returnString += `${i.name} ${'-'.repeat(separatorValue - i.name.length)} ${formatItems.find(j => j.item === i.name)?.format(i.value)}\n`;
+        }
       });
       return returnString;
     }

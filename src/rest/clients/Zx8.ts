@@ -42,7 +42,7 @@ export default class Zx8RestClient extends ClientBase {
   public async searchHosts (query: string, limit: number = 1): Promise<Dataset[]> {
     return await <Promise<Dataset[]>> this.controller.request({
       method: 'GET',
-      path: `api/${this.version}/hosts`,
+      path: `api/${this.version}/host`,
       url: this.baseUrl,
       query: {
         url: query,

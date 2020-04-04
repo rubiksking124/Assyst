@@ -19,7 +19,7 @@ export default {
     minArgs: 1
   },
   onBefore: (ctx: Context): boolean => ctx.client.isOwner(ctx.userId),
-  run: async (_assyst: Assyst, ctx: Context, args: any) => {
+  run: async (assyst: Assyst, ctx: Context, args: any) => {
     let evaled: any;
     try {
     // eslint-disable-next-line no-eval
