@@ -28,7 +28,7 @@ export default {
       key = key[0].toUpperCase() + key.slice(1);
       rows.push({
         name: `${key}:`,
-        value
+        value: typeof value === 'number' ? value.toLocaleString() : value
       });
     });
     return ctx.editOrReply({
@@ -36,25 +36,25 @@ export default {
         title: 'zx8 Information',
         description: Markup.codeblock(assyst.utils.formatMetricList(rows, 20, [{
           item: 'TableSize:',
-          format: (item: number) => { return `${item.toString()} MB`; }
+          format: (item: string) => { return `${item} MB`; }
         },
         {
           item: 'Rss:',
-          format: (item: number) => { return `${item.toString()} MB`; }
+          format: (item: string) => { return `${item} MB`; }
         },
         {
           item: 'QueryCache:',
-          format: (item: number) => { return `${item.toString()} entries`; }
+          format: (item: string) => { return `${item} entries`; }
         },
         {
           item: 'ContentTypes:',
           format: (item: any) => {
             return `
- -- Images: ${item.image}
- -- Animated: ${item.animated}
- -- Videos: ${item.video}
- -- HTML: ${item.html}
- -- Other: ${item.other}`;
+ -- Images: ${item.image.toLocaleString()}
+ -- Animated: ${item.animated.toLocaleString()}
+ -- Videos: ${item.video.toLocaleString()}
+ -- HTML: ${item.html.toLocaleString()}
+ -- Other: ${item.other.toLocaleString()}`;
           }
         }]), { language: 'ml' }),
         color: 0x0fbcf9
