@@ -19,6 +19,14 @@ import { Context } from 'detritus-client/lib/command';
 import { Markup } from 'detritus-client/lib/utils';
 import AssystApi from '../api/Api';
 import { BaseCollection } from 'detritus-client/lib/collections';
+import { MessageEmbedField } from 'detritus-client/lib/structures';
+import Database from './Database';
+
+interface Field {
+  name: string,
+  value: string,
+  inline?: boolean
+}
 
 interface FoundCommandRow {
   uses: number,
@@ -30,8 +38,13 @@ interface Metrics {
   commands: number
 }
 
+export interface Metric {
+  name: string,
+  value: number
+}
+
 export default class Assyst extends CommandClient {
-    public db: Pool
+    public db: Database
     public customRest: RestController
     public logger: Logger
     public api: AssystApi
@@ -44,7 +57,7 @@ export default class Assyst extends CommandClient {
 
     constructor (token: string, options: CommandClientOptions) {
       super(token || '', options);
-      this.db = new Pool(db);
+      this.db = new Database(this, db);
       this.customRest = new RestController(this);
       this.logger = new Logger();
       this.api = new AssystApi(this);
@@ -54,15 +67,6 @@ export default class Assyst extends CommandClient {
       });
       this.initMetricsChecks();
       this.loadCommands();
-    }
-
-    public sql (query: string, values?: any[]): Promise<QueryResult> {
-      return new Promise((resolve, reject) => {
-        this.db.query(query, values || [], (err: any, res: any) => {
-          if (err) reject(err);
-          else resolve(res);
-        });
-      });
     }
 
     private loadCommands () {
@@ -95,9 +99,25 @@ export default class Assyst extends CommandClient {
 
             // onBefore: (ctx: Context, args: any) => { return this.checkArgsMet(command, ctx, args) && (command.onBefore === undefined ? command.onBefore(ctx) : true); },
 
-            onRunError: (ctx: Context, _args: any, error: any) => {
+            onRunError: (ctx: Context, args: any, error: any) => {
               ctx.editOrReply(Markup.codeblock(`Error: ${error.message}`, { language: 'js', limit: 1990 }));
-              this.fireErrorWebhook(webhooks.commandOnError.id, webhooks.commandOnError.token, 'Command Run Error Fired', 0xDD5522, error);
+              this.fireErrorWebhook(webhooks.commandOnError.id, webhooks.commandOnError.token, 'Command Run Error Fired', 0xDD5522, error, [
+                {
+                  name: 'Command',
+                  value: command.name,
+                  inline: true
+                },
+                {
+                  name: 'Args',
+                  value: args[command.name] || 'None',
+                  inline: true
+                },
+                {
+                  name: 'Guild',
+                  value: ctx.guildId || 'None',
+                  inline: false
+                }
+              ]);
             },
 
             onError: (ctx: Context, _args: any, error: any) => {
@@ -110,18 +130,7 @@ export default class Assyst extends CommandClient {
               this.fireErrorWebhook(webhooks.commandOnError.id, webhooks.commandOnError.token, 'Command Type Error Fired', 0xCC2288, error);
             },
 
-            onSuccess: async (ctx: Context) => {
-              if (!ctx.command) return;
-              const registeredCommandUses: FoundCommandRow[] = await this.sql('select command, uses from command_uses where guild = $1', [ctx.guildId]).then((r: QueryResult) => r.rows);
-              this.metrics.commands++;
-              const foundCommand: FoundCommandRow | undefined = registeredCommandUses.find((c: FoundCommandRow) => c.command === ctx.command?.name);
-              if (!foundCommand) {
-                await this.sql('insert into command_uses("guild", "command", "uses") values ($1, $2, $3)', [ctx.guildId, ctx.command.name, 1]);
-              } else {
-                foundCommand.uses++;
-                await this.sql('update command_uses set uses = $1 where guild = $2 and command = $3', [foundCommand.uses, ctx.guildId, foundCommand.command]);
-              }
-            }
+            onSuccess: async (ctx: Context) => await this.db.updateCommandUsage(ctx)
           });
           this.logger.info(`Loaded command: ${command.name}`);
         });
@@ -140,7 +149,7 @@ export default class Assyst extends CommandClient {
       return true;
     }
 
-    public fireErrorWebhook (id: string, token: string, title: string, color: number, error: any): void {
+    public fireErrorWebhook (id: string, token: string, title: string, color: number, error: any, extraFields: Field[] = []): void {
       this.client.rest.executeWebhook(id, token, {
         embed: {
           title,
@@ -151,7 +160,8 @@ export default class Assyst extends CommandClient {
               name: 'Stack',
               value: `\`\`\`js\n${error.stack}\`\`\``,
               inline: false
-            }
+            },
+            ...extraFields
           ]
         }
       });
@@ -161,9 +171,9 @@ export default class Assyst extends CommandClient {
       if (!ctx.user.bot && ctx.guildId && prefixOverride.enabled === false) {
         let prefix = this.prefixCache.get(ctx.guildId);
         if (!prefix) {
-          prefix = await this.sql('select prefix from prefixes where guild = $1', [ctx.guildId]).then((r: QueryResult) => r.rows[0].prefix);
+          prefix = await this.db.getGuildPrefix(ctx.guildId);
           if (!prefix) {
-            await this.sql('insert into prefixes(prefix, guild) values($1, $2)', ['a-', ctx.guildId]);
+            await this.db.updateGuildPrefix(ctx.guildId, 'a-');
             prefix = 'a-';
           }
         }
@@ -174,9 +184,12 @@ export default class Assyst extends CommandClient {
     }
 
     private async initMetricsChecks (): Promise<void> {
-      const metrics = await this.sql('select * from metrics').then((r: QueryResult) => r.rows);
-      const commands = metrics.find((m) => m.name === 'commands').value;
-      const eventRate = metrics.find((m) => m.name === 'last_event_count').value;
+      const metrics = await this.db.getMetrics();
+      const commands = metrics.find((m: Metric) => m.name === 'commands')?.value;
+      const eventRate = metrics.find((m: Metric) => m.name === 'last_event_count')?.value;
+      if (!commands || !eventRate) {
+        throw new Error('Metrics are missing from the table');
+      }
       let eventsThisMinute: number = 0;
       this.metrics = {
         commands,
@@ -188,7 +201,7 @@ export default class Assyst extends CommandClient {
       this.metricsInterval = setInterval(() => {
         this.metrics.eventRate = eventsThisMinute;
         eventsThisMinute = 0;
-        this.sql(`update metrics set value = ${this.metrics.commands} where name = 'commands'; update metrics set value = ${this.metrics.eventRate} where name = 'last_event_count'`);
+        this.db.updateMetrics(this.metrics.commands, this.metrics.eventRate);
       }, 60000);
       this.logger.info('Initialised metrics checks');
     }
