@@ -27,7 +27,7 @@ export default {
     duration: 10000
   },
   run: async (assyst: Assyst, ctx: Context) => {
-    const commandUses: CommandUseInfo[] = await assyst.sql('select command, uses from command_uses where guild = $1 order by uses desc', [ctx.guildId]).then((r: QueryResult) => r.rows);
+    const commandUses = await assyst.db.getGuildCommandUses(<string>ctx.guildId);
     const rows: string[] = [];
     commandUses.forEach((c: CommandUseInfo) => {
       rows.push(`Command: ${c.command} ${'-'.repeat(15 - c.command.length)} Uses: ${c.uses}`);

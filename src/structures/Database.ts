@@ -22,6 +22,11 @@ interface FoundCommandRow {
     command: string
 }
 
+interface CommandUseInfo {
+  command: string,
+  uses: string
+}
+
 export default class Database {
     private assyst: Assyst;
     private db: Pool
@@ -68,5 +73,17 @@ export default class Database {
 
     public async updateMetrics (commands: number, eventRate: number): Promise<void> {
       this.sql(`update metrics set value = ${commands} where name = 'commands'; update metrics set value = ${eventRate} where name = 'last_event_count'`);
+    }
+
+    public async getDatabaseSize (): Promise<string> {
+      return await this.sql('select pg_size_pretty(pg_database_size(\'assyst\'))').then(r => r.rows[0].pg_size_pretty);
+    }
+
+    public async getNow (): Promise<string> {
+      return await this.sql('select now()').then(r => r.rows[0].now);
+    }
+
+    public async getGuildCommandUses (guildId: string): Promise<CommandUseInfo[]> {
+      return await this.sql('select command, uses from command_uses where guild = $1 order by uses desc', [guildId]).then((r: QueryResult) => r.rows);
     }
 }

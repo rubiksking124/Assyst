@@ -21,7 +21,7 @@ export default {
     await ctx.editOrReply('Pong');
     const start = Date.now();
     let finish: number;
-    await assyst.sql('select now()');
+    await assyst.db.getNow();
     // eslint-disable-next-line prefer-const
     finish = Date.now() - start;
     const { rest, gateway } = await ctx.client.ping();

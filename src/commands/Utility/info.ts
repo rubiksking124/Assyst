@@ -32,7 +32,7 @@ export default {
     const processor: string = `${os.cpus().length}x ${os.cpus()[0].model}`;
     const gitRepo: string = homepage;
     const supportLink: string = 'https://jacher.io/assyst';
-    const dbSize: string = await assyst.sql('select pg_size_pretty(pg_database_size(\'assyst\'))').then(r => r.rows[0].pg_size_pretty);
+    const dbSize: string = await assyst.db.getDatabaseSize();
 
     const countsString = assyst.utils.formatMetricList([
       { name: 'Guilds:', value: guildCount.toString() },

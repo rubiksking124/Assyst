@@ -19,7 +19,6 @@ import { Context } from 'detritus-client/lib/command';
 import { Markup } from 'detritus-client/lib/utils';
 import AssystApi from '../api/Api';
 import { BaseCollection } from 'detritus-client/lib/collections';
-import { MessageEmbedField } from 'detritus-client/lib/structures';
 import Database from './Database';
 
 interface Field {
@@ -64,6 +63,9 @@ export default class Assyst extends CommandClient {
       this.utils = new Utils(this);
       this.prefixCache = new BaseCollection({
         expire: 3600000
+      });
+      this.on('commandDelete', ({ reply }) => {
+        reply.delete();
       });
       this.initMetricsChecks();
       this.loadCommands();
