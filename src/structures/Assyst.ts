@@ -16,16 +16,12 @@ import { Markup } from 'detritus-client/lib/utils';
 import AssystApi from '../api/Api';
 import { BaseCollection } from 'detritus-client/lib/collections';
 import Database from './Database';
+import DblRestClient from '../rest/clients/BotLists';
 
 interface Field {
   name: string,
   value: string,
   inline?: boolean
-}
-
-interface FoundCommandRow {
-  uses: number,
-  command: string
 }
 
 interface Metrics {
@@ -188,5 +184,16 @@ export default class Assyst extends CommandClient {
         this.db.updateMetrics(this.metrics.commands, this.metrics.eventRate);
       }, 60000);
       this.logger.info('Initialised metrics checks');
+    }
+
+    private async initBotListPosting (): Promise<void> {
+      setInterval(async () => {
+        const dblClient: DblRestClient | undefined = <DblRestClient | undefined> this.customRest.clients.get('dbl');
+        if (!dblClient) {
+          this.logger.warn('There is no DBL client present! Stats will not be posted.');
+        } else {
+          await dblClient.postStats();
+        }
+      }, 172800000);
     }
 }

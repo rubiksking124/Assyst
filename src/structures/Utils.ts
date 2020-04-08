@@ -21,15 +21,6 @@ export interface MetricItem {
   value: string
 }
 
-export interface CodeResult {
-  data: {
-      res: string,
-      comp: number,
-      timings: any[]
-  },
-  status: number
-}
-
 export interface MetricItemFormat {
   item: string,
   format: Function
@@ -40,11 +31,6 @@ interface ElapsedTime {
   minutes: number,
   hours: number,
   days: number
-}
-
-export interface CodeList {
-  status: number,
-  data: Array<string>
 }
 
 export default class Utils {
@@ -116,7 +102,7 @@ export default class Utils {
       return imageUrl;
     }
 
-    /* public async uploadToFilesGG (text: string, filename: string): Promise<string> { // TODO: fix this
+  /* public async uploadToFilesGG (text: string, filename: string): Promise<string> { // TODO: fix this
       const fd = new FormData();
       fd.append('file', createReadStream(`${__dirname}/${filename}`));
 
@@ -128,42 +114,4 @@ export default class Utils {
         body: fd
       });
     } */
-
-    public async runSandboxedCode (language: string, code: string): Promise<CodeResult> {
-      const body: FormData = new FormData();
-      body.append('lang', language);
-      body.append('code', code);
-      body.append('timeout', '60');
-      return await new Request({
-        method: 'POST',
-        headers: {
-          Authorization: gocode
-        },
-        settings: {
-          timeout: 60000
-        },
-        body: {
-          lang: language,
-          code: code,
-          timeout: '60'
-        },
-        url: new URL('https://api.gocode.it/exec/')
-      }).send().then(async (v: any) => {
-        const text = await v.text();
-        return JSON.parse(text);
-      });
-    }
-
-    public async getLanguageList (): Promise<CodeList> {
-      return await new Request({
-        method: 'OPTIONS',
-        url: new URL('https://api.gocode.it/exec/'),
-        settings: {
-          timeout: 1000
-        },
-        headers: {
-          Authorization: gocode
-        }
-      }).send().then(async (v) => JSON.parse(await v.text()));
-    }
 }
