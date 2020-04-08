@@ -1,12 +1,17 @@
 import Assyst from './Assyst';
 
+import { gocode } from '../../config.json';
+
 import { promisify } from 'util';
-import { unlink, writeFile, createReadStream } from 'fs';
+import { unlink, writeFile } from 'fs';
 
-import { Message, MessageEmbedThumbnail, Attachment } from 'detritus-client/lib/structures';
+import { Message } from 'detritus-client/lib/structures';
 
-import fetch from 'node-fetch';
 import { Context } from 'detritus-client/lib/command';
+
+import { Request } from 'detritus-rest';
+
+import FormData from 'form-data';
 
 const promisifyUnlink = promisify(unlink);
 const promisifyWrite = promisify(writeFile);
@@ -35,6 +40,11 @@ interface ElapsedTime {
   minutes: number,
   hours: number,
   days: number
+}
+
+export interface CodeList {
+  status: number,
+  data: Array<string>
 }
 
 export default class Utils {
@@ -106,7 +116,7 @@ export default class Utils {
       return imageUrl;
     }
 
-  /* public async uploadToFilesGG (text: string, filename: string): Promise<string> { // TODO: fix this
+    /* public async uploadToFilesGG (text: string, filename: string): Promise<string> { // TODO: fix this
       const fd = new FormData();
       fd.append('file', createReadStream(`${__dirname}/${filename}`));
 
@@ -119,20 +129,41 @@ export default class Utils {
       });
     } */
 
-  /* public async runSandboxedCode (language: string, code: string): Promise<CodeResult> {
-       return fetch({
+    public async runSandboxedCode (language: string, code: string): Promise<CodeResult> {
+      const body: FormData = new FormData();
+      body.append('lang', language);
+      body.append('code', code);
+      body.append('timeout', '60');
+      return await new Request({
         method: 'POST',
-        url: ''
+        headers: {
+          Authorization: gocode
+        },
+        settings: {
+          timeout: 60000
+        },
+        body: {
+          lang: language,
+          code: code,
+          timeout: '60'
+        },
+        url: new URL('https://api.gocode.it/exec/')
+      }).send().then(async (v: any) => {
+        const text = await v.text();
+        return JSON.parse(text);
       });
+    }
 
-      return superagent
-        .post(this.assyst.config.apis.code)
-        .accept('application/json')
-        .set('Content-Type', 'application/json')
-        .set('Authorization', tokens.gocodeit)
-        .field('lang', language)
-        .field('code', code)
-        .field('timeout', '60')
-        .then((v: any) => JSON.parse(v.text));
-    } */
+    public async getLanguageList (): Promise<CodeList> {
+      return await new Request({
+        method: 'OPTIONS',
+        url: new URL('https://api.gocode.it/exec/'),
+        settings: {
+          timeout: 1000
+        },
+        headers: {
+          Authorization: gocode
+        }
+      }).send().then(async (v) => JSON.parse(await v.text()));
+    }
 }
