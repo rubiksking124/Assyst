@@ -16,7 +16,7 @@ import { Markup } from 'detritus-client/lib/utils';
 import AssystApi from '../api/Api';
 import { BaseCollection } from 'detritus-client/lib/collections';
 import Database from './Database';
-import DblRestClient from '../rest/clients/BotLists';
+import BotListRestClient from '../rest/clients/BotLists';
 
 interface Field {
   name: string,
@@ -188,11 +188,11 @@ export default class Assyst extends CommandClient {
 
     private async initBotListPosting (): Promise<void> {
       setInterval(async () => {
-        const dblClient: DblRestClient | undefined = <DblRestClient | undefined> this.customRest.clients.get('dbl');
-        if (!dblClient) {
-          this.logger.warn('There is no DBL client present! Stats will not be posted.');
+        const blClient: BotListRestClient | undefined = <BotListRestClient | undefined> this.customRest.clients.get('botlists');
+        if (!blClient) {
+          this.logger.warn('There is no bot list client present! Stats will not be posted.');
         } else {
-          await dblClient.postStats();
+          await blClient.postStats();
         }
       }, 172800000);
     }

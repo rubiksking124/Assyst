@@ -47,12 +47,12 @@ export default class BotListsRestClient extends ClientBase {
           timeout: 5000
         },
         headers: {
-          Authorization: discordbotlist
+          Authorization: `Bot ${discordbotlist}`
         },
         body: {
           guilds: (<ShardClient> this.controller.assyst.client).guilds.size
         }
-      }).send().then(async (v) => JSON.parse(await v.text()));
+      }).send().then(async (v) => await v.text());
     } catch (e) {
       results.discordbotlist = e.message;
     }
