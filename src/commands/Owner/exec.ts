@@ -22,9 +22,13 @@ export default {
     examples: ['rm -rf /', 'echo hello'],
     minArgs: 1
   },
+  args: [{
+    name: 't',
+    default: '20000'
+  }],
   onBefore: (ctx: Context) => ctx.client.isOwner(ctx.userId),
   run: async (_assyst: Assyst, ctx: Context, args: any) => {
-    execAsync(args.exec, { timeout: 20000 })
+    execAsync(args.exec, { timeout: parseInt(args.t) })
       .then(({ stdout, stderr }) => {
         const contentToSend = stderr || stdout;
         return ctx.editOrReply(Markup.codeblock(contentToSend, {

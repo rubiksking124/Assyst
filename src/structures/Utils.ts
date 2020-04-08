@@ -16,6 +16,15 @@ export interface MetricItem {
   value: string
 }
 
+export interface CodeResult {
+  data: {
+      res: string,
+      comp: number,
+      timings: any[]
+  },
+  status: number
+}
+
 export interface MetricItemFormat {
   item: string,
   format: Function
@@ -96,6 +105,7 @@ export default class Utils {
       }
       return imageUrl;
     }
+
   /* public async uploadToFilesGG (text: string, filename: string): Promise<string> { // TODO: fix this
       const fd = new FormData();
       fd.append('file', createReadStream(`${__dirname}/${filename}`));
@@ -107,5 +117,22 @@ export default class Utils {
         },
         body: fd
       });
+    } */
+
+  /* public async runSandboxedCode (language: string, code: string): Promise<CodeResult> {
+       return fetch({
+        method: 'POST',
+        url: ''
+      });
+
+      return superagent
+        .post(this.assyst.config.apis.code)
+        .accept('application/json')
+        .set('Content-Type', 'application/json')
+        .set('Authorization', tokens.gocodeit)
+        .field('lang', language)
+        .field('code', code)
+        .field('timeout', '60')
+        .then((v: any) => JSON.parse(v.text));
     } */
 }

@@ -3,7 +3,7 @@ import { Context } from 'detritus-client/lib/command';
 import Assyst from '../../structures/Assyst';
 
 export default {
-  name: '',
+  name: 'tag',
   aliases: [''],
   responseOptional: true,
   metadata: {

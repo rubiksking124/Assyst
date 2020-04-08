@@ -1,10 +1,6 @@
 import { CommandClient, CommandClientOptions, Command } from 'detritus-client';
 
-import { CommandEvents } from 'detritus-client/lib/command/events';
-
 import Utils from './Utils';
-
-import { Pool, QueryResult } from 'pg';
 
 import { readdirSync } from 'fs';
 
@@ -99,8 +95,6 @@ export default class Assyst extends CommandClient {
               }
             },
 
-            // onBefore: (ctx: Context, args: any) => { return this.checkArgsMet(command, ctx, args) && (command.onBefore === undefined ? command.onBefore(ctx) : true); },
-
             onRunError: (ctx: Context, args: any, error: any) => {
               ctx.editOrReply(Markup.codeblock(`Error: ${error.message}`, { language: 'js', limit: 1990 }));
               this.fireErrorWebhook(webhooks.commandOnError.id, webhooks.commandOnError.token, 'Command Run Error Fired', 0xDD5522, error, [
@@ -137,18 +131,6 @@ export default class Assyst extends CommandClient {
           this.logger.info(`Loaded command: ${command.name}`);
         });
       });
-    }
-
-    private checkArgsMet (command: Command.Command, ctx: Context, args: any): boolean {
-      if (command.metadata.minArgs > args[command.name]) {
-        ctx.editOrReply(`Usage: ${command.metadata.usage !== undefined
-            ? Markup.codeblock(`${ctx.prefix}${command.name} ${command.metadata.usage}`, {
-              language: 'css', limit: 1990
-            })
-            : 'No usage information found...'}`);
-        return false;
-      }
-      return true;
     }
 
     public fireErrorWebhook (id: string, token: string, title: string, color: number, error: any, extraFields: Field[] = []): void {
