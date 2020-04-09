@@ -3,11 +3,9 @@ import Zx8RestClient from '../../rest/clients/Zx8';
 import Assyst from '../../structures/Assyst';
 import { MetricItem } from '../../structures/Utils';
 
-import { Markup } from 'detritus-client/lib/utils';
-
 export default {
   name: 'zx8 hosts',
-  aliases: ['zx8 hs'],
+  aliases: ['zx8 hs', 'zx8 search'],
   responseOptional: true,
   metadata: {
     description: 'Search for hosts using the zx8 search engine',
