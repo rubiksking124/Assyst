@@ -7,7 +7,8 @@ import { readdirSync } from 'fs';
 import {
   db,
   webhooks,
-  prefixOverride
+  prefixOverride,
+  limitToUsers
 } from '../../config.json';
 import RestController from '../rest/Rest';
 import Logger from './Logger';
@@ -61,6 +62,7 @@ export default class Assyst extends CommandClient {
       });
       this.initMetricsChecks();
       this.loadCommands();
+      this.initBotListPosting();
     }
 
     private loadCommands () {
@@ -195,5 +197,11 @@ export default class Assyst extends CommandClient {
           await blClient.postStats();
         }
       }, 172800000);
+    }
+
+    public onCommandCheck (ctx: Context, _command: Command.Command): boolean {
+      if (limitToUsers.enabled && limitToUsers.users.includes(ctx.userId)) return true;
+      else if (!limitToUsers.enabled) return true;
+      else return false;
     }
 }

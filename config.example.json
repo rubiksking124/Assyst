@@ -1,4 +1,8 @@
 {
+    "limitToUsers": {
+        "enabled": false, 
+        "users": ["UID1", "UID2"] 
+    },
     "devMode": {
         "enabled": false,
         "prefix": ""
