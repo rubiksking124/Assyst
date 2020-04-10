@@ -5,6 +5,8 @@ import { inspect } from 'util';
 
 import Assyst from '../../structures/Assyst';
 
+import { admins } from '../../../config.json';
+
 import { Utils } from 'detritus-client';
 
 const AsyncFunction = Object.getPrototypeOf(async function () {}).constructor;
@@ -27,7 +29,7 @@ export default {
       type: Boolean
     }
   ],
-  onBefore: (ctx: Context): boolean => ctx.client.isOwner(ctx.userId),
+  onBefore: (ctx: Context): boolean => ctx.client.isOwner(ctx.userId) || admins.includes(ctx.userId),
   run: async (assyst: Assyst, ctx: Context, args: any) => {
     let evaled: any;
     try {

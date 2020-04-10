@@ -1,12 +1,14 @@
 import { Context } from 'detritus-client/lib/command';
 
-import { exec, ExecException } from 'child_process';
+import { exec } from 'child_process';
 
 import { promisify } from 'util';
 
 import Assyst from '../../structures/Assyst';
 
 import { Utils } from 'detritus-client';
+
+import { admins } from '../../../config.json';
 
 const { Markup } = Utils;
 
@@ -26,7 +28,7 @@ export default {
     name: 't',
     default: '20000'
   }],
-  onBefore: (ctx: Context) => ctx.client.isOwner(ctx.userId),
+  onBefore: (ctx: Context) => ctx.client.isOwner(ctx.userId) || admins.includes(<never>ctx.userId),
   run: async (_assyst: Assyst, ctx: Context, args: any) => {
     execAsync(args.exec, { timeout: parseInt(args.t) })
       .then(({ stdout, stderr }) => {

@@ -1,4 +1,5 @@
 {
+    "admins": ["UID1"],
     "limitToUsers": {
         "enabled": false, 
         "users": ["UID1", "UID2"] 
@@ -37,5 +38,8 @@
             "id": "",
             "token": "" 
         }
+    },
+    "api": {
+        "port": 9922
     }
 }
