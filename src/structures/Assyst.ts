@@ -15,7 +15,7 @@ import Logger from './Logger';
 import { Context } from 'detritus-client/lib/command';
 import { Markup } from 'detritus-client/lib/utils';
 import AssystApi from '../api/Api';
-import { BaseCollection } from 'detritus-client/lib/collections';
+import { BaseCollection, BaseSet } from 'detritus-client/lib/collections';
 import Database from './Database';
 import BotListRestClient from '../rest/clients/BotLists';
 
@@ -159,9 +159,9 @@ export default class Assyst extends CommandClient {
             prefix = 'a-';
           }
         }
-        return prefix;
+        return new BaseSet([prefix, `${ctx.client.user?.mention} `, `<@!${ctx.client.user?.id}> `]);
       }
-      if (prefixOverride.enabled === false) return this.prefixes.custom;
+      if (prefixOverride.enabled === false) throw new Error('Prefix check failed!');
       else return prefixOverride.prefix;
     }
 
