@@ -58,12 +58,16 @@ export default class Database {
       }
     }
 
+    public async updateGuildPrefix (prefix: string, guildId: string): Promise<void> {
+      await this.sql('update prefixes set prefix = $1 where guild = $2', [prefix, guildId]).then((r: QueryResult) => r.rows[0] ? r.rows[0].prefix : undefined);
+    }
+
     public async getGuildPrefix (guildId: string): Promise<string | undefined> {
       const prefix: string | undefined = await this.sql('select prefix from prefixes where guild = $1', [guildId]).then((r: QueryResult) => r.rows[0] ? r.rows[0].prefix : undefined);
       return prefix;
     }
 
-    public async updateGuildPrefix (guildId: string, prefix: string): Promise<QueryResult> {
+    public async addGuildPrefix (guildId: string, prefix: string): Promise<QueryResult> {
       const res = await this.sql('insert into prefixes("prefix", "guild") values($1, $2)', [prefix, guildId]);
       return res;
     }

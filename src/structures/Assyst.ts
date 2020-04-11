@@ -155,7 +155,7 @@ export default class Assyst extends CommandClient {
         if (!prefix) {
           prefix = await this.db.getGuildPrefix(ctx.guildId);
           if (!prefix) {
-            await this.db.updateGuildPrefix(ctx.guildId, 'a-');
+            await this.db.addGuildPrefix(ctx.guildId, 'a-');
             prefix = 'a-';
           }
         }
