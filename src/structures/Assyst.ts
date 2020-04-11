@@ -161,7 +161,7 @@ export default class Assyst extends CommandClient {
         }
         return new BaseSet([prefix, `${ctx.client.user?.mention} `, `<@!${ctx.client.user?.id}> `]);
       }
-      if (prefixOverride.enabled === false) throw new Error('Prefix check failed!');
+      if (prefixOverride.enabled === false) return '';
       else return prefixOverride.prefix;
     }
 
@@ -200,7 +200,7 @@ export default class Assyst extends CommandClient {
     }
 
     public onCommandCheck (ctx: Context, _command: Command.Command): boolean {
-      if (ctx.inDm) return false;
+      if (ctx.inDm || ctx.user.bot) return false;
       if (limitToUsers.enabled && limitToUsers.users.includes(ctx.userId)) return true;
       else if (!limitToUsers.enabled) return true;
       else return false;
