@@ -94,7 +94,11 @@ export default class Assyst extends CommandClient {
             },
 
             onRunError: (ctx: Context, args: any, error: any) => {
-              ctx.editOrReply(Markup.codeblock(`Error: ${error.message}`, { language: 'js', limit: 1990 }));
+              if (error.message.includes(db.host)) {
+                ctx.editOrReply('An unexpected error occurred during execution...');
+              } else {
+                ctx.editOrReply(Markup.codeblock(`Error: ${error.message}`, { language: 'js', limit: 1990 }));
+              }
               this.fireErrorWebhook(webhooks.commandOnError.id, webhooks.commandOnError.token, 'Command Run Error Fired', 0xDD5522, error, [
                 {
                   name: 'Command',

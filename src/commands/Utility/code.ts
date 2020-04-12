@@ -5,6 +5,9 @@ import { Markup } from 'detritus-client/lib/utils';
 
 import { STATUS_CODES } from 'http';
 import GocodeitRestClient from '../../rest/clients/Gocodeit';
+import { BaseSet } from 'detritus-client/lib/collections';
+
+const currentExecutions: BaseSet<string> = new BaseSet([]);
 
 export default {
   name: 'code',
@@ -18,7 +21,7 @@ export default {
   ratelimit: {
     type: 'guild',
     limit: 1,
-    duration: 20000
+    duration: 5000
   },
   args: [
     {
@@ -36,9 +39,13 @@ export default {
       return ctx.editOrReply(`Supported languages: ${languages.map(l => `\`${l}\``).join(', ')}`);
     } else if (args.code.split(' ').length === 1) {
       return ctx.editOrReply('You need to provide a code argument');
+    } else if (currentExecutions.has(ctx.userId)) {
+      return ctx.editOrReply('You already have a currently executing program');
     }
     await ctx.triggerTyping();
+    currentExecutions.add(ctx.userId);
     const response = await client.runSandboxedCode(args.code.split(' ')[0], args.code.split(' ').slice(1).join(' ')).then((res) => res);
+    currentExecutions.delete(ctx.userId);
     if (response.status !== 200) {
       return ctx.editOrReply(`Error ${response.status}: ${STATUS_CODES[response.status]} - ${response.data.res}`);
     }
