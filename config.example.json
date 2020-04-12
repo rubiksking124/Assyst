@@ -9,6 +9,10 @@
         "prefix": ""
     },
     "token": "",
+    "gocode": "",
+    "dbl": "",
+    "discordbotlist": "",
+    "fapi": "",
     "db": {
         "host": "",
         "username": "",
