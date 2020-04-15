@@ -1,6 +1,12 @@
-import { CommandClient, CommandClientOptions, Command } from 'detritus-client';
+import { CommandClient, CommandClientOptions, Command, ShardClient } from 'detritus-client';
 
 import Utils from './Utils';
+
+import Database, { ITag } from './Database';
+
+import Parser from './Parser';
+
+import { Message } from 'detritus-client/lib/structures';
 
 import { readdirSync } from 'fs';
 
@@ -16,7 +22,7 @@ import { Context } from 'detritus-client/lib/command';
 import { Markup } from 'detritus-client/lib/utils';
 import AssystApi from '../api/Api';
 import { BaseCollection, BaseSet } from 'detritus-client/lib/collections';
-import Database from './Database';
+
 import BotListRestClient from '../rest/clients/BotLists';
 
 interface Field {
@@ -203,10 +209,27 @@ export default class Assyst extends CommandClient {
       }, 172800000);
     }
 
-    public onCommandCheck (ctx: Context, _command: Command.Command): boolean {
+    public async onCommandCheck (ctx: Context, command: Command.Command): Promise<boolean> {
+      return this.checkBotUseLimit(ctx) && await this.checkIfDisabled(ctx, command);
+    }
+
+    private async checkIfDisabled (ctx: Context, command: Command.Command): Promise<boolean> {
+      const disabledGuildCommands = await this.db.getGuildDisabledCommands(<string> ctx.guildId);
+      if (disabledGuildCommands.includes(command.name)) return false;
+      else return true;
+    }
+
+    private checkBotUseLimit (ctx: Context): boolean {
       if (ctx.inDm || ctx.user.bot) return false;
       if (limitToUsers.enabled && limitToUsers.users.includes(ctx.userId)) return true;
       else if (!limitToUsers.enabled) return true;
       else return false;
+    }
+
+    public parseNew (input: string, message: Message, args: string[] = [], tag: ITag) {
+      return new Parser(<ShardClient> this.client, {
+        message,
+        getMemberFromString: () => null
+      }, this).parse(input, args, tag);
     }
 }

@@ -27,6 +27,17 @@ interface CommandUseInfo {
   uses: string
 }
 
+export interface ITag {
+  id: number,
+  name: string,
+  author: string,
+  createdat: Date,
+  nsfw: boolean,
+  guild: string,
+  uses: number,
+  content: string
+}
+
 export default class Database {
     private assyst: Assyst;
     private db: Pool
@@ -67,6 +78,20 @@ export default class Database {
       return prefix;
     }
 
+    public async getGuildDisabledCommands (guildId: string): Promise<string[]> {
+      const rows: { command: string }[] = await this.sql('select command from disabled_commands where guild = $1', [guildId]).then((r: QueryResult) => r.rows);
+      if (rows.length === 0) return [];
+      else return rows.map(r => r.command);
+    }
+
+    public async disableGuildCommand (commandName: string, guildId: string): Promise<void> {
+      await this.sql('insert into disabled_commands(command, guild) values ($1, $2)', [commandName, guildId]);
+    }
+
+    public async enableGuildCommand (commandName: string, guildId: string): Promise<void> {
+      await this.sql('delete from disabled_commands where command = $1 and guild = $2', [commandName, guildId]);
+    }
+
     public async addGuildPrefix (guildId: string, prefix: string): Promise<QueryResult> {
       const res = await this.sql('insert into prefixes("prefix", "guild") values($1, $2)', [prefix, guildId]);
       return res;
@@ -90,5 +115,9 @@ export default class Database {
 
     public async getGuildCommandUses (guildId: string): Promise<CommandUseInfo[]> {
       return await this.sql('select command, uses from command_uses where guild = $1 order by uses desc', [guildId]).then((r: QueryResult) => r.rows);
+    }
+
+    public async getTag (guildId: string, tagName: string): Promise<ITag | undefined> {
+      return await this.sql('select * from tags where name = $1 and guild = $2', [tagName, guildId]).then(r => r.rows[0]);
     }
 }

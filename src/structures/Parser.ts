@@ -4,18 +4,18 @@ import { Message, Member, Role } from 'detritus-client/lib/structures';
 import Assyst from './Assyst';
 import Utils from './Utils';
 import { Permissions } from 'detritus-client/lib/constants';
+import GocodeitRestClient, { CodeList } from '../rest/clients/Gocodeit';
 
 let utils: Utils;
 const preParseTags: Array<string> = ['ignore', 'note'];
 const postParseTags: Array<string> = ['attach', 'iscript'];
-let rexLangs: string[];
+let rexLangs: CodeList;
 
-/* (async () => {
-  rexLangs = await options(new Config().apis.code)
-    .accept('application/json')
-    .set('Authorization', tokens.gocodeit)
-    .then((v: any) => JSON.parse(v.text).data);
-})(); */
+const gocodeitClient: GocodeitRestClient = new GocodeitRestClient();
+
+(async () => {
+  rexLangs = await gocodeitClient.getLanguageList();
+})();
 
 export default class Parser {
     private assyst: Assyst
@@ -588,7 +588,8 @@ export default class Parser {
           return Math.round((await this.client.ping()).gateway);
 
         case 'haste':
-        /* case 'files.gg': {
+          break;
+          /* case 'files.gg': {
           this.hasteCalls++;
           if (this.hasteCalls > 5) return '[TOO MANY HASTE CALLS]';
 
@@ -597,19 +598,19 @@ export default class Parser {
           else return await Parser.createHaste(rawArgs);
         } */
 
-        /* default:
-          if (rexLangs.includes(key)) {
+        default:
+          if (rexLangs.data.includes(key)) {
             if (!rawArgs) return;
 
             this.rexCalls++;
             if (this.rexCalls > 2) return '[TOO MANY REX CALLS]';
 
-            const rexResult = await this.assyst.utils.runSandboxedCode(key, Parser.unescapeTag(rawArgs));
+            const rexResult = await (<GocodeitRestClient> this.assyst.customRest.clients.get('gocodeit')).runSandboxedCode(key, Parser.unescapeTag(rawArgs));
 
             return Parser.escapeTag(rexResult.data.res);
           }
           this.parsedStatements--;
-          return `{${key}${rawArgs ? `:${rawArgs}` : ''}}`; */
+          return `{${key}${rawArgs ? `:${rawArgs}` : ''}}`;
       }
     }
 
