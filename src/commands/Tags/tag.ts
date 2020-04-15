@@ -25,6 +25,7 @@ export default {
     if (!tag) {
       return ctx.editOrReply('No tag found');
     }
+    ctx.triggerTyping();
     const tagArgs = args.tag.split(' ').slice(1);
     const result = await assyst.parseNew(tag.content, ctx.message, tagArgs, tag);
     if (!result || !result.result) {
