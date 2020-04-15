@@ -31,6 +31,6 @@ export default {
     if (!result || !result.result) {
       return ctx.editOrReply('Tag returned an empty response');
     }
-    return ctx.editOrReply(result.result.slice(0, 1990));
+    return ctx.editOrReply(Markup.escape.mentions(result.result.slice(0, 1990)));
   }
 };
