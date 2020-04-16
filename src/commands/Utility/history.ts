@@ -23,6 +23,6 @@ export default {
     const day = new Date().getDate()
     const response = await ctx.rest.request(`https://byabbe.se/on-this-day/${month}/${day}/events.json`).then(res => res.events)
     let event = response[Math.floor(Math.random() * response.length)];
-    return ctx.editOrReply(`**On this day (${day}/${month}/${new Date().getFullYear()}):**\n${Markup.codeblock(event.description)}`);
+    return ctx.editOrReply(`**On this day (${day}/${month}/${new Date().getFullYear()}), in the year ${event.year}:**\n${Markup.codeblock(event.description)}`);
   }
 };
