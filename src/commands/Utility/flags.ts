@@ -10,30 +10,43 @@ export default {
   aliases: ['flags'],
   responseOptional: true,
   metadata: {
-    description: 'Get your public flags',
+    description: 'Get your or someone else\'s public flags',
     usage: '',
     examples: ['']
   },
   ratelimit: {
     type: 'guild',
     limit: 1,
-    duration: 3000
+    duration: 5000
   },
-  run: async (assyst: Assyst, ctx: Context, args: any) => {
+  args: [{
+    name: 'onlytrue',
+    type: Boolean
+  }],
+  run: async (_assyst: Assyst, ctx: Context, args: any) => {
     let user = ctx.user;
     if (args && args.publicflags) {
-      user = await ctx.rest.fetchUser(args.publicflags);
-      if (!user) return ctx.editOrReply('No user found with this id');
+      try {
+        user = await ctx.rest.fetchUser(args.publicflags);
+      } catch (e) {
+        if (e.response.statusCode === 400) {
+          return ctx.editOrReply('User parameter must be a valid id');
+        }
+        return ctx.editOrReply(e.message);
+      }
     }
     const publicFlags: Array<string> = [];
     for (let i = 0; i < 16; i++) {
       const flagName: string | undefined = UserFlags[1 << i];
       if (flagName) {
-        publicFlags.push(`${flagName.slice(0, 1)}${flagName.slice(1).toLowerCase()}: ${(user.publicFlags & 1 << i) !== 0}`);
+        const state = (user.publicFlags & 1 << i) !== 0;
+        if ((args.onlytrue && state) || !args.onlytrue) {
+          publicFlags.push(`${flagName.slice(0, 1)}${flagName.slice(1).toLowerCase()}: ${state}`);
+        }
       }
     }
-    publicFlags.push(`Verified_bot_developer: ${user.hasVerifiedDeveloper}`);
-    publicFlags.push(`Verified_bot: ${user.hasVerifiedBot}`);
+    if ((args.onlytrue && user.hasVerifiedDeveloper) || !args.onlytrue) publicFlags.push(`Verified_bot_developer: ${user.hasVerifiedDeveloper}`);
+    if ((args.onlytrue && user.hasVerifiedBot) || !args.onlytrue) publicFlags.push(`Verified_bot: ${user.hasVerifiedBot}`);
     ctx.editOrReply(Markup.codeblock(publicFlags.join('\n'), { language: 'ml' }));
   }
 };
