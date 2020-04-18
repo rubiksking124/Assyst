@@ -50,7 +50,7 @@ export default {
       }
     }
     if ((args.onlytrue && user.hasVerifiedDeveloper) || (!args.onlytrue && !args.onlyfalse) || (args.onlyfalse && !user.hasVerifiedDeveloper)) publicFlags.push(`Verified_bot_developer: ${user.hasVerifiedDeveloper}`);
-    if ((args.onlytrue && user.hasVerifiedBot) || (!args.onlytrue && args.onlyfalse) || (args.onlyfalse && !user.hasVerifiedBot)) publicFlags.push(`Verified_bot: ${user.hasVerifiedBot}`);
+    if ((args.onlytrue && user.hasVerifiedBot) || (!args.onlytrue && !args.onlyfalse) || (args.onlyfalse && !user.hasVerifiedBot)) publicFlags.push(`Verified_bot: ${user.hasVerifiedBot}`);
     ctx.editOrReply(Markup.codeblock(publicFlags.join('\n'), { language: 'ml' }));
   }
 };

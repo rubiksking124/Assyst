@@ -3,6 +3,7 @@ import { Context } from 'detritus-client/lib/command';
 import { UserFlags } from 'detritus-client/lib/constants';
 
 import Assyst from '../../structures/Assyst';
+import { Member } from 'detritus-client/lib/structures';
 
 export default {
   name: 'whois',
@@ -19,7 +20,7 @@ export default {
     duration: 5000
   },
   run: async (assyst: Assyst, ctx: Context, args: any) => {
-    let member;
+    let member: Member;
     if (args && args.whois) {
       try {
         member = await ctx.rest.fetchGuildMember(<string> ctx.guildId, args.whois);
@@ -54,8 +55,34 @@ export default {
     const roleCount = member.roles.length;
     return ctx.editOrReply({
       embed: {
-        title: member.user.mention,
-        color: memberColor
+        description: member.user.mention,
+        color: memberColor,
+        author: {
+          name: `${member.user.name}#${member.user.discriminator}`,
+          iconUrl: member.user.avatarUrl        
+        },
+        fields: [
+          {
+            name: 'Join Date',
+            value: `${joinDate} (${daysElapsedSinceJoin} days ago)`,
+            inline: false
+          },
+          {
+            name: 'Creation Date',
+            value: `${createdDate} (${daysElapsedSinceCreate} days ago)`,
+            inline: false
+          },
+          {
+            name: 'Role Count',
+            value: roleCount.toString(),
+            inline: true
+          },
+          {
+            name: 'User Flags',
+            value: memberFlags.length > 0 ? memberFlags.join(', ') : 'None',
+            inline: true
+          }
+        ]
       }
     });
   }
