@@ -19,10 +19,10 @@ export default {
   },
   run: async (assyst: Assyst, ctx: Context, _args: any) => {
     ctx.triggerTyping();
-    const month = new Date().getMonth() + 1
-    const day = new Date().getDate()
-    const response = await ctx.rest.request(`https://byabbe.se/on-this-day/${month}/${day}/events.json`).then(res => res.events)
-    let event = response[Math.floor(Math.random() * response.length)];
+    const month = new Date().getMonth() + 1;
+    const day = new Date().getDate();
+    const response = await ctx.rest.request(`https://byabbe.se/on-this-day/${month}/${day}/events.json`).then(res => res.events);
+    const event = response[Math.floor(Math.random() * response.length)];
     return ctx.editOrReply(`**On this day (${day}/${month}/${new Date().getFullYear()}), in the year ${event.year}:**\n${Markup.codeblock(event.description)}`);
   }
 };
