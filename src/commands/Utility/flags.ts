@@ -11,8 +11,8 @@ export default {
   responseOptional: true,
   metadata: {
     description: 'Get your or someone else\'s public flags',
-    usage: '',
-    examples: ['']
+    usage: '<user id>',
+    examples: ['', '233667448887312385']
   },
   ratelimit: {
     type: 'guild',
