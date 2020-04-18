@@ -22,6 +22,10 @@ export default {
   args: [{
     name: 'onlytrue',
     type: Boolean
+  },
+  {
+    name: 'onlyfalse',
+    type: Boolean
   }],
   run: async (_assyst: Assyst, ctx: Context, args: any) => {
     let user = ctx.user;
@@ -40,13 +44,13 @@ export default {
       const flagName: string | undefined = UserFlags[1 << i];
       if (flagName) {
         const state = (user.publicFlags & 1 << i) !== 0;
-        if ((args.onlytrue && state) || !args.onlytrue) {
+        if ((args.onlytrue && state) || (!args.onlytrue && !args.onlyfalse) || (args.onlyfalse && !state)) {
           publicFlags.push(`${flagName.slice(0, 1)}${flagName.slice(1).toLowerCase()}: ${state}`);
         }
       }
     }
-    if ((args.onlytrue && user.hasVerifiedDeveloper) || !args.onlytrue) publicFlags.push(`Verified_bot_developer: ${user.hasVerifiedDeveloper}`);
-    if ((args.onlytrue && user.hasVerifiedBot) || !args.onlytrue) publicFlags.push(`Verified_bot: ${user.hasVerifiedBot}`);
+    if ((args.onlytrue && user.hasVerifiedDeveloper) || (!args.onlytrue && !args.onlyfalse) || (args.onlyfalse && !user.hasVerifiedDeveloper)) publicFlags.push(`Verified_bot_developer: ${user.hasVerifiedDeveloper}`);
+    if ((args.onlytrue && user.hasVerifiedBot) || (!args.onlytrue && args.onlyfalse) || (args.onlyfalse && !user.hasVerifiedBot)) publicFlags.push(`Verified_bot: ${user.hasVerifiedBot}`);
     ctx.editOrReply(Markup.codeblock(publicFlags.join('\n'), { language: 'ml' }));
   }
 };
