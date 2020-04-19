@@ -85,7 +85,7 @@ export default {
           },
           {
             name: 'User Flags',
-            value: memberFlags.length > 0 ? memberFlags.join(', ') : 'None',
+            value: memberFlags.length > 0 ? memberFlags.join('\n') : 'None',
             inline: true
           }
         ]
