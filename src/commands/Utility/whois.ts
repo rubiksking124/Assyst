@@ -3,7 +3,7 @@ import { Context } from 'detritus-client/lib/command';
 import { UserFlags } from 'detritus-client/lib/constants';
 
 import Assyst from '../../structures/Assyst';
-import { Member } from 'detritus-client/lib/structures';
+import { Member, User } from 'detritus-client/lib/structures';
 
 export default {
   name: 'whois',
@@ -20,15 +20,18 @@ export default {
     duration: 5000
   },
   run: async (assyst: Assyst, ctx: Context, args: any) => {
-    let member: Member;
+    let member: Member | User | undefined;
     if (args && args.whois) {
       try {
         member = await ctx.rest.fetchGuildMember(<string> ctx.guildId, args.whois);
       } catch (e) {
+        let notFound = false;
         if (e.response.statusCode === 400) {
           return ctx.editOrReply('User parameter must be a valid id');
+        } else if (e.response.statusCode === 404 && e.message.includes('Unknown Member')) {
+          member = await ctx.rest.fetchUser(args.whois).catch(() => { notFound = true; return undefined; });
         }
-        return ctx.editOrReply(e.message);
+        if (!member) return ctx.editOrReply(e.message);
       }
     } else {
       if (!ctx.member) {
@@ -38,33 +41,36 @@ export default {
       }
     }
 
+    const user = member instanceof User ? member : member.user;
+
     const memberFlags: Array<string> = [];
     for (let i = 0; i < 16; i++) {
       const flagName: string | undefined = UserFlags[1 << i];
       if (flagName) {
-        const state = (member.user.publicFlags & 1 << i) !== 0;
+        const state = (user.publicFlags & 1 << i) !== 0;
         if (state) memberFlags.push(flagName);
       }
     }
 
-    const memberColor = ctx.member?.color;
-    const joinDate = new Date(member.joinedAtUnix).toLocaleString();
-    const daysElapsedSinceJoin = Math.round((Date.now() - member.joinedAtUnix) / 1000 / 60 / 60 / 24);
-    const createdDate = new Date(member.user.createdAtUnix).toLocaleString();
-    const daysElapsedSinceCreate = Math.round((Date.now() - member.user.createdAtUnix) / 1000 / 60 / 60 / 24);
-    const roleCount = member.roles.length;
+    const memberColor = member instanceof Member ? member.color : 0xb9bbbe;
+    const joinDate = member instanceof Member ? new Date(member.joinedAtUnix).toLocaleString() : 'None';
+    const daysElapsedSinceJoin = member instanceof Member ? `(${Math.round((Date.now() - member.joinedAtUnix) / 1000 / 60 / 60 / 24)} days ago)` : '';
+    const createdDate = new Date(user.createdAtUnix).toLocaleString();
+    const daysElapsedSinceCreate = Math.round((Date.now() - user.createdAtUnix) / 1000 / 60 / 60 / 24);
+    const roleCount = member instanceof Member ? member.roles.length : 0;
+
     return ctx.editOrReply({
       embed: {
-        description: member.user.mention,
+        description: user.mention,
         color: memberColor,
         author: {
-          name: `${member.user.name}#${member.user.discriminator}`,
-          iconUrl: member.user.avatarUrl        
+          name: `${user.name}#${user.discriminator}`,
+          iconUrl: user.avatarUrl
         },
         fields: [
           {
             name: 'Join Date',
-            value: `${joinDate} (${daysElapsedSinceJoin} days ago)`,
+            value: `${joinDate} ${daysElapsedSinceJoin}`,
             inline: false
           },
           {
