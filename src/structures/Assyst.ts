@@ -71,7 +71,7 @@ export default class Assyst extends CommandClient {
       this.initBotListPosting();
     }
 
-    private loadCommands () {
+    private loadCommands (noLog?: boolean) {
       const folders = readdirSync('./src/commands');
       folders.forEach(async (folder: string) => {
         if (folder.includes('template')) return;
@@ -136,9 +136,25 @@ export default class Assyst extends CommandClient {
 
             onSuccess: async (ctx: Context) => await this.db.updateCommandUsage(ctx)
           });
-          this.logger.info(`Loaded command: ${command.name}`);
+          if (!noLog) this.logger.info(`Loaded command: ${command.name}`);
         });
       });
+    }
+
+    public reloadCommands () {
+      const folders = readdirSync('./src/commands');
+      folders.forEach(async (folder: string) => {
+        if (folder.includes('template')) return;
+        if (folder.includes('.js')) throw new Error('Commands must be within subfolders for their category');
+        const files = readdirSync(`./src/commands/${folder}`);
+        files.forEach(async (file) => {
+          if (file.includes('template') || file.includes('category_info')) {} else {
+            delete require.cache[require.resolve(`../commands/${folder}/${file}`)];
+          }
+        });
+      });
+      this.clear();
+      this.loadCommands(true);
     }
 
     public fireErrorWebhook (id: string, token: string, title: string, color: number, error: any, extraFields: Field[] = []): void {
