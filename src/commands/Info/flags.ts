@@ -40,7 +40,7 @@ export default {
       }
     }
     const publicFlags: Array<string> = [];
-    for (let i = 0; i < 16; i++) {
+    for (let i = 0; i < 18; i++) {
       const flagName: string | undefined = UserFlags[1 << i];
       if (flagName) {
         const state = (user.publicFlags & 1 << i) !== 0;
@@ -49,8 +49,6 @@ export default {
         }
       }
     }
-    if ((args.onlytrue && user.hasVerifiedDeveloper) || (!args.onlytrue && !args.onlyfalse) || (args.onlyfalse && !user.hasVerifiedDeveloper)) publicFlags.push(`Verified_bot_developer: ${user.hasVerifiedDeveloper}`);
-    if ((args.onlytrue && user.hasVerifiedBot) || (!args.onlytrue && !args.onlyfalse) || (args.onlyfalse && !user.hasVerifiedBot)) publicFlags.push(`Verified_bot: ${user.hasVerifiedBot}`);
     ctx.editOrReply(Markup.codeblock(publicFlags.join('\n'), { language: 'ml' }));
   }
 };

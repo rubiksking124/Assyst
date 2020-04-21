@@ -44,7 +44,7 @@ export default {
     const user = member instanceof User ? member : member.user;
 
     const memberFlags: Array<string> = [];
-    for (let i = 0; i < 16; i++) {
+    for (let i = 0; i < 18; i++) {
       const flagName: string | undefined = UserFlags[1 << i];
       if (flagName) {
         const state = (user.publicFlags & 1 << i) !== 0;
