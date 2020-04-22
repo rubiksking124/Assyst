@@ -30,6 +30,7 @@ export default {
     }
   ],
   run: async (assyst: Assyst, ctx: Context, args: any) => {
+    if (!args || !args.messageinfo) return ctx.editOrReply('Message parameter must be a valid id');
     let channel: ChannelGuildText | undefined;
     if (args && args.c) {
       channel = (<ShardClient> assyst.client).channels.get(args.c);
