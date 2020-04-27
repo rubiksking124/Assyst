@@ -14,8 +14,8 @@ const AsyncFunction = Object.getPrototypeOf(async function () {}).constructor;
 const { Markup } = Utils;
 
 export default {
-  name: 'eval',
-  aliases: ['e'],
+  name: 'e',
+  aliases: ['ev'],
   responseOptional: true,
   metadata: {
     description: 'Evaluate some code',
