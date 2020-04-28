@@ -9,7 +9,7 @@ client.client.on('gatewayReady', () => {
 });
 
 process.on('unhandledRejection', (err: any) => {
-  if (err.statusCode && err.statusCode === 429) return;
+  if (err.response && err.response.statusCode === 429) return;
   client.fireErrorWebhook(webhooks.unhandledRejection.id, webhooks.unhandledRejection.token, 'Unhandled Rejection', 0xFF0000, err);
   console.error(err);
 });
