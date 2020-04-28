@@ -1,4 +1,5 @@
 {
+    "logErrors": true,
     "admins": ["UID1"],
     "limitToUsers": {
         "enabled": false, 

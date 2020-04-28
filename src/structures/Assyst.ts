@@ -14,7 +14,8 @@ import {
   db,
   webhooks,
   prefixOverride,
-  limitToUsers
+  limitToUsers,
+  logErrors
 } from '../../config.json';
 import RestController from '../rest/Rest';
 import Logger from './Logger';
@@ -22,8 +23,6 @@ import { Context } from 'detritus-client/lib/command';
 import { Markup } from 'detritus-client/lib/utils';
 import AssystApi from '../api/Api';
 import { BaseCollection, BaseSet } from 'detritus-client/lib/collections';
-
-import BotListRestClient from '../rest/clients/BotLists';
 
 interface Field {
   name: string,
@@ -49,12 +48,15 @@ export default class Assyst extends CommandClient {
     public utils: Utils
     public metrics!: Metrics
 
+    public logErrors: boolean
+
     public prefixCache: BaseCollection<string, string>
 
     private metricsInterval!: NodeJS.Timeout
 
     constructor (token: string, options: CommandClientOptions) {
       super(token || '', options);
+      this.logErrors = logErrors === undefined ? true : logErrors;
       this.db = new Database(this, db);
       this.customRest = new RestController(this);
       this.logger = new Logger();
@@ -158,6 +160,7 @@ export default class Assyst extends CommandClient {
     }
 
     public fireErrorWebhook (id: string, token: string, title: string, color: number, error: any, extraFields: Field[] = []): void {
+      if (!this.logErrors) return;
       this.client.rest.executeWebhook(id, token, {
         embed: {
           title,
@@ -216,12 +219,7 @@ export default class Assyst extends CommandClient {
 
     private async initBotListPosting (): Promise<void> {
       setInterval(async () => {
-        const blClient: BotListRestClient | undefined = <BotListRestClient | undefined> this.customRest.clients.get('botlists');
-        if (!blClient) {
-          this.logger.warn('There is no bot list client present! Stats will not be posted.');
-        } else {
-          await blClient.postStats();
-        }
+        await this.customRest.postStats();
       }, 172800000);
     }
 

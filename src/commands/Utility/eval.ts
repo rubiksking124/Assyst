@@ -4,7 +4,6 @@ import Assyst from '../../structures/Assyst';
 import { Markup } from 'detritus-client/lib/utils';
 
 import { STATUS_CODES } from 'http';
-import GocodeitRestClient from '../../rest/clients/Gocodeit';
 import { BaseSet } from 'detritus-client/lib/collections';
 
 import { ShardClient } from 'detritus-client';
@@ -57,8 +56,6 @@ export default {
     }
   ],
   run: async (assyst: Assyst, ctx: Context, args: any) => {
-    const client: GocodeitRestClient | undefined = <GocodeitRestClient | undefined>assyst.customRest.clients.get('gocodeit');
-    if (!client) throw new Error('No gocodeit client is defined');
     if (!args || !args.eval) {
       return ctx.editOrReply('You need to provide code arguments');
     } else if (currentExecutions.has(ctx.userId)) {
@@ -66,7 +63,7 @@ export default {
     }
     await ctx.triggerTyping();
     currentExecutions.add(ctx.userId);
-    const response = await client.runSandboxedCode('js', getPrependedCode(<ShardClient> assyst.client).replace('{input}', args.eval.replace(/"/g, '\''))).then((res) => res);
+    const response = await assyst.customRest.runSandboxedCode('js', getPrependedCode(<ShardClient> assyst.client).replace('{input}', args.eval.replace(/"/g, '\''))).then((res) => res);
     currentExecutions.delete(ctx.userId);
     if (response.status !== 200) {
       return ctx.editOrReply(`Error ${response.status}: ${STATUS_CODES[response.status]} - ${response.data.res}`);

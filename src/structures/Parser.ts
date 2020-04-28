@@ -4,18 +4,13 @@ import { Message, Member, Role } from 'detritus-client/lib/structures';
 import Assyst from './Assyst';
 import Utils from './Utils';
 import { Permissions } from 'detritus-client/lib/constants';
-import GocodeitRestClient, { CodeList } from '../rest/clients/Gocodeit';
+
+import Rest, { CodeList } from '../rest/Rest';
 
 let utils: Utils;
 const preParseTags: Array<string> = ['ignore', 'note'];
 const postParseTags: Array<string> = ['attach', 'iscript'];
 let rexLangs: CodeList;
-
-const gocodeitClient: GocodeitRestClient = new GocodeitRestClient();
-
-(async () => {
-  rexLangs = await gocodeitClient.getLanguageList();
-})();
 
 export default class Parser {
     private assyst: Assyst
@@ -58,6 +53,7 @@ export default class Parser {
     }
 
     async parse (input: string, tagArgs: string[], tag: any /* todo */) {
+      rexLangs = await new Rest(this.assyst).getLanguageList();
       try {
         const result: string = await this.subParse(input, tagArgs, tag, false, true);
         return { success: true, nsfw: this.nsfw, attachments: this.attachments, imagescripts: this.imagescripts, result: Parser.unescapeTag(result).replace(/\\{/g, '{').replace(/\\}/g, '}') };
@@ -605,7 +601,7 @@ export default class Parser {
             this.rexCalls++;
             if (this.rexCalls > 2) return '[TOO MANY REX CALLS]';
 
-            const rexResult = await (<GocodeitRestClient> this.assyst.customRest.clients.get('gocodeit')).runSandboxedCode(key, Parser.unescapeTag(rawArgs));
+            const rexResult = await this.assyst.customRest.runSandboxedCode(key, Parser.unescapeTag(rawArgs));
 
             return Parser.escapeTag(rexResult.data.res);
           }

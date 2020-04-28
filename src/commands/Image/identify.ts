@@ -3,7 +3,7 @@ import { Context } from 'detritus-client/lib/command';
 import Assyst from '../../structures/Assyst';
 import { Markup } from 'detritus-client/lib/utils';
 
-const identifyApi: string = 'https://captionbot.azurewebsites.net/api/messages?language=en-US';
+const identifyApi: string = '';
 
 export default {
   name: 'identify',
@@ -26,17 +26,10 @@ export default {
       return ctx.editOrReply('No valid image found or supplied');
     }
     let success: boolean = true;
-    const res = await assyst.customRest.request({
-      url: identifyApi,
-      body: {
-        Type: 'CaptionRequest',
-        Content: imageUrl
-      },
-      headers: {
-        'content-type': 'application/json'
-      },
-      method: 'POST'
-    }).catch((e) => { ctx.editOrReply(e.message); success = false; });
+    const res = await assyst.customRest.identify(imageUrl).catch((e) => {
+      ctx.editOrReply(e.message);
+      success = false;
+    });
     if (success) return ctx.editOrReply(Markup.codeblock(res, { limit: 1990 }));
     else return null;
   }

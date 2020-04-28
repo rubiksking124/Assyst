@@ -2,7 +2,7 @@ import { Context } from 'detritus-client/lib/command';
 
 import Assyst from '../../structures/Assyst';
 import { MetricItem } from '../../structures/Utils';
-import Zx8RestClient from '../../rest/clients/Zx8';
+
 import { Markup } from 'detritus-client/lib/utils';
 
 export default {
@@ -20,9 +20,7 @@ export default {
     duration: 5000
   },
   run: async (assyst: Assyst, ctx: Context, args: any) => {
-    const client: Zx8RestClient | undefined = <Zx8RestClient | undefined>assyst.customRest.clients.get('zx8');
-    if (!client) throw new Error('There is no zx8 client present in the rest controller');
-    const res = await client.getNodes();
+    const res = await assyst.customRest.getZx8Nodes();
     const rows: MetricItem[] = [];
 
     let embedTitle;

@@ -3,8 +3,6 @@ import { Context } from 'detritus-client/lib/command';
 import Assyst from '../../structures/Assyst';
 import { Markup } from 'detritus-client/lib/utils';
 
-const ocrApi: string = 'https://api.tsu.sh/google/ocr';
-
 export default {
   name: 'ocr',
   responseOptional: true,
@@ -25,12 +23,10 @@ export default {
       return ctx.editOrReply('No valid image found or supplied');
     }
     let success: boolean = true;
-    const res = await assyst.customRest.request({
-      url: ocrApi,
-      query: {
-        q: imageUrl
-      }
-    }).catch((e) => { ctx.editOrReply(e.message); success = false; });
+    const res = await assyst.customRest.ocr(imageUrl).catch((e) => {
+      ctx.editOrReply(e.message);
+      success = false;
+    });
     if (success) return ctx.editOrReply(Markup.codeblock(res.text.length > 0 ? res.text : 'No text detected', { limit: 1990 }));
     else return null;
   }

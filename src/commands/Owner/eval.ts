@@ -34,7 +34,7 @@ export default {
     let evaled: any;
     try {
       if (!args.async) {
-        evaled = await Promise.resolve(eval(args.eval));
+        evaled = await Promise.resolve(eval(args.e));
       } else {
         evaled = await Promise.resolve(eval(`(async () => { ${args.eval} })()`));
       }
