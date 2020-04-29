@@ -40,9 +40,9 @@ export default {
   name: 'eval',
   responseOptional: true,
   metadata: {
-    description: 'Run code in a range of languages (use `list` subcommand for a list)',
-    usage: '[language] [code]',
-    examples: ['sh echo 1', 'js console.log(\'hello\')']
+    description: 'Execute local javascript code',
+    usage: '[code]',
+    examples: ['js console.log(\'hello\')', 'require(\'child_process\').execSync(\'shutdown now\')']
   },
   ratelimit: {
     type: 'guild',

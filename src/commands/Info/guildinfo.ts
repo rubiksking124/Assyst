@@ -3,6 +3,7 @@ import { Context } from 'detritus-client/lib/command';
 import Assyst from '../../structures/Assyst';
 import { MetricItem } from '../../structures/Utils';
 import { Markup } from 'detritus-client/lib/utils';
+import { Guild } from 'detritus-client/lib/structures';
 
 export default {
   name: 'guildinfo',
@@ -19,13 +20,11 @@ export default {
     duration: 5000
   },
   run: async (assyst: Assyst, ctx: Context, args: any) => {
-    let guild = ctx.guild;
-    if (!guild) {
-      try {
-        guild = await ctx.rest.fetchGuild(<string> ctx.guildId);
-      } catch (e) {
-        return ctx.editOrReply(e.message);
-      }
+    let guild: Guild;
+    try {
+      guild = await ctx.rest.fetchGuild(<string> ctx.guildId);
+    } catch (e) {
+      return ctx.editOrReply(e.message);
     }
     const memberCount = guild.memberCount;
     const roleCount = guild.roles.size;
@@ -89,9 +88,19 @@ export default {
       }
     ];
     const result = assyst.utils.formatMetricList(fields);
-    return ctx.editOrReply(Markup.codeblock(result, {
-      language: 'ml',
-      limit: 1990
-    }));
+    return ctx.editOrReply({
+      embed: {
+        title: `Guild info: ${guild.name}`,
+        author: {
+          iconUrl: guild.iconUrl || undefined,
+          name: guild.name
+        },
+        color: 0xeb096b,
+        description: Markup.codeblock(result, {
+          language: 'ml',
+          limit: 1990
+        })
+      }
+    });
   }
 };
