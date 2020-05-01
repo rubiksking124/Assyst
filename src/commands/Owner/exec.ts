@@ -14,6 +14,8 @@ import { admins } from '../../../config.json';
 
 const { Markup } = Utils;
 
+const execAsync = promisify(exec);
+
 export default {
   name: 'exec',
   aliases: ['ex'],
@@ -25,40 +27,47 @@ export default {
     minArgs: 1
   },
   args: [{
-    name: 't',
+    name: 'timeout',
     default: '20000'
+  },
+  {
+    name: 'nostream',
+    type: Boolean
   }],
   onBefore: (ctx: Context) => ctx.client.isOwner(ctx.userId) || admins.includes(<never>ctx.userId),
   run: async (_assyst: Assyst, ctx: Context, args: any) => {
-    let sentData = '';
-    const updateQueue: Array<string> = [];
-    const stream = exec(args.exec, { timeout: parseInt(args.t) });
+    if(!args.nostream) {
+      let sentData = '';
+      const updateQueue: Array<string> = [];
+      const stream = exec(args.exec, { timeout: parseInt(args.timeout) });
+  
+      const updateInterval = setInterval(() => {
+        const newData = updateQueue.shift();
+        if(!newData) return;
+        sentData += newData
+        ctx.editOrReply(Markup.codeblock(sentData, { limit: 1990 }));
+      }, 1000);
+  
+      setTimeout(() => { 
+        clearInterval(updateInterval)
+      }, parseInt(args.timeout));
+  
+      if (stream.stdout === null || stream.stderr === null) {
+        console.log(':(');
+        return;
+      };
+  
+      stream.stdout.on('data', async (data) => {
+        updateQueue.push(String(data));
+      });
+  
+      stream.stderr.on('data', async (data) => {
+        updateQueue.push(String(data));
+      });
 
-    const updateInterval = setInterval(() => {
-      const newData = updateQueue.shift();
-      if(!newData) return;
-      sentData += newData
-      ctx.editOrReply(Markup.codeblock(sentData, { limit: 1990 }));
-    }, 2000);
-
-    setTimeout(() => { 
-      clearInterval(updateInterval)
-    }, parseInt(args.t));
-
-    if (stream.stdout === null || stream.stderr === null) {
-      console.log(':(');
-      return;
-    };
-
-    stream.stdout.on('data', async (data) => {
-      updateQueue.push(String(data));
-    });
-
-    stream.stderr.on('data', async (data) => {
-      updateQueue.push(String(data));
-    });
-
-    /* execAsync(args.exec, { timeout: parseInt(args.t) })
+      return null;
+    } else {
+      execAsync(args.exec, { timeout: parseInt(args.timeout) })
       .then(({ stdout, stderr }) => {
         const contentToSend = stderr || stdout;
         return ctx.editOrReply(Markup.codeblock(contentToSend, {
@@ -69,6 +78,7 @@ export default {
       .catch(e => {
         return ctx.editOrReply(e.message);
       });
-    return null; */
+      return null;
+    }
   }
 };
