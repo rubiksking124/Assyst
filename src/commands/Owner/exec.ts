@@ -35,7 +35,9 @@ export default {
     const stream = exec(args.exec, { timeout: parseInt(args.t) });
 
     const updateInterval = setInterval(() => {
-      sentData += updateQueue.pop();
+      const newData = updateQueue.shift();
+      if(!newData) return;
+      sentData += newData
       ctx.editOrReply(sentData);
     }, 2000);
 
@@ -51,7 +53,7 @@ export default {
     });
 
     stream.stderr.on('data', async (data) => {
-      updateQueue.push(sentData);
+      updateQueue.push(String(data));
     });
 
     /* execAsync(args.exec, { timeout: parseInt(args.t) })
