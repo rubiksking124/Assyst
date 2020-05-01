@@ -38,10 +38,12 @@ export default {
       const newData = updateQueue.shift();
       if(!newData) return;
       sentData += newData
-      ctx.editOrReply(sentData);
+      ctx.editOrReply(Markup.codeblock(sentData, { limit: 1990 }));
     }, 2000);
 
-    setTimeout(() => clearInterval(updateInterval), parseInt(args.t));
+    setTimeout(() => { 
+      clearInterval(updateInterval)
+    }, parseInt(args.t));
 
     if (stream.stdout === null || stream.stderr === null) {
       console.log(':(');
