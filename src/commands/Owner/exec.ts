@@ -30,10 +30,16 @@ export default {
   }],
   onBefore: (ctx: Context) => ctx.client.isOwner(ctx.userId) || admins.includes(<never>ctx.userId),
   run: async (_assyst: Assyst, ctx: Context, args: any) => {
-    let cooldown: number = 0;
-    let response: Message | undefined;
-    let sentResponse: boolean;
-    const stream = exec(args.exec);
+    let sentData = '';
+    const updateQueue: Array<string> = [];
+    const stream = exec(args.exec, { timeout: parseInt(args.t) });
+
+    const updateInterval = setInterval(() => {
+      sentData += updateQueue.pop();
+      ctx.editOrReply(sentData);
+    }, 2000);
+
+    setTimeout(() => clearInterval(updateInterval), parseInt(args.t));
 
     if (stream.stdout === null || stream.stderr === null) {
       console.log(':(');
@@ -41,23 +47,11 @@ export default {
     };
 
     stream.stdout.on('data', async (data) => {
-      if (!sentResponse && Date.now() > cooldown + 1000) {
-        sentResponse = true;
-        response = await ctx.reply(Markup.codeblock(String(data), { limit: 1990 }));
-        cooldown = Date.now();
-      } else if (Date.now() > cooldown + 1000 && sentResponse && response) {
-        (<Message>response).edit(Markup.codeblock(String(data), { limit: 1990 }));
-      }
+      updateQueue.push(String(data));
     });
 
     stream.stderr.on('data', async (data) => {
-      if (!sentResponse && Date.now() > cooldown + 1000) {
-        sentResponse = true;
-        response = await ctx.reply(Markup.codeblock(String(data), { limit: 1990 }));
-        cooldown = Date.now();
-      } else if (Date.now() > cooldown + 1000 && sentResponse && response) {
-        (<Message>response).edit(Markup.codeblock(String(data), { limit: 1990 }));
-      }
+      updateQueue.push(sentData);
     });
 
     /* execAsync(args.exec, { timeout: parseInt(args.t) })
