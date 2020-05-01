@@ -21,7 +21,7 @@ export default {
     ctx.triggerTyping();
     const month = new Date().getMonth() + 1;
     const day = new Date().getDate();
-    const response = await ctx.rest.request(`https://byabbe.se/on-this-day/${month}/${day}/events.json`).then(res => res.events);
+    const response = await assyst.customRest.getHistory(month.toString(), day.toString()).then(res => res.events);
     const event = response[Math.floor(Math.random() * response.length)];
     return ctx.editOrReply(`**On this day (${day}/${month}/${new Date().getFullYear()}), in the year ${event.year}:**\n${Markup.codeblock(event.description)}`);
   }

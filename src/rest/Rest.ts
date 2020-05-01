@@ -62,6 +62,23 @@ interface Dataset {
   lastResponseTime: number
 }
 
+interface HistoryApiResult {
+  wikipedia: string,
+  date: string,
+  events: HistoryEvent[]
+}
+
+interface HistoryEvent {
+  year: string,
+  description: string,
+  wikipedia: HistoryWikipedia[]
+}
+
+interface HistoryWikipedia {
+  title: string,
+  wikipedia: string
+}
+
 export default class RestController {
     public assyst: Assyst
 
@@ -222,6 +239,16 @@ export default class RestController {
           timeout: 7000
         }
       });
+    }
+
+    public async getHistory (month: string, day: string): Promise<HistoryApiResult> {
+      return JSON.parse(await this.sendRequest({
+        url: new URL(`https://byabbe.se/on-this-day/${month}/${day}/events.json`),
+        method: 'GET',
+        settings: {
+          timeout: 5000
+        }
+      }));
     }
 
     public async sendRequest (options: RequestOptions) {
