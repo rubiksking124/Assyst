@@ -17,8 +17,6 @@ const { Markup } = Utils;
 
 const execAsync = promisify(exec);
 
-const currentQueries: BaseSet<string> = new BaseSet([]);
-
 export default {
   name: 'exec',
   aliases: ['ex'],
@@ -43,10 +41,8 @@ export default {
   }],
   onBefore: (ctx: Context) => ctx.client.isOwner(ctx.userId) || admins.includes(<never>ctx.userId),
   run: async (assyst: Assyst, ctx: Context, args: any) => {
-    if (currentQueries.has(ctx.userId)) ctx.editOrReply('SEX');
     if (!args.nostream) {
-      currentQueries.add(ctx.userId);
-      return assyst.utils.createExecStream(ctx, args.exec, parseInt(args.timeout), parseInt(args.sd), () => currentQueries.delete(ctx.userId));
+      return assyst.utils.createExecStream(ctx, args.exec, parseInt(args.timeout), parseInt(args.sd));
     } else {
       execAsync(args.exec, { timeout: parseInt(args.timeout) })
         .then(({ stdout, stderr }) => {
