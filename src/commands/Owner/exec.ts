@@ -36,31 +36,30 @@ export default {
   }],
   onBefore: (ctx: Context) => ctx.client.isOwner(ctx.userId) || admins.includes(<never>ctx.userId),
   run: async (_assyst: Assyst, ctx: Context, args: any) => {
-    if(!args.nostream) {
+    if (!args.nostream) {
       let sentData = '';
       const updateQueue: Array<string> = [];
       const stream = exec(args.exec, { timeout: parseInt(args.timeout) });
-  
+
       const updateInterval = setInterval(() => {
         const newData = updateQueue.shift();
-        if(!newData) return;
-        sentData += newData
+        if (!newData) return;
+        sentData += newData;
         ctx.editOrReply(Markup.codeblock(sentData, { limit: 1990 }));
       }, 1000);
-  
-      setTimeout(() => { 
-        clearInterval(updateInterval)
+
+      setTimeout(() => {
+        clearInterval(updateInterval);
       }, parseInt(args.timeout));
-  
+
       if (stream.stdout === null || stream.stderr === null) {
-        console.log(':(');
         return;
       };
-  
+
       stream.stdout.on('data', async (data) => {
         updateQueue.push(String(data));
       });
-  
+
       stream.stderr.on('data', async (data) => {
         updateQueue.push(String(data));
       });
@@ -68,16 +67,16 @@ export default {
       return null;
     } else {
       execAsync(args.exec, { timeout: parseInt(args.timeout) })
-      .then(({ stdout, stderr }) => {
-        const contentToSend = stderr || stdout;
-        return ctx.editOrReply(Markup.codeblock(contentToSend, {
-          limit: 1990,
-          language: 'bash'
-        }));
-      })
-      .catch(e => {
-        return ctx.editOrReply(e.message);
-      });
+        .then(({ stdout, stderr }) => {
+          const contentToSend = stderr || stdout;
+          return ctx.editOrReply(Markup.codeblock(contentToSend, {
+            limit: 1990,
+            language: 'bash'
+          }));
+        })
+        .catch(e => {
+          return ctx.editOrReply(e.message);
+        });
       return null;
     }
   }
