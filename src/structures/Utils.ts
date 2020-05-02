@@ -1,7 +1,5 @@
 import Assyst from './Assyst';
 
-import { gocode } from '../../config.json';
-
 import { promisify } from 'util';
 import { unlink, writeFile } from 'fs';
 
@@ -9,9 +7,8 @@ import { Message } from 'detritus-client/lib/structures';
 
 import { Context } from 'detritus-client/lib/command';
 
-import { Request } from 'detritus-rest';
-
-import FormData from 'form-data';
+import { exec } from 'child_process';
+import { Markup } from 'detritus-client/lib/utils';
 
 const promisifyUnlink = promisify(unlink);
 const promisifyWrite = promisify(writeFile);
@@ -100,6 +97,42 @@ export default class Utils {
         imageUrl = await this.assyst.utils.getRecentAttachmentOrEmbed(ctx.message, 50);
       }
       return imageUrl;
+    }
+
+    public createExecStream (ctx: Context, args: string, timeout: number) {
+      let sentData = '';
+      const updateQueue: Array<string> = [];
+      const stream = exec(args, { timeout });
+
+      const updateInterval = setInterval(() => {
+        const newData = updateQueue.shift();
+        if (!newData) return;
+        sentData += newData;
+        ctx.editOrReply(Markup.codeblock(sentData, { limit: 1990 }));
+      }, 1000);
+
+      setTimeout(() => {
+        clearInterval(updateInterval);
+      }, timeout);
+
+      if (stream.stdout === null || stream.stderr === null) {
+        return;
+      };
+
+      stream.stdout.on('data', async (data) => {
+        updateQueue.push(String(data));
+      });
+
+      stream.stderr.on('data', async (data) => {
+        updateQueue.push(String(data));
+      });
+
+      stream.on('error', (error) => {
+        ctx.editOrReply(error.message);
+        clearInterval(updateInterval);
+      });
+
+      return null;
     }
 
   /* public async uploadToFilesGG (text: string, filename: string): Promise<string> { // TODO: fix this

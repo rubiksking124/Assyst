@@ -6,8 +6,8 @@ import Assyst from '../../structures/Assyst';
 import { Member, User } from 'detritus-client/lib/structures';
 
 export default {
-  name: 'whois',
-  aliases: ['userinfo'],
+  name: 'userinfo',
+  aliases: ['uinfo'],
   responseOptional: true,
   metadata: {
     description: 'Get user information about a user',

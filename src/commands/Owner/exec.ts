@@ -35,36 +35,9 @@ export default {
     type: Boolean
   }],
   onBefore: (ctx: Context) => ctx.client.isOwner(ctx.userId) || admins.includes(<never>ctx.userId),
-  run: async (_assyst: Assyst, ctx: Context, args: any) => {
+  run: async (assyst: Assyst, ctx: Context, args: any) => {
     if (!args.nostream) {
-      let sentData = '';
-      const updateQueue: Array<string> = [];
-      const stream = exec(args.exec, { timeout: parseInt(args.timeout) });
-
-      const updateInterval = setInterval(() => {
-        const newData = updateQueue.shift();
-        if (!newData) return;
-        sentData += newData;
-        ctx.editOrReply(Markup.codeblock(sentData, { limit: 1990 }));
-      }, 1000);
-
-      setTimeout(() => {
-        clearInterval(updateInterval);
-      }, parseInt(args.timeout));
-
-      if (stream.stdout === null || stream.stderr === null) {
-        return;
-      };
-
-      stream.stdout.on('data', async (data) => {
-        updateQueue.push(String(data));
-      });
-
-      stream.stderr.on('data', async (data) => {
-        updateQueue.push(String(data));
-      });
-
-      return null;
+      return assyst.utils.createExecStream(ctx, args.exec, parseInt(args.timeout));
     } else {
       execAsync(args.exec, { timeout: parseInt(args.timeout) })
         .then(({ stdout, stderr }) => {
