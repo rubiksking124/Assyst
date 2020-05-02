@@ -104,18 +104,21 @@ export default class Utils {
       const updateQueue: Array<string> = [];
       const stream = exec(args, { timeout });
 
-      let timeOfLastNewData: number = 0;
+      let timeOfLastNewData: number = Date.now();
 
       let running: boolean = true;
 
       const updateInterval = setInterval(async () => {
         const newData = updateQueue.shift();
         if (!newData) {
-          if (timeOfLastNewData + stopDelay < Date.now()) {
+          if (stopDelay < Date.now() - timeOfLastNewData) {
             await ctx.editOrReply(Markup.codeblock(sentData + `\nNo new data recieved in last ${stopDelay}ms, listener killed`, { limit: 1990 }));
             running = false;
-            clearUpdateInterval();
             if (after) after();
+            clearUpdateInterval();
+            return;
+          } else {
+            return;
           }
         } else {
           timeOfLastNewData = Date.now();
@@ -132,12 +135,14 @@ export default class Utils {
 
       setTimeout(() => {
         if (running) {
-          clearInterval(updateInterval);
           if (after) after();
+          clearInterval(updateInterval);
         }
       }, timeout);
 
       if (stream.stdout === null || stream.stderr === null) {
+        if (after) after();
+        clearInterval(updateInterval);
         return;
       };
 
@@ -151,10 +156,9 @@ export default class Utils {
 
       stream.on('error', (error) => {
         ctx.editOrReply(error.message);
+        if (after) after();
         clearInterval(updateInterval);
       });
-
-      return null;
     }
 
   /* public async uploadToFilesGG (text: string, filename: string): Promise<string> { // TODO: fix this
