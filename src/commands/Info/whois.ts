@@ -32,14 +32,8 @@ export default {
     } else if (currentQueries.has(ctx.userId)) {
       return ctx.editOrReply('You already have an executing whois');
     }
-    let legalQuery = true;
-    args.whois.split('').forEach((char: string) => {
-      if (char.charCodeAt(0) > 122 || (char.charCodeAt(0) < 97 && char.charCodeAt(0) !== 46)) {
-        legalQuery = false;
-      }
-    });
-    if (!legalQuery) {
-      ctx.editOrReply('The query has illegal characters, the valid characters are a-z and .');
+    if (!(/[a-zA-Z0-9.]/g.test(args.whois))) {
+      return ctx.editOrReply('The query has illegal characters, the valid characters are a-z, 0-9 and .');
     }
     await ctx.triggerTyping();
     if (args.whois.split(' ').length > 1) {
