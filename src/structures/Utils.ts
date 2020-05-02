@@ -114,15 +114,21 @@ export default class Utils {
           if (timeOfLastNewData + stopDelay < Date.now()) {
             await ctx.editOrReply(Markup.codeblock(sentData + `\nNo new data recieved in last ${stopDelay}ms, listener killed`, { limit: 1990 }));
             running = false;
-            clearInterval(updateInterval);
+            clearUpdateInterval();
             if (after) after();
           }
         } else {
           timeOfLastNewData = Date.now();
         }
-        sentData += newData;
-        await ctx.editOrReply(Markup.codeblock(sentData, { limit: 1990 }));
+        if (running) {
+          sentData += newData;
+          await ctx.editOrReply(Markup.codeblock(sentData, { limit: 1990 }));
+        }
       }, 1000);
+
+      function clearUpdateInterval () {
+        clearInterval(updateInterval);
+      }
 
       setTimeout(() => {
         if (running) {
