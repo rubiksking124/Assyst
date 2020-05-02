@@ -31,7 +31,7 @@ export default {
       const { rest, gateway } = await ctx.client.ping();
       return ctx.editOrReply(`Pong (REST: ${rest}ms) (Gateway: ${gateway}ms) (Database: ${finish}ms)`);
     } else {
-      return assyst.utils.createExecStream(ctx, `ping ${args.ping} -${process.platform === 'win32' ? 'n' : 'c'} 4`, 30000);
+      return assyst.utils.createExecStream(ctx, `ping ${args.ping} -${process.platform === 'win32' ? 'n' : 'c'} 4`, 30000, 10000);
     }
   }
 };

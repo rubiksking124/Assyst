@@ -99,20 +99,36 @@ export default class Utils {
       return imageUrl;
     }
 
-    public createExecStream (ctx: Context, args: string, timeout: number) {
+    public createExecStream (ctx: Context, args: string, timeout: number, stopDelay: number, after?: Function) {
       let sentData = '';
       const updateQueue: Array<string> = [];
       const stream = exec(args, { timeout });
 
-      const updateInterval = setInterval(() => {
+      let timeOfLastNewData: number = 0;
+
+      let running: boolean = true;
+
+      const updateInterval = setInterval(async () => {
         const newData = updateQueue.shift();
-        if (!newData) return;
+        if (!newData) {
+          if (timeOfLastNewData + stopDelay < Date.now()) {
+            await ctx.editOrReply(Markup.codeblock(sentData + `\nNo new data recieved in last ${stopDelay}ms, listener killed`, { limit: 1990 }));
+            running = false;
+            clearInterval(updateInterval);
+            if (after) after();
+          }
+        } else {
+          timeOfLastNewData = Date.now();
+        }
         sentData += newData;
-        ctx.editOrReply(Markup.codeblock(sentData, { limit: 1990 }));
+        await ctx.editOrReply(Markup.codeblock(sentData, { limit: 1990 }));
       }, 1000);
 
       setTimeout(() => {
-        clearInterval(updateInterval);
+        if (running) {
+          clearInterval(updateInterval);
+          if (after) after();
+        }
       }, timeout);
 
       if (stream.stdout === null || stream.stderr === null) {

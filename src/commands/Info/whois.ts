@@ -12,6 +12,8 @@ const createFile = promisify(writeFileSync);
 
 const currentQueries: BaseSet<string> = new BaseSet([]);
 
+const headerLine = 'AS      ¦ IP               ¦ BGP Prefix          ¦ CC ¦ Registry ¦ Allocated  ¦ AS Name';
+
 export default {
   name: 'whois',
   aliases: ['wi'],
@@ -32,25 +34,24 @@ export default {
     } else if (currentQueries.has(ctx.userId)) {
       return ctx.editOrReply('You already have an executing whois');
     }
+
     if (!(/[a-zA-Z0-9.]/g.test(args.whois))) {
       return ctx.editOrReply('The query has illegal characters, the valid characters are a-z, 0-9 and .');
     }
+
     await ctx.triggerTyping();
+
     if (args.whois.split(' ').length > 1) {
       const hosts = args.whois.split(' ').join('\n');
       currentQueries.add(ctx.userId);
       await writeFileSync(`./whois_${ctx.userId}`, `begin\n${hosts}\nend`);
-      assyst.utils.createExecStream(ctx, `cat whois_${ctx.userId} | nc bgp.tools 43`, 10000);
-      setTimeout(async () => {
+      assyst.utils.createExecStream(ctx, `echo ${headerLine} && cat whois_${ctx.userId} | nc bgp.tools 43`, 10000, 5000, async () => {
         await delFile(`./whois_${ctx.userId}`);
         currentQueries.delete(ctx.userId);
-      }, 11000);
+      });
     } else {
       currentQueries.add(ctx.userId);
-      assyst.utils.createExecStream(ctx, `whois -h bgp.tools ${args.whois}`, 5000);
-      setTimeout(async () => {
-        currentQueries.delete(ctx.userId);
-      }, 6000);
+      assyst.utils.createExecStream(ctx, `whois -h bgp.tools ${args.whois}`, 5000, 5000, () => currentQueries.delete(ctx.userId));
     }
   }
 };

@@ -33,11 +33,15 @@ export default {
   {
     name: 'nostream',
     type: Boolean
+  },
+  {
+    name: 'sd',
+    default: '100000'
   }],
   onBefore: (ctx: Context) => ctx.client.isOwner(ctx.userId) || admins.includes(<never>ctx.userId),
   run: async (assyst: Assyst, ctx: Context, args: any) => {
     if (!args.nostream) {
-      return assyst.utils.createExecStream(ctx, args.exec, parseInt(args.timeout));
+      return assyst.utils.createExecStream(ctx, args.exec, parseInt(args.timeout), parseInt(args.sd));
     } else {
       execAsync(args.exec, { timeout: parseInt(args.timeout) })
         .then(({ stdout, stderr }) => {
