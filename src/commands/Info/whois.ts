@@ -12,7 +12,7 @@ const createFile = promisify(writeFileSync);
 
 const currentQueries: BaseSet<string> = new BaseSet([]);
 
-const headerLine = 'AS      ¦ IP               ¦ BGP Prefix          ¦ CC ¦ Registry ¦ Allocated  ¦ AS Name';
+const headerLine = '"AS      ¦ IP               ¦ BGP Prefix          ¦ CC ¦ Registry ¦ Allocated  ¦ AS Name"';
 
 export default {
   name: 'whois',
