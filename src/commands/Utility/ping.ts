@@ -5,8 +5,6 @@ import Assyst from '../../structures/Assyst';
 
 const urlRegex = /^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:/?#[\]@!\$&'\(\)\*\+,;=.]+$/g;
 
-const flagRegex = /-[c|s]/g;
-
 export default {
   name: 'ping',
   aliases: ['pong'],
@@ -33,9 +31,6 @@ export default {
     }
   ],
   run: async (assyst: Assyst, ctx: Context, args: any) => {
-    if (!flagRegex.test(args.ping)) {
-      return ctx.editOrReply('Invalid ping flags were provided');
-    }
     const regexMatch = args.ping.match(urlRegex);
     if (!args || !args.ping || !regexMatch || regexMatch?.length === 0) {
       await ctx.editOrReply('Pong');
