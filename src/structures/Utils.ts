@@ -106,26 +106,26 @@ export default class Utils {
 
       let timeOfLastNewData: number = Date.now();
 
+      let timeoutExceeded = false;
+
       let running: boolean = true;
 
       const updateInterval = setInterval(async () => {
+        if (timeoutExceeded) return;
         const newData = updateQueue.shift();
         if (!newData) {
-          if (stopDelay < Date.now() - timeOfLastNewData) {
+          if (stopDelay < Date.now() - timeOfLastNewData && running) {
             await ctx.editOrReply(Markup.codeblock(sentData + `\nNo new data recieved in last ${stopDelay}ms, listener killed`, { limit: 1990 }));
             running = false;
-            if (after) after();
-            clearUpdateInterval();
-            return;
-          } else {
-            return;
-          }
+            return handleStreamEnd();
+          } else return;
         } else {
           timeOfLastNewData = Date.now();
         }
-        if (running) {
-          sentData += newData;
-          await ctx.editOrReply(Markup.codeblock(sentData, { limit: 1990 }));
+        sentData += newData;
+        await ctx.editOrReply(Markup.codeblock(sentData, { limit: 1990 }));
+        if (updateQueue.length === 0 && !running) {
+          handleStreamEnd();
         }
       }, 1000);
 
@@ -133,17 +133,25 @@ export default class Utils {
         clearInterval(updateInterval);
       }
 
-      setTimeout(() => {
-        if (running) {
-          if (after) after();
-          clearInterval(updateInterval);
+      function handleStreamEnd () {
+        stream.kill();
+        if (after) after();
+        clearUpdateInterval();
+        clearTimeout(limitTimer);
+      }
+
+      const limitTimer = setTimeout(async () => {
+        running = false;
+        stream.kill();
+        if (updateQueue.length > 0) {
+          await ctx.editOrReply(Markup.codeblock(`${sentData}\nTIMEOUT`, { limit: 1990 }));
+          timeoutExceeded = true;
         }
+        return handleStreamEnd();
       }, timeout);
 
       if (stream.stdout === null || stream.stderr === null) {
-        if (after) after();
-        clearInterval(updateInterval);
-        return;
+        return handleStreamEnd();
       };
 
       stream.stdout.on('data', async (data) => {
@@ -154,10 +162,16 @@ export default class Utils {
         updateQueue.push(String(data));
       });
 
+      stream.on('close', async () => {
+        if (!sentData) {
+          await ctx.editOrReply(Markup.codeblock('No data was recieved', { limit: 1990 }));
+        }
+        running = false;
+      });
+
       stream.on('error', (error) => {
         ctx.editOrReply(error.message);
-        if (after) after();
-        clearInterval(updateInterval);
+        return handleStreamEnd();
       });
     }
 
