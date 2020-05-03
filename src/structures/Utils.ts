@@ -3,7 +3,7 @@ import Assyst from './Assyst';
 import { promisify } from 'util';
 import { unlink, writeFile } from 'fs';
 
-import { Message } from 'detritus-client/lib/structures';
+import { Message, ChannelGuildText } from 'detritus-client/lib/structures';
 
 import { Context } from 'detritus-client/lib/command';
 
@@ -61,12 +61,10 @@ export default class Utils {
     }
 
     public async getRecentAttachmentOrEmbed (message: Message, amtOfMessages: number): Promise<string | undefined> {
-      if (!message.channel) {
-        return undefined;
-      } else if (message.attachments.length > 0) {
+      if (message.attachments.length > 0) {
         return message.attachments.first()?.url;
       }
-      const messages: Array<Message> = await message.channel?.fetchMessages({ limit: amtOfMessages });
+      const messages: Array<Message> = await this.assyst.rest.fetchMessages(message.channelId, { limit: amtOfMessages });
       if (!messages) {
         return undefined;
       }
