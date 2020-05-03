@@ -21,7 +21,8 @@ export default {
     duration: 10000
   },
   run: async (assyst: Assyst, ctx: Context, args: any) => {
-    if (!args || !args.ping || (args.ping).match(urlRegex).length === 0) {
+    const regexMatch = args.ping.match(urlRegex);
+    if (!args || !args.ping || !regexMatch || regexMatch?.length === 0) {
       await ctx.editOrReply('Pong');
       const start = Date.now();
       let finish: number;
