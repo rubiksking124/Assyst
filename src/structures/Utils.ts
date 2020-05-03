@@ -104,6 +104,8 @@ export default class Utils {
       const updateQueue: Array<string> = [];
       const stream = exec(args, { timeout });
 
+      let dataRecieved = false;
+
       let timeOfLastNewData: number = Date.now();
 
       let timeoutExceeded = false;
@@ -156,14 +158,16 @@ export default class Utils {
 
       stream.stdout.on('data', async (data) => {
         updateQueue.push(String(data));
+        dataRecieved = true;
       });
 
       stream.stderr.on('data', async (data) => {
         updateQueue.push(String(data));
+        dataRecieved = true;
       });
 
       stream.on('close', async () => {
-        if (!sentData) {
+        if (!dataRecieved) {
           await ctx.editOrReply(Markup.codeblock('No data was recieved', { limit: 1990 }));
         }
         running = false;
