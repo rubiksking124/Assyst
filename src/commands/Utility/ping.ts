@@ -10,8 +10,8 @@ export default {
   aliases: ['pong'],
   responseOptional: true,
   metadata: {
-    description: 'Ping the discord rest and gateway apis',
-    usage: '',
+    description: 'Ping the discord rest and gateway apis, or a host',
+    usage: '<host> <-c count (limit 10)> <-s packet_size (limit 128)>',
     examples: [''],
     minArgs: 0
   },
@@ -20,6 +20,16 @@ export default {
     limit: 1,
     duration: 10000
   },
+  args: [
+    {
+      name: 'c',
+      default: '4'
+    },
+    {
+      name: 's',
+      default: '64'
+    }
+  ],
   run: async (assyst: Assyst, ctx: Context, args: any) => {
     const regexMatch = args.ping.match(urlRegex);
     if (!args || !args.ping || !regexMatch || regexMatch?.length === 0) {
@@ -32,7 +42,9 @@ export default {
       const { rest, gateway } = await ctx.client.ping();
       return ctx.editOrReply(`Pong (REST: ${rest}ms) (Gateway: ${gateway}ms) (Database: ${finish}ms)`);
     } else {
-      return assyst.utils.createExecStream(ctx, `ping ${args.ping} -${process.platform === 'win32' ? 'n' : 'c'} 4`, 30000, 10000);
+      const count = isNaN(parseInt(args.c)) || parseInt(args.c) > 10 ? 4 : parseInt(args.c);
+      const size = isNaN(parseInt(args.s)) || parseInt(args.s) > 128 ? 64 : parseInt(args.s);
+      return assyst.utils.createExecStream(ctx, `ping ${args.ping} -${process.platform === 'win32' ? 'n' : 'c'} ${count} -${process.platform === 'win32' ? 'l' : 's'} ${size}`, 30000, 10000);
     }
   }
 };
