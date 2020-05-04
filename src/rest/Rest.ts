@@ -173,7 +173,7 @@ export default class RestController {
         headers: {
           Authorization: gocode
         }
-      }).then(async (v) => await v.text());
+      }).then(async (v) => JSON.parse(await v.body()));
     }
 
     public async searchZx8Hosts (query: string, limit: number = 1): Promise<Dataset[]> {
