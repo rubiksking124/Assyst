@@ -39,10 +39,6 @@ export default {
     const vanityCode = guild.vanityUrlCode;
     const fields: MetricItem[] = [
       {
-        name: 'Members:',
-        value: memberCount.toString()
-      },
-      {
         name: 'Roles:',
         value: roleCount.toString()
       },

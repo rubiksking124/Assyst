@@ -35,7 +35,6 @@ export default {
     const dbSize: string = await assyst.db.getDatabaseSize();
 
     const countsString = assyst.utils.formatMetricList([
-      { name: 'Guilds:', value: guildCount.toString() },
       { name: 'Events:', value: `${(assyst.metrics.eventRate / 60).toFixed(1).toString()}/sec (avg)` },
       { name: 'Commands:', value: `${assyst.metrics.commands.toString()} ran (all time)` }
     ]);
