@@ -160,7 +160,7 @@ export default class RestController {
           timeout: '60'
         },
         url: new URL(Endpoints.gocodeit)
-      }).then(async (v) => await v.body());
+      }).then(async (v) => JSON.parse(await v.body()));
     }
 
     public async getLanguageList (): Promise<CodeList> {
