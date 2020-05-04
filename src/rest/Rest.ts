@@ -86,6 +86,10 @@ export default class RestController {
       this.assyst = assyst;
     }
 
+    public async fetchGuilds () {
+      return await this.assyst.rest.request('https://discordapp.com/api/v7/users/@me/guilds');
+    }
+
     public async postStats (): Promise<PostResults> {
       const results: PostResults = { dbl: null, discordbotlist: null };
       results.dbl = await this.postStatsToTopGG();
