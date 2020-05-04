@@ -107,7 +107,7 @@ export default class RestController {
           server_count: (<ShardClient> this.assyst.client).guilds.size,
           shard_count: 1
         }
-      });
+      }).then(async (v) => await v.text());
     }
 
     private async postStatsToDiscordBotList () {
@@ -123,7 +123,7 @@ export default class RestController {
         body: {
           guilds: (<ShardClient> this.assyst.client).guilds.size
         }
-      });
+      }).then(async (v) => await v.text());
     }
 
     public async screenshotWebPage (url: string, allowNsfw: boolean): Promise<Buffer | string> {
@@ -142,11 +142,11 @@ export default class RestController {
             text: url
           }
         }
-      });
+      }).then(async (v) => await v.body());
     }
 
     public async runSandboxedCode (language: string, code: string): Promise<CodeResult> {
-      return JSON.parse(await this.sendRequest({
+      return await this.sendRequest({
         method: 'POST',
         headers: {
           Authorization: gocode
@@ -160,7 +160,7 @@ export default class RestController {
           timeout: '60'
         },
         url: new URL(Endpoints.gocodeit)
-      }));
+      }).then(async (v) => await v.body());
     }
 
     public async getLanguageList (): Promise<CodeList> {
@@ -173,11 +173,11 @@ export default class RestController {
         headers: {
           Authorization: gocode
         }
-      });
+      }).then(async (v) => await v.text());
     }
 
     public async searchZx8Hosts (query: string, limit: number = 1): Promise<Dataset[]> {
-      return JSON.parse(await this.sendRequest({
+      return await this.sendRequest({
         method: 'GET',
         url: new URL(`${Endpoints.zx8}/search`),
         settings: {
@@ -187,7 +187,7 @@ export default class RestController {
           query,
           limit
         }
-      }));
+      }).then(async (v) => await v.body());
     }
 
     public async getZx8Host (query: string): Promise<Dataset> {
@@ -195,33 +195,33 @@ export default class RestController {
     }
 
     public async getZx8Nodes (): Promise<Node[]> {
-      return JSON.parse(await this.sendRequest({
+      return await this.sendRequest({
         method: 'GET',
         url: new URL(`${Endpoints.zx8}/nodes`),
         settings: {
           timeout: 5000
         }
-      }));
+      }).then(async (v) => await v.body());
     }
 
     public async getZx8Info (): Promise<Zx8Info> {
-      return JSON.parse(await this.sendRequest({
+      return await this.sendRequest({
         method: 'GET',
         url: new URL(`${Endpoints.zx8}/info`),
         settings: {
           timeout: 5000
         }
-      }));
+      }).then(async (v) => await v.body());
     }
 
     public async ocr (imageUrl: string) {
-      return JSON.parse(await this.assyst.customRest.sendRequest({
+      return await this.assyst.customRest.sendRequest({
         url: new URL(`${Endpoints.ocr}?q=${imageUrl}`),
         settings: {
           timeout: 7000
         },
         method: 'GET'
-      }));
+      }).then(async (v) => await v.body());
     }
 
     public async identify (imageUrl: string) {
@@ -238,20 +238,20 @@ export default class RestController {
         settings: {
           timeout: 7000
         }
-      });
+      }).then(async (v) => await v.text());
     }
 
     public async getHistory (month: string, day: string): Promise<HistoryApiResult> {
-      return JSON.parse(await this.sendRequest({
+      return await await this.sendRequest({
         url: new URL(`https://byabbe.se/on-this-day/${month}/${day}/events.json`),
         method: 'GET',
         settings: {
           timeout: 5000
         }
-      }));
+      }).then(async (v) => await v.body());
     }
 
     public async sendRequest (options: RequestOptions) {
-      return await new Request(options).send().then(async (r) => await r.text());
+      return await new Request(options).send();
     }
 }
