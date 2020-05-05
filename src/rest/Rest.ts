@@ -24,7 +24,7 @@ export interface CodeList {
   data: Array<string>
 }
 
-interface CodeResult {
+export interface CodeResult {
   data: {
       res: string,
       comp: number,
@@ -149,7 +149,7 @@ export default class RestController {
       }).then(async (v) => await v.body());
     }
 
-    public async runSandboxedCode (language: string, code: string): Promise<CodeResult> {
+    public async runSandboxedCode (language: string, code: string): Promise<CodeResult | string> {
       return await this.sendRequest({
         method: 'POST',
         headers: {
@@ -164,7 +164,7 @@ export default class RestController {
           timeout: '60'
         },
         url: new URL(Endpoints.gocodeit)
-      }).then(async (v) => JSON.parse(await v.body()));
+      }).then(async (v) => { return JSON.parse(await v.body()); });
     }
 
     public async getLanguageList (): Promise<CodeList> {
@@ -177,7 +177,16 @@ export default class RestController {
         headers: {
           Authorization: gocode
         }
-      }).then(async (v) => JSON.parse(await v.body()));
+      }).then(async (v) => {
+        const body = await v.body();
+        let out;
+        try {
+          out = JSON.parse(body);
+        } catch (e) {
+          return body;
+        }
+        return out;
+      });
     }
 
     public async searchZx8Hosts (query: string, limit: number = 1): Promise<Dataset[]> {

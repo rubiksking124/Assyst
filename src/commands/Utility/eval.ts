@@ -65,6 +65,9 @@ export default {
     currentExecutions.add(ctx.userId);
     const response = await assyst.customRest.runSandboxedCode('js', getPrependedCode(<ShardClient> assyst.client).replace('{input}', args.eval.replace(/"/g, '\''))).then((res) => res);
     currentExecutions.delete(ctx.userId);
+    if (typeof response === 'string') {
+      return ctx.editOrReply(response.slice(0, 1990));
+    }
     if (response.status !== 200) {
       return ctx.editOrReply(`Error ${response.status}: ${STATUS_CODES[response.status]} - ${response.data.res}`);
     }

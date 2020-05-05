@@ -7,6 +7,8 @@ import { STATUS_CODES } from 'http';
 
 import { BaseSet } from 'detritus-client/lib/collections';
 
+import { CodeResult } from '../../rest/Rest';
+
 const currentExecutions: BaseSet<string> = new BaseSet([]);
 
 export default {
@@ -44,6 +46,9 @@ export default {
     currentExecutions.add(ctx.userId);
     const response = await assyst.customRest.runSandboxedCode(args.code.split(' ')[0], args.code.split(' ').slice(1).join(' ')).then((res) => res);
     currentExecutions.delete(ctx.userId);
+    if (typeof response === 'string') {
+      return ctx.editOrReply(response.slice(0, 1990));
+    }
     if (response.status !== 200) {
       return ctx.editOrReply(`Error ${response.status}: ${STATUS_CODES[response.status]} - ${response.data.res}`);
     }
