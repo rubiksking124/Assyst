@@ -21,17 +21,17 @@ export default {
   },
   run: async (assyst: Assyst, ctx: Context, args: any) => {
     let member: Member | User | undefined;
-    if (args && args.whois) {
+    if (args && args.userinfo) {
       try {
-        member = await ctx.rest.fetchGuildMember(<string> ctx.guildId, args.whois);
+        member = await ctx.rest.fetchGuildMember(<string> ctx.guildId, args.userinfo);
       } catch (e) {
         let notFound = false;
         if (e.response.statusCode === 400) {
           return ctx.editOrReply('User parameter must be a valid id');
         } else if (e.response.statusCode === 404 && e.message.includes('Unknown Member')) {
-          member = await ctx.rest.fetchUser(args.whois).catch(() => { notFound = true; return undefined; });
+          member = await ctx.rest.fetchUser(args.userinfo).catch(() => { notFound = true; return undefined; });
         }
-        if (!member) return ctx.editOrReply(e.message);
+        if (!member || notFound) return ctx.editOrReply(e.message);
       }
     } else {
       if (!ctx.member) {
