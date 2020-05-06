@@ -14,11 +14,22 @@ export default {
     usage: '',
     examples: ['']
   },
+  args: [
+    {
+      name: 'pull',
+      type: Boolean
+    },
+    {
+      name: 'restart',
+      type: Boolean
+    }
+  ],
   onBefore: (ctx: Context) => { return ctx.client.isOwner(ctx.userId) || admins.includes(ctx.userId); },
   run: async (assyst: Assyst, ctx: Context, args: any) => {
     await ctx.editOrReply('reloading');
-    execSync('tsc');
+    execSync(`${args.pull ? 'git pull && ' : ''}tsc`);
     assyst.reloadCommands();
-    ctx.editOrReply(`reloaded commands on shard ${ctx.shardId}`);
+    await ctx.editOrReply(`reloaded commands on shard ${ctx.shardId}${args.restart ? ', restarting' : ''}`);
+    if (args.restart) process.exit(0);
   }
 };
