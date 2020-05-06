@@ -4,7 +4,7 @@ import Assyst from '../../structures/Assyst';
 
 import os from 'os';
 
-import { short } from 'git-rev-sync';
+import fs from 'fs';
 
 import { version, homepage } from '../../../package.json';
 import { Markup } from 'detritus-client/lib/utils';
@@ -25,14 +25,22 @@ export default {
     duration: 5000
   },
   run: async (assyst: Assyst, ctx: Context, args: any) => {
-    const commitHash: string = short();
+    const commitHash: string = getCommitHash();
     const memoryUsage: string = (process.memoryUsage().rss / 1000 / 1000).toFixed(2);
-    const guildCount: number = ctx.client.guilds.size;
     const uptime = assyst.utils.elapsed(process.uptime() * 1000);
     const processor: string = `${os.cpus().length}x ${os.cpus()[0].model}`;
     const gitRepo: string = homepage;
     const supportLink: string = 'https://jacher.io/assyst';
     const dbSize: string = await assyst.db.getDatabaseSize();
+
+    function getCommitHash () {
+      const rev = fs.readFileSync('../.git/HEAD').toString();
+      if (rev.indexOf(':') === -1) {
+        return rev;
+      } else {
+        return fs.readFileSync(`../.git/${rev.substring(5).trim()}`).toString().substring(0, 7);
+      }
+    }
 
     const countsString = assyst.utils.formatMetricList([
       { name: 'Events:', value: `${(assyst.metrics.eventRate / 60).toFixed(1).toString()}/sec (avg)` },
