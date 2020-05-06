@@ -603,6 +603,10 @@ export default class Parser {
 
             const rexResult = await this.assyst.customRest.runSandboxedCode(key, Parser.unescapeTag(rawArgs));
 
+            if (typeof rexResult === 'string') {
+              return rexResult;
+            }
+
             return Parser.escapeTag(rexResult.data.res);
           }
           this.parsedStatements--;
