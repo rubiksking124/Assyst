@@ -53,7 +53,8 @@ export default {
       { name: 'Memory:', value: `${memoryUsage}MB` },
       { name: 'Version:', value: version },
       { name: 'Commit:', value: commitHash },
-      { name: 'DB:', value: dbSize }
+      { name: 'DB:', value: dbSize },
+      { name: 'Node:', value: process.version }
     ], 11);
 
     return ctx.editOrReply({
@@ -68,7 +69,7 @@ export default {
             inline: false
           },
           {
-            name: 'Stats',
+            name: 'Technical information',
             value: Markup.codeblock(statsString, { language: 'ml' }),
             inline: false
           }
