@@ -91,13 +91,14 @@ export default class RestController {
     }
 
     public async postStats (): Promise<PostResults> {
+      const guildCount = await this.fetchGuilds().then(g => g.length);
       const results: PostResults = { dbl: null, discordbotlist: null };
-      results.dbl = await this.postStatsToTopGG();
-      results.discordbotlist = await this.postStatsToDiscordBotList();
+      results.dbl = await this.postStatsToTopGG(guildCount);
+      results.discordbotlist = await this.postStatsToDiscordBotList(guildCount);
       return results;
     }
 
-    private async postStatsToTopGG () {
+    private async postStatsToTopGG (guildCount: number) {
       return await this.sendRequest({
         method: 'POST',
         url: new URL(`${Endpoints.topgg}/${(<ShardClient> this.assyst.client).user?.id}/stats`),
@@ -108,13 +109,13 @@ export default class RestController {
           Authorization: dbl
         },
         body: {
-          server_count: (<ShardClient> this.assyst.client).guilds.size,
+          server_count: guildCount,
           shard_count: 1
         }
       }).then(async (v) => await v.text());
     }
 
-    private async postStatsToDiscordBotList () {
+    private async postStatsToDiscordBotList (guildCount: number) {
       return await this.sendRequest({
         method: 'POST',
         url: new URL(`${Endpoints.discordbotlist}/${(<ShardClient> this.assyst.client).user?.id}/stats`),
@@ -125,7 +126,7 @@ export default class RestController {
           Authorization: `Bot ${discordbotlist}`
         },
         body: {
-          guilds: (<ShardClient> this.assyst.client).guilds.size
+          guilds: guildCount
         }
       }).then(async (v) => await v.text());
     }
