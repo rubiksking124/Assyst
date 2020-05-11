@@ -193,14 +193,10 @@ export default class RestController {
     public async searchZx8Hosts (query: string, limit: number = 1): Promise<Dataset[]> {
       return await this.sendRequest({
         method: 'GET',
-        url: new URL(`${Endpoints.zx8}/search`),
+        url: new URL(`${Endpoints.zx8}/search?query=${query}&limit=${limit}`),
         settings: {
           timeout: 5000
         },
-        body: {
-          query,
-          limit
-        }
       }).then(async (v) => await v.json());
     }
 
