@@ -87,7 +87,7 @@ export default class RestController {
     }
 
     public async fetchGuilds () {
-      return await this.assyst.rest.request('https://discordapp.com/api/v7/users/@me/guilds');
+      return await this.assyst.rest.request('https://discord.com/api/v7/users/@me/guilds');
     }
 
     public async postStats (): Promise<PostResults> {
