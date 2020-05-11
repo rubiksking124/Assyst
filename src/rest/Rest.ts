@@ -79,6 +79,14 @@ interface HistoryWikipedia {
   wikipedia: string
 }
 
+export enum Zx8ContentType {
+  Other,
+  Image,
+  Animated,
+  Video,
+  HTML
+}
+
 export default class RestController {
     public assyst: Assyst
 
