@@ -30,7 +30,7 @@ export default {
       return ctx.editOrReply(e.message);
     }
     if (typeof response === 'string') {
-      ctx.editOrReply(response);
+      return ctx.editOrReply(response);
     }
     const hash = createHash('md5').update(response).digest('hex');
     switch (hash) {
