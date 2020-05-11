@@ -68,7 +68,7 @@ export default class Assyst extends CommandClient {
       this.on('commandDelete', ({ reply }) => {
         reply.delete();
       });
-      (<ShardClient> this.client).messages.limit = 1000;
+      (<ShardClient> this.client).messages.limit = 100;
       this.initMetricsChecks();
       this.loadCommands();
       this.initBotListPosting();
