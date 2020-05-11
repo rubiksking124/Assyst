@@ -140,7 +140,7 @@ export default class RestController {
           'content-type': 'application/json'
         },
         settings: {
-          timeout: 30000
+          timeout: 32000
         },
         body: {
           args: {
