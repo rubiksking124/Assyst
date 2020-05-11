@@ -201,7 +201,7 @@ export default class RestController {
           query,
           limit
         }
-      }).then(async (v) => await v.body());
+      }).then(async (v) => await v.json());
     }
 
     public async getZx8Host (query: string): Promise<Dataset> {
