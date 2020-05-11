@@ -23,7 +23,7 @@ export default {
     duration: 5000
   },
   run: async (_assyst: Assyst, ctx: Context, args: any) => {
-    if (!args || !args.help) return ctx.editOrReply('<https://assyst.axonteam.org/commands>');
+    if (!args || !args.help) return ctx.editOrReply(`Command list: <https://assyst.axonteam.org/commands>\nJoin the Assyst discord server: <https://jacher.io/assyst>`);
     const command = ctx.commandClient.commands.find(i => i.name === args.help || i.aliases.includes(args.help));
     if (command) {
       ctx.editOrReply({
