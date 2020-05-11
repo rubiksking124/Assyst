@@ -221,7 +221,7 @@ export default class Assyst extends CommandClient {
     private async initBotListPosting (): Promise<void> {
       setInterval(async () => {
         await this.customRest.postStats();
-      }, 172800000);
+      }, 60000);
     }
 
     public async onCommandCheck (ctx: Context, command: Command.Command): Promise<boolean> {
