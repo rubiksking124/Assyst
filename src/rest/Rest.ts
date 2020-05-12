@@ -178,7 +178,7 @@ export default class RestController {
       }).then(async (v) => await v.body());
     }
 
-    public async fetchSteamPlaying (game: string) {
+    public async fetchSteamPlaying (game: string): Promise<string> {
       const res = await this.sendRequest({
         url: new URL(`${Endpoints.fapi.steamplaying}`),
         method: 'POST',
@@ -202,6 +202,25 @@ export default class RestController {
       } else {
         return res;
       }
+    }
+
+    public async runImageScript (script: string): Promise<Buffer | string> {
+      return await this.sendRequest({
+        url: new URL(`${Endpoints.fapi.imagescript}`),
+        method: 'POST',
+        headers: {
+          Authorization: fapi,
+          'content-type': 'application/json'
+        },
+        settings: {
+          timeout: 10000
+        },
+        body: {
+          args: {
+            text: script
+          }
+        }
+      }).then(async (v) => await v.body());
     }
 
     public async runSandboxedCode (language: string, code: string): Promise<CodeResult | string> {

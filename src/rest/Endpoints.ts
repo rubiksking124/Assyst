@@ -2,7 +2,8 @@ export default Object.freeze({
   fapi: Object.freeze({
     screenshot: 'https://fapi.wrmsr.io/screenshot',
     evalmagik: 'https://fapi.wrmsr.io/evalmagik',
-    steamplaying: 'https://fapi.wrmsr.io/steamplaying'
+    steamplaying: 'https://fapi.wrmsr.io/steamplaying',
+    imagescript: 'https://fapi.wrmsr.io/parse_tag'
   }),
   topgg: 'https://top.gg/api/bots',
   discordbotlist: 'https://discordbotlist.com/api/bots',
