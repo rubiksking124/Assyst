@@ -34,7 +34,7 @@ export default {
     });
     ctx.editOrReply({
       embed: {
-        title: `Command usage stats: ${ctx.guild?.name}`,
+        title: 'Command usage stats in the current guild',
         description: Markup.codeblock(rows.slice(0, 15).join('\n'), { language: 'ml' }),
         color: 0xf4632e
       }
