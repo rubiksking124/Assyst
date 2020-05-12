@@ -53,7 +53,10 @@ export default {
           },
           {
             item: 'Ocr:',
-            format: (item: string) => { return item.slice(0, 200); }
+            format: (item: string | null) => {
+              if (item) return item.slice(0, 200);
+              else return null;
+            }
           }
         ]), { language: 'ml' }),
         color: 0x0fbcf9
