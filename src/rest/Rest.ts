@@ -158,7 +158,7 @@ export default class RestController {
       }).then(async (v) => await v.body());
     }
 
-    public async runEvalMagik (script: string, imageUrl: string) {
+    public async runEvalMagik (script: string, imageUrl: string): Promise<string | Buffer> {
       return await this.sendRequest({
         url: new URL(`${Endpoints.fapi.evalmagik}`),
         method: 'POST',
@@ -167,7 +167,7 @@ export default class RestController {
           'content-type': 'application/json'
         },
         settings: {
-          timeout: 32000
+          timeout: 10000
         },
         body: {
           args: {
@@ -176,6 +176,32 @@ export default class RestController {
           images: [imageUrl]
         }
       }).then(async (v) => await v.body());
+    }
+
+    public async fetchSteamPlaying (game: string) {
+      const res = await this.sendRequest({
+        url: new URL(`${Endpoints.fapi.steamplaying}`),
+        method: 'POST',
+        headers: {
+          Authorization: fapi,
+          'content-type': 'application/json'
+        },
+        settings: {
+          timeout: 10000
+        },
+        body: {
+          args: {
+            text: game
+          }
+        }
+      }).then(async (v) => await v.body());
+      if (res === 'invalid game??') {
+        return 'No game found';
+      } else if (res.startsWith('🕹')) {
+        return res.replace(/[*]/g, '').slice(3);
+      } else {
+        return res;
+      }
     }
 
     public async runSandboxedCode (language: string, code: string): Promise<CodeResult | string> {

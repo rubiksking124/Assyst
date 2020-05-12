@@ -23,6 +23,9 @@ export default {
     }
   ],
   run: async (assyst: Assyst, ctx: Context, args: any) => {
+    if (!args || !args.evalmagik) {
+      return ctx.editOrReply('You need to provide a script to run on the image');
+    }
     ctx.triggerTyping();
     let success = true;
     const imageUrl = await assyst.utils.getUrlFromChannel(ctx, args.img);
