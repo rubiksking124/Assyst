@@ -1,6 +1,7 @@
 export default Object.freeze({
   fapi: Object.freeze({
-    screenshot: 'https://fapi.wrmsr.io/screenshot'
+    screenshot: 'https://fapi.wrmsr.io/screenshot',
+    evalmagik: 'https://fapi.wrmsr.io/evalmagik'
   }),
   topgg: 'https://top.gg/api/bots',
   discordbotlist: 'https://discordbotlist.com/api/bots',

@@ -158,6 +158,26 @@ export default class RestController {
       }).then(async (v) => await v.body());
     }
 
+    public async runEvalMagik (script: string, imageUrl: string) {
+      return await this.sendRequest({
+        url: new URL(`${Endpoints.fapi.evalmagik}`),
+        method: 'POST',
+        headers: {
+          Authorization: fapi,
+          'content-type': 'application/json'
+        },
+        settings: {
+          timeout: 32000
+        },
+        body: {
+          args: {
+            text: script
+          },
+          images: [imageUrl]
+        }
+      }).then(async (v) => await v.body());
+    }
+
     public async runSandboxedCode (language: string, code: string): Promise<CodeResult | string> {
       return await this.sendRequest({
         method: 'POST',

@@ -15,7 +15,8 @@ import {
   webhooks,
   prefixOverride,
   limitToUsers,
-  logErrors
+  logErrors,
+  doPostToBotLists
 } from '../../config.json';
 import RestController from '../rest/Rest';
 import Logger from './Logger';
@@ -71,7 +72,7 @@ export default class Assyst extends CommandClient {
       (<ShardClient> this.client).messages.limit = 100;
       this.initMetricsChecks();
       this.loadCommands();
-      this.initBotListPosting();
+      if (doPostToBotLists) this.initBotListPosting();
     }
 
     private loadCommands (noLog?: boolean) {
