@@ -49,6 +49,8 @@ export default class Assyst extends CommandClient {
     public utils: Utils
     public metrics!: Metrics
 
+    public startedAt!: Date
+
     public logErrors: boolean
 
     public prefixCache: BaseCollection<string, string>
@@ -57,6 +59,7 @@ export default class Assyst extends CommandClient {
 
     constructor (token: string, options: CommandClientOptions) {
       super(token || '', options);
+
       this.logErrors = logErrors === undefined ? true : logErrors;
       this.db = new Database(this, db);
       this.customRest = new RestController(this);
@@ -66,10 +69,13 @@ export default class Assyst extends CommandClient {
       this.prefixCache = new BaseCollection({
         expire: 3600000
       });
-      this.on('commandDelete', ({ reply }) => {
-        reply.delete();
-      });
+
+      this.on('commandDelete', ({ reply }) => { reply.delete(); });
+      (<ShardClient> this.client).gateway.on('open', () => { this.startedAt = new Date(); });
+      (<ShardClient> this.client).gateway.on('reconnect', () => { this.startedAt = new Date(); });
+
       (<ShardClient> this.client).messages.limit = 100;
+
       this.initMetricsChecks();
       this.loadCommands();
       if (doPostToBotLists) this.initBotListPosting();

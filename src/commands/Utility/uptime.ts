@@ -18,9 +18,10 @@ export default {
   },
   run: async (assyst: Assyst, ctx: Context, args: any) => {
     const uptime = process.uptime() * 1000;
-    const elapsedTime = assyst.utils.elapsed(uptime);
-    const lastStarted = new Date(Date.now() - Math.round(uptime));
-    ctx.editOrReply(`Up for ${elapsedTime.days > 0 ? `${elapsedTime.days} days, ` : ''}${elapsedTime.hours > 0 ? `${elapsedTime.hours} hours, ` : ''}${elapsedTime.minutes > 0 ? `${elapsedTime.minutes} minutes, ` : ''}${elapsedTime.seconds} seconds
-Last started: ${lastStarted.toLocaleString()}`);
+    const elapsedProcessTime = assyst.utils.elapsed(uptime);
+    const elapsedWebsocketTime = assyst.utils.elapsed(Date.now() - assyst.startedAt.getTime());
+    const lastStartedProcessString = `${elapsedProcessTime.days > 0 ? `${elapsedProcessTime.days} days, ` : ''}${elapsedProcessTime.hours > 0 ? `${elapsedProcessTime.hours} hours, ` : ''}${elapsedProcessTime.minutes > 0 ? `${elapsedProcessTime.minutes} minutes, ` : ''}${elapsedProcessTime.seconds} seconds`;
+    const lastStartedWebsocketString = `${elapsedWebsocketTime.days > 0 ? `${elapsedWebsocketTime.days} days, ` : ''}${elapsedWebsocketTime.hours > 0 ? `${elapsedWebsocketTime.hours} hours, ` : ''}${elapsedWebsocketTime.minutes > 0 ? `${elapsedWebsocketTime.minutes} minutes, ` : ''}${elapsedWebsocketTime.seconds} seconds`;
+    ctx.editOrReply(`Process uptime: ${lastStartedProcessString}\nWebsocket uptime: ${lastStartedWebsocketString}\nLast reconnection: ${assyst.startedAt.toLocaleString()}`);
   }
 };
