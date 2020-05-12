@@ -16,7 +16,8 @@ import {
   prefixOverride,
   limitToUsers,
   logErrors,
-  doPostToBotLists
+  doPostToBotLists,
+  logGateway
 } from '../../config.json';
 import RestController from '../rest/Rest';
 import Logger from './Logger';
@@ -78,6 +79,7 @@ export default class Assyst extends CommandClient {
 
       this.initMetricsChecks();
       this.loadCommands();
+      this.initGatewayEventHandlers();
       if (doPostToBotLists) this.initBotListPosting();
     }
 
@@ -184,6 +186,82 @@ export default class Assyst extends CommandClient {
           ]
         }
       });
+    }
+
+    public initGatewayEventHandlers () {
+      (<ShardClient> this.client).gateway.on('open', () => {
+        this.startedAt = new Date();
+        if (logGateway) {
+          this.client.rest.executeWebhook(webhooks.gatewayOpen.id, webhooks.gatewayOpen.token, {
+            embed: {
+              title: 'Gateway Opened',
+              description: `Opened at ${new Date().toLocaleString()}`,
+              color: 0x33FF33
+            }
+          });
+        }
+      });
+
+      (<ShardClient> this.client).gateway.on('reconnect', () => {
+        this.startedAt = new Date();
+        if (logGateway) {
+          this.client.rest.executeWebhook(webhooks.gatewayReconnect.id, webhooks.gatewayReconnect.token, {
+            embed: {
+              title: 'Gateway Reconnected',
+              description: `Reconnected at ${new Date().toLocaleString()}`,
+              color: 0xbae302
+            }
+          });
+        }
+      });
+
+      if (logGateway) {
+        (<ShardClient> this.client).gateway.on('close', ({ code, reason }) => {
+          this.client.rest.executeWebhook(webhooks.gatewayClose.id, webhooks.gatewayClose.token, {
+            embed: {
+              title: 'Gateway Closed',
+              description: `Closed at ${new Date().toLocaleString()}`,
+              fields: [
+                {
+                  name: 'Code',
+                  value: code.toString(),
+                  inline: true
+                },
+                {
+                  name: 'Reason',
+                  value: reason,
+                  inline: true
+                }
+              ],
+              color: 0xe35502
+            }
+          });
+        });
+      }
+
+      if (logGateway) {
+        (<ShardClient> this.client).gateway.on('killed', () => {
+          this.client.rest.executeWebhook(webhooks.gatewayKilled.id, webhooks.gatewayKilled.token, {
+            embed: {
+              title: 'Gateway Killed',
+              description: `Killed at ${new Date().toLocaleString()}`,
+              color: 0xd10e04
+            }
+          });
+        });
+      }
+
+      if (logGateway) {
+        (<ShardClient> this.client).gateway.on('ready', () => {
+          this.client.rest.executeWebhook(webhooks.gatewayKilled.id, webhooks.gatewayKilled.token, {
+            embed: {
+              title: 'Gateway Ready',
+              description: `Readied at ${new Date().toLocaleString()}`,
+              color: 0x09e06e
+            }
+          });
+        });
+      }
     }
 
     public async onPrefixCheck (ctx: Context) {
