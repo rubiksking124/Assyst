@@ -204,7 +204,7 @@ export default class RestController {
         url: new URL(`${Endpoints.zx8}/search?query=${query}&limit=${limit}`),
         settings: {
           timeout: 5000
-        },
+        }
       }).then(async (v) => await v.json());
     }
 

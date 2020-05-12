@@ -5,6 +5,8 @@ import { MetricItem } from '../../structures/Utils';
 
 import { Markup } from 'detritus-client/lib/utils';
 
+import { Zx8ContentType } from '../../rest/Rest';
+
 export default {
   name: 'zx8 host',
   aliases: ['zx8 h'],
@@ -44,6 +46,14 @@ export default {
           {
             item: 'LastRequest:',
             format: (item: string) => { return new Date(parseInt(item)).toLocaleString(); }
+          },
+          {
+            item: 'ContentType:',
+            format: (item: string) => { return Zx8ContentType[parseInt(item)]; }
+          },
+          {
+            item: 'Ocr:',
+            format: (item: string) => { return item.slice(0, 200); }
           }
         ]), { language: 'ml' }),
         color: 0x0fbcf9
