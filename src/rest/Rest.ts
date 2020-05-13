@@ -223,6 +223,26 @@ export default class RestController {
       }).then(async (v) => await v.body());
     }
 
+    public async legoifyImage (imageUrl: string, resolution: string) {
+      return await this.sendRequest({
+        url: new URL(`${Endpoints.fapi.lego}`),
+        method: 'POST',
+        headers: {
+          Authorization: fapi,
+          'content-type': 'application/json'
+        },
+        settings: {
+          timeout: 10000
+        },
+        body: {
+          args: {
+            text: resolution
+          },
+          images: [imageUrl]
+        }
+      }).then(async (v) => await v.body());
+    }
+
     public async runSandboxedCode (language: string, code: string): Promise<CodeResult | string> {
       return await this.sendRequest({
         method: 'POST',
