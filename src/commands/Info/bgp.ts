@@ -31,8 +31,8 @@ export default {
       return ctx.editOrReply('You already have an executing whois');
     }
 
-    if (!(/[a-zA-Z0-9.]/g.test(args.bgp))) {
-      return ctx.editOrReply('The query has illegal characters, the valid characters are a-z, 0-9 and .');
+    if (!(/^[a-f0-9.:]+$/i.test(args.bgp))) {
+      return ctx.editOrReply('Your query has illegal characters');
     }
 
     await ctx.triggerTyping();

@@ -10,9 +10,6 @@ import { Context } from 'detritus-client/lib/command';
 import { exec } from 'child_process';
 import { Markup } from 'detritus-client/lib/utils';
 
-const promisifyUnlink = promisify(unlink);
-const promisifyWrite = promisify(writeFile);
-
 export interface MetricItem {
   name: string,
   value: string
@@ -177,17 +174,4 @@ export default class Utils {
         return handleStreamEnd();
       });
     }
-
-  /* public async uploadToFilesGG (text: string, filename: string): Promise<string> { // TODO: fix this
-      const fd = new FormData();
-      fd.append('file', createReadStream(`${__dirname}/${filename}`));
-
-      fetch('https://api.files.gg/files', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'multipart/form-data'
-        },
-        body: fd
-      });
-    } */
 }
