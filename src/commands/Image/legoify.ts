@@ -12,7 +12,7 @@ export default {
   metadata: {
     description: 'Identify an image',
     usage: '<image|url>',
-    examples: ['https://link.to.my/image.png', '']
+    examples: ['https://link.to.my/image.png']
   },
   ratelimit: {
     type: 'guild',
