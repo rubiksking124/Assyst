@@ -60,7 +60,7 @@ export default {
     return ctx.editOrReply({
       embed: {
         title: 'Assyst Information',
-        description: `[Git](${gitRepo}) | [Invite](${ctx.application?.oauth2UrlFormat({ scope: 'bot', permissions: 0 })}) | [Support](${supportLink})`,
+        description: `[Git](${gitRepo}) | [Invite](${ctx.application?.oauth2UrlFormat({ scope: 'bot', permissions: 0 })}) | [Support](${supportLink}) | [Vote](https://top.gg/bot/${ctx.client.user?.id}/vote)`,
         color: 0xf4632e,
         fields: [
           {
