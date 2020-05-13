@@ -18,6 +18,6 @@ export default {
     duration: 3000
   },
   run: async (assyst: Assyst, ctx: Context, sargs: any) => {
-    return ctx.editOrReply(`Bot invite: <${(<ShardClient> assyst.client).application?.oauth2UrlFormat({ scope: 'bot', permissions: 0 })}>\nJoin the support server: <https://jacher.io/assyst>`);
+    return ctx.editOrReply(`Bot invite: <${(<ShardClient> assyst.client).application?.oauth2UrlFormat({ scope: 'bot' })}>\nJoin the support server: <https://jacher.io/assyst>`);
   }
 };
