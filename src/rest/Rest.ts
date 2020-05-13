@@ -139,6 +139,40 @@ export default class RestController {
       }).then(async (v) => await v.text());
     }
 
+    public async fetchTopGGBot (botId: string) {
+      const responses = await Promise.all([this.fetchTopGGBotInfo(botId), this.fetchTopGGBotStats(botId)]);
+      return {
+        ...responses[0],
+        ...responses[1]
+      };
+    }
+
+    private async fetchTopGGBotInfo (botId: string) {
+      return await this.sendRequest({
+        url: new URL(`${Endpoints.topgg}/${botId}`),
+        method: 'GET',
+        settings: {
+          timeout: 5000
+        },
+        headers: {
+          Authorization: dbl
+        }
+      }).then(async (v) => await v.json());
+    }
+
+    private async fetchTopGGBotStats (botId: string) {
+      return await this.sendRequest({
+        url: new URL(`${Endpoints.topgg}/${botId}/stats`),
+        method: 'GET',
+        settings: {
+          timeout: 5000
+        },
+        headers: {
+          Authorization: dbl
+        }
+      }).then(async (v) => await v.json());
+    }
+
     public async screenshotWebPage (url: string, allowNsfw: boolean): Promise<Buffer | string> {
       return await this.sendRequest({
         url: new URL(`${Endpoints.fapi.screenshot}?allow_nsfw=${allowNsfw.toString()}`),
