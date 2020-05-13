@@ -87,7 +87,8 @@ export default class Utils {
         imageUrl = args;
         try {
           const parsedURL: URL = new URL(<string>imageUrl);
-          imageUrl = parsedURL.origin + parsedURL.pathname;
+          imageUrl = parsedURL.origin + parsedURL.pathname + parsedURL.search;
+          console.log(imageUrl);
         } catch (e) {
           return undefined;
         }
