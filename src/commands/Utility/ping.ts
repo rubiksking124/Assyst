@@ -2,6 +2,9 @@
 import { Context, ArgumentParser } from 'detritus-client/lib/command';
 
 import Assyst from '../../structures/Assyst';
+import { MetricItem } from '../../structures/Utils';
+
+import { Markup } from 'detritus-client/lib/utils';
 
 const urlRegex = /^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:/?#[\]@!\$&'\(\)\*\+,;=.]+$/g;
 
@@ -44,11 +47,30 @@ export default {
       await ctx.editOrReply('Pong');
       const start = Date.now();
       let finish: number;
-      await assyst.db.getNow();
+      const now = await assyst.db.getNow().then(v => new Date(v).valueOf());
       // eslint-disable-next-line prefer-const
       finish = Date.now() - start;
+      const drift = Math.abs(Date.now() - now);
       const { rest, gateway } = await ctx.client.ping();
-      return ctx.editOrReply(`Pong (REST: ${rest}ms) (Gateway: ${gateway}ms) (Database: ${finish}ms)`);
+      const fields: MetricItem[] = [
+        {
+          name: 'REST:',
+          value: `${rest}ms`
+        },
+        {
+          name: 'Gateway:',
+          value: `${gateway}ms`
+        },
+        {
+          name: 'Database:',
+          value: `${finish}ms`
+        },
+        {
+          name: 'SQL Drift:',
+          value: `${drift}ms`
+        }
+      ];
+      return ctx.editOrReply(Markup.codeblock(assyst.utils.formatMetricList(fields), { limit: 1990, language: 'ml' }));
     } else {
       const count = isNaN(parseInt(args.c)) || parseInt(args.c) > 10 ? 4 : parseInt(args.c);
       const size = isNaN(parseInt(args.s)) || parseInt(args.s) > 128 ? 64 : parseInt(args.s);
