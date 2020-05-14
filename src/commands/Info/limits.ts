@@ -59,7 +59,8 @@ export default {
           name: guild.name,
           iconUrl: guild.iconUrl || ''
         },
-        description: Markup.codeblock(assyst.utils.formatMetricList(fields), { limit: 1990, language: 'ml' })
+        description: Markup.codeblock(assyst.utils.formatMetricList(fields), { limit: 1990, language: 'ml' }),
+        color: 0xe39117
       }
     });
   }
