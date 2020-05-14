@@ -35,6 +35,6 @@ export default class AssystApi {
     }
 
     private getFormattedCommands (): string {
-      return this.assyst.commands.map((c) => `${c.name} - ${c.metadata.description}`).join('\n\n');
+      return this.assyst.commands.filter((c) => !c.onBefore).map((c) => `${c.name} - ${c.metadata.description}`).join('\n\n');
     }
 }
