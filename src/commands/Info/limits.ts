@@ -48,7 +48,7 @@ export default {
         value: `${parseInt(bitrateLimit) / 1000} kbps`
       },
       {
-        name: 'AttachmentSize',
+        name: 'AttachmentSize:',
         value: `${parseInt(attachmentLimit) / 1024 / 1024} MB`
       }
     ];
