@@ -26,22 +26,17 @@ export default {
     } catch (e) {
       return ctx.editOrReply(e.message);
     }
-    const memberCount = guild.memberCount;
-    const roleCount = guild.roles.size;
     const ownerId = guild.ownerId;
     const creationDate = guild.createdAt.toLocaleString();
     const daysElapsedSinceCreate = Math.round((Date.now() - guild.createdAtUnix) / 1000 / 60 / 60 / 24);
     const maxMembers = guild.maxMembers;
+    const maxPresences = guild.maxPresences;
     const region = guild.region;
     const features = guild.features;
     const premiumTier = guild.premiumTier;
     const description = guild.description;
     const vanityCode = guild.vanityUrlCode;
     const fields: MetricItem[] = [
-      {
-        name: 'Roles:',
-        value: roleCount.toString()
-      },
       {
         name: 'Owner:',
         value: ownerId
@@ -53,6 +48,10 @@ export default {
       {
         name: 'MaximumMembers:',
         value: maxMembers.toString()
+      },
+      {
+        name: 'MaximumPresences:',
+        value: maxPresences.toString()
       },
       {
         name: 'Region:',
