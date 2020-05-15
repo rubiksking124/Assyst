@@ -27,6 +27,8 @@ import AssystApi from '../api/Api';
 import { BaseCollection, BaseSet } from 'detritus-client/lib/collections';
 
 import { Paginator } from 'detritus-pagination';
+import TraceController from './TraceController';
+import Trace from './Trace';
 
 interface Field {
   name: string,
@@ -51,6 +53,7 @@ export default class Assyst extends CommandClient {
     public api: AssystApi
     public utils: Utils
     public metrics!: Metrics
+    public traceHandler: TraceController
 
     public paginator: any
 
@@ -65,6 +68,7 @@ export default class Assyst extends CommandClient {
     constructor (token: string, options: CommandClientOptions) {
       super(token || '', options);
 
+      this.traceHandler = new TraceController(this);
       this.logErrors = logErrors === undefined ? true : logErrors;
       this.db = new Database(this, db);
       this.customRest = new RestController(this);
@@ -128,11 +132,7 @@ export default class Assyst extends CommandClient {
             },
 
             onRunError: (ctx: Context, args: any, error: any) => {
-              if (error.message.includes(db.host)) {
-                ctx.editOrReply('An unexpected error occurred during execution...');
-              } else {
-                ctx.editOrReply(Markup.codeblock(`Error: ${error.message}`, { language: 'js', limit: 1990 }));
-              }
+              this.handleTraceAddition(ctx, args, error);
               this.fireErrorWebhook(webhooks.commandOnError.id, webhooks.commandOnError.token, 'Command Run Error Fired', 0xDD5522, error, [
                 {
                   name: 'Command',
@@ -152,13 +152,13 @@ export default class Assyst extends CommandClient {
               ]);
             },
 
-            onError: (ctx: Context, _args: any, error: any) => {
-              ctx.editOrReply(Markup.codeblock(`Error: ${error.message}`, { language: 'js', limit: 1990 }));
+            onError: (ctx: Context, args: any, error: any) => {
+              this.handleTraceAddition(ctx, args, error);
               this.fireErrorWebhook(webhooks.commandOnError.id, webhooks.commandOnError.token, 'Command Error Fired', 0xBBAA00, error);
             },
 
-            onTypeError: (ctx: Context, _args: any, error: any) => {
-              ctx.editOrReply(Markup.codeblock(`Error: ${error.message}`, { language: 'js', limit: 1990 }));
+            onTypeError: (ctx: Context, args: any, error: any) => {
+              this.handleTraceAddition(ctx, args, error);
               this.fireErrorWebhook(webhooks.commandOnError.id, webhooks.commandOnError.token, 'Command Type Error Fired', 0xCC2288, error);
             },
 
@@ -167,6 +167,12 @@ export default class Assyst extends CommandClient {
           if (!noLog) this.logger.info(`Loaded command: ${command.name}`);
         });
       });
+    }
+
+    private handleTraceAddition (ctx: Context, args: any, error: any) {
+      const id = TraceController.generateId();
+      this.traceHandler.addTrace(id, new Trace({ error, args, context: ctx, thrownAt: new Date() }));
+      ctx.editOrReply(`An error occurred, to report this error please join the support server (with ${ctx.prefix}invite) and quote the error id \`${id}\``);
     }
 
     public reloadCommands () {
