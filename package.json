@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "detritus-client": "^0.10.2",
+    "detritus-pagination": "^1.0.73",
     "pg": "^7.18.2",
     "polka": "^0.5.2"
   },

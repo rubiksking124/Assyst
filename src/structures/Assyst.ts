@@ -26,6 +26,8 @@ import { Markup } from 'detritus-client/lib/utils';
 import AssystApi from '../api/Api';
 import { BaseCollection, BaseSet } from 'detritus-client/lib/collections';
 
+import { Paginator } from 'detritus-pagination';
+
 interface Field {
   name: string,
   value: string,
@@ -49,6 +51,8 @@ export default class Assyst extends CommandClient {
     public api: AssystApi
     public utils: Utils
     public metrics!: Metrics
+
+    public paginator: any
 
     public startedAt!: Date
 
@@ -76,6 +80,12 @@ export default class Assyst extends CommandClient {
       (<ShardClient> this.client).gateway.on('reconnect', () => { this.startedAt = new Date(); });
 
       (<ShardClient> this.client).messages.limit = 100;
+
+      this.paginator = new Paginator(this.client, {
+        maxTime: 30000,
+        pageLoop: true,
+        pageNumber: true
+      });
 
       this.initMetricsChecks();
       this.loadCommands();

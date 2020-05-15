@@ -200,6 +200,25 @@ export default class RestController {
       }).then(async (v) => await v.json());
     }
 
+    public async searchDuckDuckGoImages (query: string, safetyLevel: 1 | -2): Promise<string[]> {
+      return await this.sendRequest({
+        url: new URL(Endpoints.fapi.ddgimg),
+        method: 'POST',
+        settings: {
+          timeout: 15000
+        },
+        headers: {
+          Authorization: fapi
+        },
+        body: {
+          args: {
+            text: query,
+            safetyLevel
+          }
+        }
+      }).then(async (v) => await v.json());
+    }
+
     public async screenshotWebPage (url: string, allowNsfw: boolean): Promise<Buffer | string> {
       return await this.sendRequest({
         url: new URL(`${Endpoints.fapi.screenshot}?allow_nsfw=${allowNsfw.toString()}`),
