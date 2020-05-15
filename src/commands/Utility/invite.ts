@@ -11,9 +11,9 @@ export default {
   name: 'invite',
   responseOptional: true,
   metadata: {
-    description: 'Fetch the Assyst invite',
-    usage: '',
-    examples: ['']
+    description: 'Fetch the Assyst or a server invite',
+    usage: '<code>',
+    examples: ['gVZ35NG', '']
   },
   ratelimit: {
     type: 'guild',
