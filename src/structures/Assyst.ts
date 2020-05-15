@@ -75,6 +75,12 @@ export default class Assyst extends CommandClient {
         expire: 3600000
       });
 
+      this.on('commandNone', () => {
+        if ((<ShardClient> this.client).messages.size > 100) {
+          (<ShardClient> this.client).messages.clear();
+        }
+      });
+
       this.on('commandDelete', ({ reply }) => { reply.delete(); });
       (<ShardClient> this.client).gateway.on('open', () => { this.startedAt = new Date(); });
       (<ShardClient> this.client).gateway.on('reconnect', () => { this.startedAt = new Date(); });
