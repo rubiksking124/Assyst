@@ -14,6 +14,15 @@ import Endpoints from './Endpoints';
 import { RequestTypes } from 'detritus-client-rest';
 import { Request, RequestOptions } from 'detritus-rest';
 
+interface DuckDuckGoResults {
+  results: DuckDuckGoResult[]
+}
+
+interface DuckDuckGoResult {
+  title: string,
+  link: string
+}
+
 interface PostResults {
   dbl: any,
   discordbotlist: any
@@ -169,6 +178,24 @@ export default class RestController {
         },
         headers: {
           Authorization: dbl
+        }
+      }).then(async (v) => await v.json());
+    }
+
+    public async searchDuckDuckGo (query: string): Promise<DuckDuckGoResults> {
+      return await this.sendRequest({
+        url: new URL(Endpoints.fapi.ddg),
+        method: 'POST',
+        settings: {
+          timeout: 15000
+        },
+        headers: {
+          Authorization: fapi
+        },
+        body: {
+          args: {
+            text: query
+          }
         }
       }).then(async (v) => await v.json());
     }

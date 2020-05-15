@@ -4,7 +4,8 @@ export default Object.freeze({
     evalmagik: 'https://fapi.wrmsr.io/evalmagik',
     steamplaying: 'https://fapi.wrmsr.io/steamplaying',
     imagescript: 'https://fapi.wrmsr.io/parse_tag',
-    lego: 'https://fapi.wrmsr.io/lego'
+    lego: 'https://fapi.wrmsr.io/lego',
+    ddg: 'https://fapi.wrmsr.io/duckduckgo'
   }),
   topgg: 'https://top.gg/api/bots',
   discordbotlist: 'https://discordbotlist.com/api/bots',
