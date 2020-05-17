@@ -110,9 +110,6 @@ export default class Assyst extends CommandClient {
         files.forEach(async (file) => {
           if (file.includes('template') || file.includes('category_info')) return;
           const command: any = await import(`../commands/${folder}/${file}`).then((v: any) => v.default);
-          if (command.name === 'complain') {
-            console.log(file);
-          }
           this.add({
             ...command,
 

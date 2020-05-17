@@ -107,7 +107,8 @@ export default class Database {
       const entries: string[] = savedEvents.map(e => e.name);
       eventTypes.forEach(async (entry: string) => {
         if (entries.includes(entry)) {
-          await this.sql('update events set amount = $1 where name = $2', [events.get(entry) + savedEvents.find(e => e.name === entry).amount, entry]);
+          // @ts-ignore
+          await this.sql('update events set amount = $1 where name = $2', [parseInt(events.get(entry)) + parseInt(savedEvents.find(e => e.name === entry).amount), entry]);
         } else {
           await this.sql('insert into events("name", "amount") values ($1, $2)', [entry, events.get(entry)]);
         }

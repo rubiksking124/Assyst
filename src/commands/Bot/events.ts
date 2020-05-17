@@ -2,6 +2,7 @@ import { Context } from 'detritus-client/lib/command';
 
 import Assyst from '../../structures/Assyst';
 import { MetricItem } from '../../structures/Utils';
+import { Markup } from 'detritus-client/lib/utils';
 
 export default {
   name: 'events',
@@ -19,14 +20,18 @@ export default {
   run: async (assyst: Assyst, ctx: Context, args: any) => {
     const events = await assyst.db.getEvents();
     const fields: MetricItem[] = [];
-    events.forEach(event => {
+    events.sort((a, b) => parseInt(b.amount) - parseInt(a.amount)).forEach(event => {
       fields.push({
         name: event.name,
         value: event.amount.toString()
       });
     });
     return ctx.editOrReply({
-      embed: {}
+      embed: {
+        title: 'Event metrics since 18/05/20',
+        description: Markup.codeblock(assyst.utils.formatMetricList(fields), { language: 'ml', limit: 1990 }),
+        color: 0xf4632e,
+      }
     });
   }
 };
