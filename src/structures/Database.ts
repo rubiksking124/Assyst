@@ -101,6 +101,23 @@ export default class Database {
       return await this.sql('select * from metrics').then((r: QueryResult) => r.rows);
     }
 
+    public async updateEventCounts (events: Map<string, number>): Promise<void> {
+      const eventTypes = Array.from(events).map(e => e[0]);
+      const savedEvents = await this.sql('select * from events').then(r => r.rows);
+      const entries: string[] = savedEvents.map(e => e.name);
+      eventTypes.forEach(async (entry: string) => {
+        if (entries.includes(entry)) {
+          await this.sql('update events set amount = $1 where name = $2', [events.get(entry) + savedEvents.find(e => e.name === entry).amount, entry]);
+        } else {
+          await this.sql('insert into events("name", "amount") values ($1, $2)', [entry, events.get(entry)]);
+        }
+      });
+    }
+
+    public async getEvents (): Promise<{name: string, amount: string}[]> {
+      return await this.sql('select * from events').then(r => r.rows);
+    }
+
     public async updateMetrics (commands: number, eventRate: number): Promise<void> {
       this.sql(`update metrics set value = ${commands} where name = 'commands'; update metrics set value = ${eventRate} where name = 'last_event_count'`);
     }

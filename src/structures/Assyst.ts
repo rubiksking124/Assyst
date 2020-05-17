@@ -86,8 +86,6 @@ export default class Assyst extends CommandClient {
       });
 
       this.on('commandDelete', ({ reply }) => { reply.delete(); });
-      (<ShardClient> this.client).gateway.on('open', () => { this.startedAt = new Date(); });
-      (<ShardClient> this.client).gateway.on('reconnect', () => { this.startedAt = new Date(); });
 
       (<ShardClient> this.client).messages.limit = 100;
 
@@ -112,6 +110,9 @@ export default class Assyst extends CommandClient {
         files.forEach(async (file) => {
           if (file.includes('template') || file.includes('category_info')) return;
           const command: any = await import(`../commands/${folder}/${file}`).then((v: any) => v.default);
+          if (command.name === 'complain') {
+            console.log(file);
+          }
           this.add({
             ...command,
 
@@ -303,6 +304,7 @@ export default class Assyst extends CommandClient {
     }
 
     private async initMetricsChecks (): Promise<void> {
+      const events: Map<string, number> = new Map();
       const metrics = await this.db.getMetrics();
       const commands = metrics.find((m: Metric) => m.name === 'commands')?.value;
       const eventRate = metrics.find((m: Metric) => m.name === 'last_event_count')?.value;
@@ -314,13 +316,17 @@ export default class Assyst extends CommandClient {
         commands,
         eventRate
       };
-      this.client.on('raw', () => {
+      this.client.on('raw', (packet) => {
+        const eventCount = events.get(packet.t) || 0;
+        events.set(packet.t, eventCount + 1);
         eventsThisMinute++;
       });
-      this.metricsInterval = setInterval(() => {
+      this.metricsInterval = setInterval(async () => {
         this.metrics.eventRate = eventsThisMinute;
         eventsThisMinute = 0;
-        this.db.updateMetrics(this.metrics.commands, this.metrics.eventRate);
+        await this.db.updateMetrics(this.metrics.commands, this.metrics.eventRate);
+        await this.db.updateEventCounts(events);
+        events.clear();
       }, 60000);
       this.logger.info('Initialised metrics checks');
     }
