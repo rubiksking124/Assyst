@@ -104,7 +104,7 @@ export default class RestController {
     }
 
     public async fetchGuilds () {
-      return await this.assyst.rest.request('https://discord.com/api/v7/users/@me/guilds');
+      return await this.assyst.rest.request({ url: 'https://discord.com/api/v7/users/@me/guilds', useAuth: true });
     }
 
     public async postStats (): Promise<PostResults> {
