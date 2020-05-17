@@ -120,4 +120,10 @@ export default class Database {
     public async getTag (guildId: string, tagName: string): Promise<ITag | undefined> {
       return await this.sql('select * from tags where name = $1 and guild = $2', [tagName, guildId]).then(r => r.rows[0]);
     }
+
+    public async checkIfUserIsFeedbackBlacklisted (userId: string): Promise<boolean> {
+      const users = await this.sql('select user_id from feedback_blacklist').then(r => r.rows);
+      const ids = users.map(u => u.user_id);
+      return ids.includes(userId);
+    }
 }
