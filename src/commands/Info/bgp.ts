@@ -31,7 +31,7 @@ export default {
       return ctx.editOrReply('You already have an executing whois');
     }
 
-    if (!(/^[a-f0-9.:]+$/i.test(args.bgp))) {
+    if (!(/^[a-z0-9.:]+$/i.test(args.bgp))) {
       return ctx.editOrReply('Your query has illegal characters');
     }
 
