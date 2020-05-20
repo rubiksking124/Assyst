@@ -63,8 +63,6 @@ export default class Assyst extends CommandClient {
 
     public prefixCache: BaseCollection<string, string>
 
-    private metricsInterval!: NodeJS.Timeout
-
     constructor (token: string, options: CommandClientOptions) {
       super(token || '', options);
 
@@ -79,14 +77,6 @@ export default class Assyst extends CommandClient {
         expire: 3600000
       });
 
-      this.on('commandNone', () => {
-        if ((<ShardClient> this.client).messages.size > 100) {
-          (<ShardClient> this.client).messages.clear();
-        }
-      });
-
-      this.on('commandDelete', ({ reply }) => { reply.delete(); });
-
       (<ShardClient> this.client).messages.limit = 100;
 
       this.paginator = new Paginator(this.client, {
@@ -97,7 +87,7 @@ export default class Assyst extends CommandClient {
 
       this.initMetricsChecks();
       this.loadCommands();
-      this.initGatewayEventHandlers();
+      this.registerEvents();
       if (doPostToBotLists) this.initBotListPosting();
     }
 
@@ -165,6 +155,18 @@ export default class Assyst extends CommandClient {
           if (!noLog) this.logger.info(`Loaded command: ${command.name}`);
         });
       });
+    }
+
+    private registerEvents (): void {
+      this.on('commandNone', () => {
+        if ((<ShardClient> this.client).messages.size > 100) {
+          (<ShardClient> this.client).messages.clear();
+        }
+      });
+
+      this.on('commandDelete', ({ reply }) => { reply.delete(); });
+
+      this.initGatewayEventHandlers();
     }
 
     private handleTraceAddition (ctx: Context, args: any, error: any) {
@@ -293,7 +295,7 @@ export default class Assyst extends CommandClient {
         events.set(packet.t, eventCount + 1);
         eventsThisMinute++;
       });
-      this.metricsInterval = setInterval(async () => {
+      setInterval(async () => {
         this.metrics.eventRate = eventsThisMinute;
         eventsThisMinute = 0;
         await this.db.updateMetrics(this.metrics.commands, this.metrics.eventRate);
