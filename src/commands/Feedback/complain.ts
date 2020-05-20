@@ -31,7 +31,7 @@ export default {
       return ctx.editOrReply('You need to supply a complaint that is shorter than 1500 characters');
     }
     const [user, guild, channel] = await Promise.all([ctx.rest.fetchUser(ctx.userId), ctx.rest.fetchGuild(<string> ctx.guildId), ctx.rest.fetchChannel(ctx.channelId)]);
-    ctx.rest.createMessage(feedbackChannels.complaints, `User: ${user.name}#${user.discriminator} (\`${user.id}\`)\nChannel: ${channel.name} (\`${channel.id}\`)\nGuild: ${guild.name} (\`${guild.id}\`)\nTime: ${new Date().toLocaleString()}\nComplaint: ${Markup.codeblock(complaint)}`);
+    ctx.rest.createMessage(feedbackChannels.complaints, `User: ${user.name}#${user.discriminator} (\`${user.id}\`)\nChannel: ${channel.name} (\`${channel.id}\`)\nGuild: ${guild.name} (\`${guild.id}\`)\nTime: ${new Date().toLocaleString()}\nComplaint: ${Markup.codeblock(complaint.replace(/discord/g, 'disc​ord'))}`);
     await ctx.editOrReply('Your message was sent');
   }
 };
