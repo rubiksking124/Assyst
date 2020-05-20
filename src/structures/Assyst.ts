@@ -32,7 +32,7 @@ import { Paginator } from 'detritus-pagination';
 import TraceController from './TraceController';
 import Trace from './Trace';
 
-import MessageSnipe, { MessageSnipeTypes } from './MessageSnipe';
+import MessageSnipe from './MessageSnipe';
 
 interface Field {
   name: string,
@@ -178,12 +178,7 @@ export default class Assyst extends CommandClient {
 
       this.client.on('messageDelete', (message) => {
         if (!message.message) return;
-        this.messageSnipes.set(message.message?.id, new MessageSnipe(message.message, new Date(), MessageSnipeTypes.DELETE, this));
-      });
-
-      this.client.on('messageUpdate', (message) => {
-        if (!message.message) return;
-        this.messageSnipes.set(message.message?.id, new MessageSnipe(message.message, new Date(), MessageSnipeTypes.EDIT, this));
+        this.messageSnipes.set(message.message?.id, new MessageSnipe(message.message, new Date(), this));
       });
 
       this.initGatewayEventHandlers();
