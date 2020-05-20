@@ -115,6 +115,10 @@ export default class Database {
       });
     }
 
+    public async addUserToFeedbackBlacklist(userId: string): Promise<void> {
+      await this.sql('insert into feedback_blacklist("userid") values($1)', [userId])
+    }
+
     public async getEvents (): Promise<{name: string, amount: string}[]> {
       return await this.sql('select * from events').then(r => r.rows);
     }
@@ -140,8 +144,8 @@ export default class Database {
     }
 
     public async checkIfUserIsFeedbackBlacklisted (userId: string): Promise<boolean> {
-      const users = await this.sql('select user_id from feedback_blacklist').then(r => r.rows);
-      const ids = users.map(u => u.user_id);
+      const users = await this.sql('select userid from feedback_blacklist').then(r => r.rows);
+      const ids = users.map(u => u.userid);
       return ids.includes(userId);
     }
 }
