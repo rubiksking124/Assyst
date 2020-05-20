@@ -222,19 +222,6 @@ export default class Assyst extends CommandClient {
         }
       });
 
-      (<ShardClient> this.client).gateway.on('reconnect', () => {
-        this.startedAt = new Date();
-        if (logGateway) {
-          this.client.rest.executeWebhook(webhooks.gatewayReconnect.id, webhooks.gatewayReconnect.token, {
-            embed: {
-              title: 'Gateway Reconnected',
-              description: `Reconnected at ${new Date().toLocaleString()}`,
-              color: 0xbae302
-            }
-          });
-        }
-      });
-
       if (logGateway) {
         (<ShardClient> this.client).gateway.on('close', ({ code, reason }) => {
           this.client.rest.executeWebhook(webhooks.gatewayClose.id, webhooks.gatewayClose.token, {
@@ -254,18 +241,6 @@ export default class Assyst extends CommandClient {
                 }
               ],
               color: 0xe35502
-            }
-          });
-        });
-      }
-
-      if (logGateway) {
-        (<ShardClient> this.client).gateway.on('killed', () => {
-          this.client.rest.executeWebhook(webhooks.gatewayKilled.id, webhooks.gatewayKilled.token, {
-            embed: {
-              title: 'Gateway Killed',
-              description: `Killed at ${new Date().toLocaleString()}`,
-              color: 0xd10e04
             }
           });
         });

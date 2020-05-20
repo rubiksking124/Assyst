@@ -31,7 +31,7 @@ export default {
       embed: {
         title: `Event metrics since 18/05/20 (Total ${totalEvents})`,
         description: Markup.codeblock(assyst.utils.formatMetricList(fields), { language: 'ml', limit: 1990 }),
-        color: 0xf4632e,
+        color: 0xf4632e
       }
     });
   }
