@@ -32,6 +32,8 @@ import { Paginator } from 'detritus-pagination';
 import TraceController from './TraceController';
 import Trace from './Trace';
 
+import MessageSnipe, { MessageSnipeTypes } from './MessageSnipe';
+
 interface Field {
   name: string,
   value: string,
@@ -65,9 +67,15 @@ export default class Assyst extends CommandClient {
 
     public prefixCache: BaseCollection<string, string>
 
+    public messageSnipes: BaseCollection<string, MessageSnipe>
+
     constructor (token: string, options: CommandClientOptions) {
       super(token || '', options);
 
+      this.messageSnipes = new BaseCollection({
+        expire: 30000,
+        limit: 100
+      });
       this.traceHandler = new TraceController(this);
       this.logErrors = logErrors === undefined ? true : logErrors;
       this.db = new Database(this, db);
@@ -167,6 +175,16 @@ export default class Assyst extends CommandClient {
       });
 
       this.on('commandDelete', ({ reply }) => { reply.delete(); });
+
+      this.client.on('messageDelete', (message) => {
+        if (!message.message) return;
+        this.messageSnipes.set(message.message?.id, new MessageSnipe(message.message, new Date(), MessageSnipeTypes.DELETE, this));
+      });
+
+      this.client.on('messageUpdate', (message) => {
+        if (!message.message) return;
+        this.messageSnipes.set(message.message?.id, new MessageSnipe(message.message, new Date(), MessageSnipeTypes.EDIT, this));
+      });
 
       this.initGatewayEventHandlers();
     }
