@@ -6,6 +6,8 @@ import Database, { ITag } from './Database';
 
 import Parser from './Parser';
 
+import { inspect } from 'util';
+
 import { Message } from 'detritus-client/lib/structures';
 
 import { readdirSync } from 'fs';
@@ -193,6 +195,12 @@ export default class Assyst extends CommandClient {
 
     public fireErrorWebhook (id: string, token: string, title: string, color: number, error: any, extraFields: Field[] = []): void {
       if (!this.logErrors) return;
+      if (error.errors) {
+        extraFields.push({
+          name: 'Errors',
+          value: Markup.codeblock(inspect(error.errors, { depth: 4, showHidden: true }))
+        });
+      }
       this.client.rest.executeWebhook(id, token, {
         embed: {
           title,
