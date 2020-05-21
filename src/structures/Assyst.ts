@@ -211,7 +211,7 @@ export default class Assyst extends CommandClient {
     if (error.errors) {
       extraFields.push({
         name: 'Errors',
-        value: Markup.codeblock(inspect(error.errors, { depth: 4, showHidden: true }))
+        value: Markup.codeblock(inspect(error.errors, { depth: 6, showHidden: true }))
       });
     }
     this.client.rest.executeWebhook(id, token, {
