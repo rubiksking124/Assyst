@@ -70,7 +70,7 @@ export default class Assyst extends CommandClient {
 
   public messageSnipeController: MessageSnipeController
 
-  constructor(token: string, options: CommandClientOptions) {
+  constructor (token: string, options: CommandClientOptions) {
     super(token || '', options);
 
     this.messageSnipeController = new MessageSnipeController(this);
@@ -85,7 +85,7 @@ export default class Assyst extends CommandClient {
       expire: 3600000
     });
 
-    (<ShardClient>this.client).messages.limit = 100;
+    (<ShardClient> this.client).messages.limit = 100;
 
     this.paginator = new Paginator(this.client, {
       maxTime: 60000,
@@ -99,7 +99,7 @@ export default class Assyst extends CommandClient {
     if (doPostToBotLists) this.initBotListPosting();
   }
 
-  private loadCommands(noLog?: boolean) {
+  private loadCommands (noLog?: boolean) {
     const folders = readdirSync('./src/commands');
     folders.forEach(async (folder: string) => {
       if (folder.includes('template')) return;
@@ -165,10 +165,10 @@ export default class Assyst extends CommandClient {
     });
   }
 
-  private registerEvents(): void {
+  private registerEvents (): void {
     this.on('commandNone', () => {
-      if ((<ShardClient>this.client).messages.size > 100) {
-        (<ShardClient>this.client).messages.clear();
+      if ((<ShardClient> this.client).messages.size > 100) {
+        (<ShardClient> this.client).messages.clear();
       }
     });
 
@@ -184,13 +184,13 @@ export default class Assyst extends CommandClient {
     this.initGatewayEventHandlers();
   }
 
-  private handleTraceAddition(ctx: Context, args: any, error: any) {
+  private handleTraceAddition (ctx: Context, args: any, error: any) {
     const id = TraceController.generateId();
     this.traceHandler.addTrace(id, new Trace({ error, args, context: ctx, thrownAt: new Date() }));
     ctx.editOrReply(`An error occurred, to report this error please join the support server (with ${ctx.prefix}invite) and quote the error id \`${id}\``);
   }
 
-  public reloadCommands() {
+  public reloadCommands () {
     const folders = readdirSync('./src/commands');
     folders.forEach(async (folder: string) => {
       if (folder.includes('template')) return;
@@ -206,7 +206,7 @@ export default class Assyst extends CommandClient {
     this.loadCommands(true);
   }
 
-  public fireErrorWebhook(id: string, token: string, title: string, color: number, error: any, extraFields: Field[] = []): void {
+  public fireErrorWebhook (id: string, token: string, title: string, color: number, error: any, extraFields: Field[] = []): void {
     if (!this.logErrors) return;
     if (error.errors) {
       extraFields.push({
@@ -231,9 +231,9 @@ export default class Assyst extends CommandClient {
     });
   }
 
-  public initGatewayEventHandlers() {
-    (<ShardClient>this.client).gateway.on('open', () => {
-      this.client.emit('raw', { t: 'GATEWAY_OPEN' })
+  public initGatewayEventHandlers () {
+    (<ShardClient> this.client).gateway.on('open', () => {
+      this.client.emit('raw', { t: 'GATEWAY_OPEN' });
       this.startedAt = new Date();
       if (logGateway) {
         this.client.rest.executeWebhook(webhooks.gatewayOpen.id, webhooks.gatewayOpen.token, {
@@ -246,8 +246,8 @@ export default class Assyst extends CommandClient {
       }
     });
 
-    (<ShardClient>this.client).gateway.on('close', ({ code, reason }) => {
-      this.client.emit('raw', { t: 'GATEWAY_CLOSE' })
+    (<ShardClient> this.client).gateway.on('close', ({ code, reason }) => {
+      this.client.emit('raw', { t: 'GATEWAY_CLOSE' });
       if (logGateway) {
         this.client.rest.executeWebhook(webhooks.gatewayClose.id, webhooks.gatewayClose.token, {
           embed: {
@@ -272,7 +272,7 @@ export default class Assyst extends CommandClient {
     });
 
     if (logGateway) {
-      (<ShardClient>this.client).gateway.on('ready', () => {
+      (<ShardClient> this.client).gateway.on('ready', () => {
         this.client.rest.executeWebhook(webhooks.gatewayKilled.id, webhooks.gatewayKilled.token, {
           embed: {
             title: 'Gateway Ready',
@@ -284,7 +284,7 @@ export default class Assyst extends CommandClient {
     }
   }
 
-  public async onPrefixCheck(ctx: Context) {
+  public async onPrefixCheck (ctx: Context) {
     if (!ctx.user.bot && ctx.guildId && prefixOverride.enabled === false) {
       let prefix = this.prefixCache.get(ctx.guildId);
       if (!prefix) {
@@ -300,7 +300,7 @@ export default class Assyst extends CommandClient {
     else return prefixOverride.prefix;
   }
 
-  private async initMetricsChecks(): Promise<void> {
+  private async initMetricsChecks (): Promise<void> {
     const events: Map<string, number> = new Map();
     const metrics = await this.db.getMetrics();
     const commands = metrics.find((m: Metric) => m.name === 'commands')?.value;
@@ -328,31 +328,31 @@ export default class Assyst extends CommandClient {
     this.logger.info('Initialised metrics checks');
   }
 
-  private async initBotListPosting(): Promise<void> {
+  private async initBotListPosting (): Promise<void> {
     setInterval(async () => {
       await this.customRest.postStats();
     }, 60000);
   }
 
-  public async onCommandCheck(ctx: Context, command: Command.Command): Promise<boolean> {
+  public async onCommandCheck (ctx: Context, command: Command.Command): Promise<boolean> {
     return this.checkBotUseLimit(ctx) && await this.checkIfDisabled(ctx, command);
   }
 
-  private async checkIfDisabled(ctx: Context, command: Command.Command): Promise<boolean> {
+  private async checkIfDisabled (ctx: Context, command: Command.Command): Promise<boolean> {
     const disabledGuildCommands = await this.db.getGuildDisabledCommands(<string>ctx.guildId);
     if (disabledGuildCommands.includes(command.name)) return false;
     else return true;
   }
 
-  private checkBotUseLimit(ctx: Context): boolean {
+  private checkBotUseLimit (ctx: Context): boolean {
     if (ctx.inDm || ctx.user.bot) return false;
     if (limitToUsers.enabled && limitToUsers.users.includes(ctx.userId)) return true;
     else if (!limitToUsers.enabled) return true;
     else return false;
   }
 
-  public parseNew(input: string, message: Message, args: string[] = [], tag: ITag) {
-    return new Parser(<ShardClient>this.client, {
+  public parseNew (input: string, message: Message, args: string[] = [], tag: ITag) {
+    return new Parser(<ShardClient> this.client, {
       message,
       getMemberFromString: () => null
     }, this).parse(input, args, tag);
