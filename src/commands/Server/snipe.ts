@@ -39,6 +39,6 @@ export default {
         if(!snipe) {
             return ctx.editOrReply('No snipes recorded in this channel')
         }
-        return ctx.editOrReply(snipe.content)
+        return ctx.editOrReply(`\`${snipe.author.username}#${snipe.author.discriminator}\`: ${snipe.content}`)
     }
 };
