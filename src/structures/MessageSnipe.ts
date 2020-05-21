@@ -23,7 +23,7 @@ export default class MessageSnipe {
     }
 
     get sourceChannel (): ChannelGuildText | undefined {
-      return this.channel || undefined
+      return this.channel || undefined;
     }
 
     public async fetchChannel (): Promise<ChannelGuildText | undefined> {

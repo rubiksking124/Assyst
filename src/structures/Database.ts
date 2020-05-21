@@ -115,8 +115,8 @@ export default class Database {
       });
     }
 
-    public async addUserToFeedbackBlacklist(userId: string): Promise<void> {
-      await this.sql('insert into feedback_blacklist("userid") values($1)', [userId])
+    public async addUserToFeedbackBlacklist (userId: string): Promise<void> {
+      await this.sql('insert into feedback_blacklist("userid") values($1)', [userId]);
     }
 
     public async getEvents (): Promise<{name: string, amount: string}[]> {
