@@ -22,8 +22,12 @@ export default class MessageSnipe {
       return this.sourceMessage.author;
     }
 
+    get sourceChannel (): ChannelGuildText | undefined {
+      return this.channel || undefined
+    }
+
     public async fetchChannel (): Promise<ChannelGuildText | undefined> {
-      if (this.channel) {
+      if (!this.channel) {
         this.channel = await this._assyst.rest.fetchChannel(this.sourceMessage.channelId);
       }
       return this.channel;

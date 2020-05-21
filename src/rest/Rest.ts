@@ -13,6 +13,7 @@ import Endpoints from './Endpoints';
 
 import { RequestTypes } from 'detritus-client-rest';
 import { Request, RequestOptions } from 'detritus-rest';
+import { Member, Role } from 'detritus-client/lib/structures';
 
 interface DuckDuckGoResults {
   results: DuckDuckGoResult[]
@@ -101,6 +102,11 @@ export default class RestController {
 
     constructor (assyst: Assyst) {
       this.assyst = assyst;
+    }
+
+    public async fetchMemberPermissionBitfield(member: Member): Promise<number> {
+      const r = await this.assyst.rest.fetchGuildRoles(member.guildId);
+      return r.filter((v: Role) => member.roles.has(v.id)).map((v: Role) => v.permissions).reduce((a: any, b: any) => a | b);
     }
 
     public async postStats (): Promise<PostResults> {

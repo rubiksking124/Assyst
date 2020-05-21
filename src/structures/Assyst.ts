@@ -33,6 +33,7 @@ import TraceController from './TraceController';
 import Trace from './Trace';
 
 import MessageSnipe from './MessageSnipe';
+import MessageSnipeController from './MessageSnipeController';
 
 interface Field {
   name: string,
@@ -67,15 +68,12 @@ export default class Assyst extends CommandClient {
 
     public prefixCache: BaseCollection<string, string>
 
-    public messageSnipes: BaseCollection<string, MessageSnipe>
+    public messageSnipeController: MessageSnipeController
 
     constructor (token: string, options: CommandClientOptions) {
       super(token || '', options);
 
-      this.messageSnipes = new BaseCollection({
-        expire: 30000,
-        limit: 100
-      });
+      this.messageSnipeController = new MessageSnipeController(this);
       this.traceHandler = new TraceController(this);
       this.logErrors = logErrors === undefined ? true : logErrors;
       this.db = new Database(this, db);
@@ -176,9 +174,11 @@ export default class Assyst extends CommandClient {
 
       this.on('commandDelete', ({ reply }) => { reply.delete(); });
 
-      this.client.on('messageDelete', (message) => {
+      this.client.on('messageDelete', async (message) => {
         if (!message.message) return;
-        this.messageSnipes.set(message.message?.id, new MessageSnipe(message.message, new Date(), this));
+        const snipe = new MessageSnipe(message.message, new Date(), this);
+        await snipe.fetchChannel();
+        this.messageSnipeController.addSnipe(message.message?.id, snipe);
       });
 
       this.initGatewayEventHandlers();
