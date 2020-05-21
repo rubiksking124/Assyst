@@ -14,7 +14,7 @@ export default {
   responseOptional: true,
   metadata: {
     description: 'Ping the discord rest and gateway apis, or a host',
-    usage: '<host> <-c count (limit 10)> <-s packet_size (limit 128)> <-4> <-6>',
+    usage: '<host|info> <-c count (limit 10)> <-s packet_size (limit 128)> <-4> <-6>',
     examples: [''],
     minArgs: 0
   },
@@ -43,7 +43,7 @@ export default {
   ],
   run: async (assyst: Assyst, ctx: Context, args: any) => {
     const regexMatch = args.ping ? args.ping.match(urlRegex) : false;
-    if (!args || !args.ping || !regexMatch || regexMatch?.length === 0) {
+    if (!args || !args.ping || ((!regexMatch || regexMatch?.length === 0) && args.ping !== 'info')) {
       await ctx.editOrReply('Pong');
       const start = Date.now();
       let finish: number;
@@ -71,6 +71,11 @@ export default {
         }
       ];
       return ctx.editOrReply(Markup.codeblock(assyst.utils.formatMetricList(fields), { limit: 1990, language: 'ml' }));
+    } else if(args.ping === 'info') {
+      return ctx.editOrReply(Markup.codeblock(`REST: Time taken to send a query to the Discord REST API, for things like sending messages (most useful)
+Gateway: How long it takes the bot to recieve events, such as messages being sent by other users
+Database: How long it takes to query the bot's database
+SQL Drift: The time difference between the local system clock and the database clock`))
     } else {
       const count = isNaN(parseInt(args.c)) || parseInt(args.c) > 10 ? 4 : parseInt(args.c);
       const size = isNaN(parseInt(args.s)) || parseInt(args.s) > 128 ? 64 : parseInt(args.s);
