@@ -233,7 +233,7 @@ export default class Assyst extends CommandClient {
 
   public initGatewayEventHandlers() {
     (<ShardClient>this.client).gateway.on('open', () => {
-      this.client.emit('raw', { t: 'OPEN' })
+      this.client.emit('raw', { t: 'GATEWAY_OPEN' })
       this.startedAt = new Date();
       if (logGateway) {
         this.client.rest.executeWebhook(webhooks.gatewayOpen.id, webhooks.gatewayOpen.token, {
@@ -247,7 +247,7 @@ export default class Assyst extends CommandClient {
     });
 
     (<ShardClient>this.client).gateway.on('close', ({ code, reason }) => {
-      this.client.emit('raw', { t: 'CLOSE' })
+      this.client.emit('raw', { t: 'GATEWAY_CLOSE' })
       if (logGateway) {
         this.client.rest.executeWebhook(webhooks.gatewayClose.id, webhooks.gatewayClose.token, {
           embed: {
