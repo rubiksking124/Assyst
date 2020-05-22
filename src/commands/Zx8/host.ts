@@ -5,7 +5,7 @@ import { MetricItem } from '../../structures/Utils';
 
 import { Markup } from 'detritus-client/lib/utils';
 
-import { Zx8ContentType } from '../../rest/Rest';
+import { Zx8 } from '../../rest/Types';
 
 export default {
   name: 'zx8 host',
@@ -49,7 +49,7 @@ export default {
           },
           {
             item: 'ContentType:',
-            format: (item: string) => { return Zx8ContentType[parseInt(item)]; }
+            format: (item: string) => { return Zx8.ContentType[parseInt(item)]; }
           },
           {
             item: 'Ocr:',

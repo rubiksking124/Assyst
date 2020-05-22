@@ -8,6 +8,13 @@ export default Object.freeze({
     ddg: 'https://fapi.wrmsr.io/duckduckgo',
     ddgimg: 'https://fapi.wrmsr.io/duckduckgoimages'
   }),
+  github: Object.freeze({
+    commits: 'https://api.github.com/repos/:owner/:repo/commits',
+    forks: 'https://api.github.com/repos/:owner/:repo/forks',
+    searchRepository: 'https://api.github.com/search/repositories',
+    searchUser: 'https://api.github.com/search/users',
+    user: 'https://api.github.com/users/:username'
+  }),
   topgg: 'https://top.gg/api/bots',
   discordbotlist: 'https://discordbotlist.com/api/bots',
   gocodeit: 'https://api.gocode.it/exec',

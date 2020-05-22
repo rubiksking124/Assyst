@@ -5,7 +5,7 @@ export interface TraceOptions {
     error: Error,
     thrownAt?: Date,
     args?: any,
-    context?: Context
+    context?: Context,
 }
 
 export default class Trace {
@@ -15,6 +15,7 @@ export default class Trace {
     public readonly type: string
     public readonly args: any
     public readonly context: Context | undefined
+    public readonly error: any
 
     constructor (options: TraceOptions) {
       this.thrownAt = options.thrownAt || new Date();
@@ -23,5 +24,6 @@ export default class Trace {
       this.type = options.error.constructor.name;
       this.args = options.args || {};
       this.context = options.context;
+      this.error = options.error;
     }
 }

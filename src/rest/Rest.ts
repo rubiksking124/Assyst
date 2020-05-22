@@ -10,108 +10,84 @@ import {
 import { ShardClient } from 'detritus-client';
 
 import Endpoints from './Endpoints';
+import DefaultHeaders from './DefaultHeaders';
 
-import { RequestTypes } from 'detritus-client-rest';
 import { Request, RequestOptions } from 'detritus-rest';
 import { Member, Role } from 'detritus-client/lib/structures';
 
-interface DuckDuckGoResults {
-  results: DuckDuckGoResult[]
-}
-
-interface DuckDuckGoResult {
-  title: string,
-  link: string
-}
-
-interface PostResults {
-  dbl: any,
-  discordbotlist: any
-}
-
-export interface CodeList {
-  status: number,
-  data: Array<string>
-}
-
-export interface CodeResult {
-  data: {
-      res: string,
-      comp: number,
-      timings: any[]
-  },
-  status: number
-}
-
-interface Node {
-  id: number,
-  host: string,
-  port: number,
-  ssl: false,
-  ping: number,
-  memory: number,
-  available: boolean,
-  queue: number
-}
-
-interface Zx8Info {
-  urlQueue: number,
-  totalURLs: number,
-  rss: number,
-  tableSize: number,
-  queryCache: number,
-  indexesPerSecond: number
-}
-
-interface Dataset {
-  url: string,
-  host: string,
-  lastStatus: number,
-  headers: string,
-  lastRequest: string,
-  lastResponseTime: number
-}
-
-interface HistoryApiResult {
-  wikipedia: string,
-  date: string,
-  events: HistoryEvent[]
-}
-
-interface HistoryEvent {
-  year: string,
-  description: string,
-  wikipedia: HistoryWikipedia[]
-}
-
-interface HistoryWikipedia {
-  title: string,
-  wikipedia: string
-}
-
-export enum Zx8ContentType {
-  Other,
-  Image,
-  Animated,
-  Video,
-  HTML
-}
+import * as Types from './Types';
 
 export default class RestController {
     public assyst: Assyst
+    private defaultTimeout: number = 15000
 
     constructor (assyst: Assyst) {
       this.assyst = assyst;
     }
 
-    public async fetchMemberPermissionBitfield(member: Member): Promise<number> {
+    public async searchGitHubRepository (query: string, options: Types.GitHub.Repository.SearchOptions = {}): Promise<Types.GitHub.Repository.SearchResult> {
+      return await this.sendRequest({
+        url: new URL(`${Endpoints.github.searchRepository}?q=${query}${options.sort ? `&sort=${options.sort}` : ''}${options.order ? `&order=${options.order}` : ''}`),
+        method: 'GET',
+        settings: {
+          timeout: this.defaultTimeout
+        },
+        headers: DefaultHeaders.github
+      }).then(async (v) => await v.json());
+    }
+
+    public async searchGitHubUser (query: string, options: Types.GitHub.User.SearchOptions = {}): Promise<Types.GitHub.User.SearchResult> {
+      return await this.sendRequest({
+        url: new URL(`${Endpoints.github.searchUser}?q=${query}${options.sort ? `&sort=${options.sort}` : ''}${options.order ? `&order=${options.order}` : ''}`),
+        method: 'GET',
+        settings: {
+          timeout: this.defaultTimeout
+        },
+        headers: DefaultHeaders.github
+      }).then(async (v) => await v.json());
+    }
+
+    public async fetchGitHubUser (username: string): Promise<Types.GitHub.User.User> {
+      return await this.sendRequest({
+        url: new URL(Endpoints.github.user.replace(':username', username)),
+        method: 'GET',
+        settings: {
+          timeout: this.defaultTimeout
+        },
+        headers: DefaultHeaders.github
+      }).then(async (v) => await v.json());
+    }
+
+    public async fetchGitHubRepositoryForks (owner: string, repository: string) {
+      return await this.sendRequest({
+        url: new URL(Endpoints.github.forks.replace(':owner', owner).replace(':repo', repository)),
+        method: 'GET',
+        settings: {
+          timeout: this.defaultTimeout
+        },
+        headers: DefaultHeaders.github
+      }).then(async (v) => await v.json());
+    }
+
+    public async fetchGitHubRepositoryCommits (owner: string, repository: string) {
+      return await this.sendRequest({
+        url: new URL(Endpoints.github.commits.replace(':owner', owner).replace(':repo', repository)),
+        method: 'GET',
+        settings: {
+          timeout: this.defaultTimeout
+        },
+        headers: DefaultHeaders.github
+      }).then(async (v) => await v.json());
+    }
+
+    public async fetchMemberPermissionBitfield (member: Member): Promise<number> {
       const r = await this.assyst.rest.fetchGuildRoles(member.guildId);
       return r.filter((v: Role) => member.roles.has(v.id)).map((v: Role) => v.permissions).reduce((a: any, b: any) => a | b);
     }
 
-    public async postStats (): Promise<PostResults> {
+    public async postStats (): Promise<Types.BotLists.PostResults> {
       const guildCount = await this.assyst.rest.fetchMeGuilds().then(g => g.length);
-      const results: PostResults = { dbl: null, discordbotlist: null };
+      const results: Types.BotLists.PostResults = { dbl: null, discordbotlist: null };
       results.dbl = await this.postStatsToTopGG(guildCount);
       results.discordbotlist = await this.postStatsToDiscordBotList(guildCount);
       return results;
@@ -184,7 +160,7 @@ export default class RestController {
       }).then(async (v) => await v.json());
     }
 
-    public async searchDuckDuckGo (query: string): Promise<DuckDuckGoResults> {
+    public async searchDuckDuckGo (query: string): Promise<Types.DuckDuckGo.Response> {
       return await this.sendRequest({
         url: new URL(Endpoints.fapi.ddg),
         method: 'POST',
@@ -325,7 +301,7 @@ export default class RestController {
       }).then(async (v) => await v.body());
     }
 
-    public async runSandboxedCode (language: string, code: string): Promise<CodeResult | string> {
+    public async runSandboxedCode (language: string, code: string): Promise<Types.GoCodeIt.CodeResult | string> {
       return await this.sendRequest({
         method: 'POST',
         headers: {
@@ -343,7 +319,7 @@ export default class RestController {
       }).then(async (v) => { return JSON.parse(await v.body()); });
     }
 
-    public async getLanguageList (): Promise<CodeList> {
+    public async getLanguageList (): Promise<Types.GoCodeIt.CodeList> {
       return await this.sendRequest({
         method: 'OPTIONS',
         url: new URL(Endpoints.gocodeit),
@@ -365,7 +341,7 @@ export default class RestController {
       });
     }
 
-    public async searchZx8Hosts (query: string, limit: number = 1): Promise<Dataset[]> {
+    public async searchZx8Hosts (query: string, limit: number = 1): Promise<Types.Zx8.Dataset[]> {
       return await this.sendRequest({
         method: 'GET',
         url: new URL(`${Endpoints.zx8}/search?query=${query}&limit=${limit}`),
@@ -375,11 +351,11 @@ export default class RestController {
       }).then(async (v) => await v.json());
     }
 
-    public async getZx8Host (query: string): Promise<Dataset> {
-      return await this.searchZx8Hosts(query).then((v: Dataset[]) => v[0]);
+    public async getZx8Host (query: string): Promise<Types.Zx8.Dataset> {
+      return await this.searchZx8Hosts(query).then((v: Types.Zx8.Dataset[]) => v[0]);
     }
 
-    public async getZx8Nodes (): Promise<Node[]> {
+    public async getZx8Nodes (): Promise<Types.Zx8.Node[]> {
       return await this.sendRequest({
         method: 'GET',
         url: new URL(`${Endpoints.zx8}/nodes`),
@@ -389,7 +365,7 @@ export default class RestController {
       }).then(async (v) => await v.body());
     }
 
-    public async getZx8Info (): Promise<Zx8Info> {
+    public async getZx8Info (): Promise<Types.Zx8.Info> {
       return await this.sendRequest({
         method: 'GET',
         url: new URL(`${Endpoints.zx8}/info`),
@@ -409,7 +385,7 @@ export default class RestController {
       }).then(async (v) => await v.body());
     }
 
-    public async identify (imageUrl: string) {
+    public async identify (imageUrl: string): Promise<string> {
       return await this.sendRequest({
         url: new URL(Endpoints.identify),
         body: {
@@ -426,7 +402,7 @@ export default class RestController {
       }).then(async (v) => await v.text());
     }
 
-    public async getHistory (month: string, day: string): Promise<HistoryApiResult> {
+    public async getHistory (month: string, day: string): Promise<Types.History.ApiResult> {
       return await await this.sendRequest({
         url: new URL(`https://byabbe.se/on-this-day/${month}/${day}/events.json`),
         method: 'GET',
@@ -436,7 +412,7 @@ export default class RestController {
       }).then(async (v) => await v.body());
     }
 
-    public async sendRequest (options: RequestOptions) {
+    public async sendRequest (options: RequestOptions): Promise<any> {
       return await new Request(options).send();
     }
 }

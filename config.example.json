@@ -1,4 +1,11 @@
 {
+    "logGateway": false,
+    "doPostToBotLists": false,
+    "feedbackChannels": {
+        "guild": "ID",
+        "complaints": "ID",
+        "compliments": "ID"
+    },
     "logErrors": true,
     "admins": ["UID1"],
     "limitToUsers": {

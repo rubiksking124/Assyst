@@ -4,6 +4,7 @@ import Assyst from '../../structures/Assyst';
 
 import { admins } from '../../../config.json';
 import { Markup } from 'detritus-client/lib/utils';
+import { inspect } from 'util';
 
 export default {
   name: 'trace',
@@ -54,6 +55,10 @@ export default {
             name: 'Raw content',
             value: trace.context?.content || 'None',
             inline: true
+          },
+          {
+            name: 'Errors',
+            value: trace.error.errors ? Markup.codeblock(inspect(trace.error.errors, { depth: 10 }), { language: 'js' }) : 'None'
           }
         ]
       }

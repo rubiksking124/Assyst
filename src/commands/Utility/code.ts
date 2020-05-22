@@ -7,8 +7,6 @@ import { STATUS_CODES } from 'http';
 
 import { BaseSet } from 'detritus-client/lib/collections';
 
-import { CodeResult } from '../../rest/Rest';
-
 const currentExecutions: BaseSet<string> = new BaseSet([]);
 
 export default {

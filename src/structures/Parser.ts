@@ -5,12 +5,14 @@ import Assyst from './Assyst';
 import Utils from './Utils';
 import { Permissions } from 'detritus-client/lib/constants';
 
-import Rest, { CodeList } from '../rest/Rest';
+import Rest from '../rest/Rest';
+
+import { GoCodeIt } from '../rest/Types';
 
 let utils: Utils;
 const preParseTags: Array<string> = ['ignore', 'note'];
 const postParseTags: Array<string> = ['attach', 'iscript'];
-let rexLangs: CodeList;
+let rexLangs: GoCodeIt.CodeList;
 
 export default class Parser {
     private assyst: Assyst
