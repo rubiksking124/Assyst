@@ -204,6 +204,11 @@ export namespace GitHub {
             order?: 'desc' | 'asc'
         }
     }
+
+    export interface NotFound {
+        message: string,
+        documentation_url: string
+    }
 }
 
 export namespace Zx8 {

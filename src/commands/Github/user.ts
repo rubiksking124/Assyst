@@ -1,6 +1,7 @@
 import { Context } from 'detritus-client/lib/command';
 
 import Assyst from '../../structures/Assyst';
+import { GitHub } from '../../rest/Types';
 
 export default {
   name: 'gituser',
@@ -17,11 +18,15 @@ export default {
     duration: 5000
   },
   run: async (assyst: Assyst, ctx: Context, args: any) => {
+    ctx.triggerTyping();
     if (!args || !args.gituser) {
       return ctx.editOrReply('You need to supply a user or organisation name to search for');
     }
     const query = args.gituser;
     const user = await assyst.customRest.fetchGitHubUser(query);
+    if ('message' in user) {
+      return ctx.editOrReply('No user found');
+    }
     return ctx.editOrReply({
       embed: {
         author: {
@@ -29,7 +34,7 @@ export default {
           name: user.login,
           url: user.html_url
         },
-        title: `${user.type}: ${user.name}`,
+        title: `${user.type}: ${user.name || user.login}`,
         thumbnail: {
           url: user.avatar_url
         },

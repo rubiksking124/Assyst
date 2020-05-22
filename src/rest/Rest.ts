@@ -47,7 +47,7 @@ export default class RestController {
       }).then(async (v) => await v.json());
     }
 
-    public async fetchGitHubUser (username: string): Promise<Types.GitHub.User.User> {
+    public async fetchGitHubUser (username: string): Promise<Types.GitHub.User.User | Types.GitHub.NotFound> {
       return await this.sendRequest({
         url: new URL(Endpoints.github.user.replace(':username', username)),
         method: 'GET',
