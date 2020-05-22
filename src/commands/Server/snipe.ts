@@ -19,6 +19,7 @@ export default {
   },
   run: async (assyst: Assyst, ctx: Context, args: any) => {
     let channel: ChannelGuildText | undefined;
+    let snipe: MessageSnipe | undefined;
     try {
       if (!args || !args.snipe) {
         channel = await ctx.rest.fetchChannel(ctx.message.channelId);
@@ -27,17 +28,17 @@ export default {
         if (channelId.split(' ').length > 1) {
           return ctx.editOrReply('Your channel mention is invalid');
         }
-        if(!channel) {
-            return ctx.editOrReply('Channel not found')
-        }
-        const snipe = assyst.messageSnipeController.findRecentSnipeFromChannelId(channel.id);
-        if(!snipe) {
-            return ctx.editOrReply('No snipes recorded in this channel')
-        }
-        return ctx.editOrReply(`\`${snipe.author.username}#${snipe.author.discriminator}\`: ${snipe.content}`)
+    }
+    if(!channel) {
+        return ctx.editOrReply('Channel not found')
+    }
+    snipe = assyst.messageSnipeController.findRecentSnipeFromChannelId(channel.id);
+    if(!snipe) {
+        return ctx.editOrReply('No snipes recorded in this channel')
     }
   } catch(e) {
       return ctx.editOrReply(e.message)
   }
+  return ctx.editOrReply(`\`${snipe.author.username}#${snipe.author.discriminator}\`: ${snipe.content}`)
 }
 };
