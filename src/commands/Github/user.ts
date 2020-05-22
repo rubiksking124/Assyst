@@ -42,7 +42,7 @@ export default {
         fields: [
           {
             name: 'Created',
-            value: user.created_at.toLocaleString(),
+            value: new Date(user.created_at).toLocaleString(),
             inline: true
           },
           {
