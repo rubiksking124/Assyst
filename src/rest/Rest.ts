@@ -41,8 +41,14 @@ export default class RestController {
       for (let i = 0; i < 6; ++i) {
           const targetLanguage = i === 5 ? "en" : Types.Translate.Languages[Math.floor(Math.random() * Types.Translate.Languages.length)];
           if (!targetLanguage) break;
-          text = await this.translateRaw(text, targetLanguage).then(res => res.text[0]);
-          chain.push(targetLanguage);
+          text = await this.translateRaw(text, targetLanguage).then(res => {
+            if(res.code !== 200) {
+              return text
+            } else {
+              chain.push(targetLanguage);
+              return res.text[0]
+            }
+          });
       }
       return { chain, text };
   }
