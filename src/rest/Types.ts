@@ -139,7 +139,7 @@ export namespace GitHub {
             name: string,
             full_name: string,
             private: string,
-            owner: any, // todo
+            owner: GitHub.User.User,
             html_url: string,
             description: string,
             fork: boolean,
