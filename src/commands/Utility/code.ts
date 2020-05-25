@@ -50,6 +50,6 @@ export default {
     if (response.status !== 200) {
       return ctx.editOrReply(`Error ${response.status}: ${STATUS_CODES[response.status]} - ${response.data.res}`);
     }
-    return ctx.editOrReply(`${Markup.codeblock(response.data.res, { limit: 1990, language: args.code.split(' ')[0] })}${args.time ? `\n⏱️ Took ${response.data.comp}ms` : ''}`);
+    return ctx.editOrReply(`${Markup.codeblock(response.data.res || 'Empty Response', { limit: 1990, language: args.code.split(' ')[0] })}${args.time ? `\n⏱️ Took ${response.data.comp}ms` : ''}`);
   }
 };
