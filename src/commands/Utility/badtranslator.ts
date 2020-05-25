@@ -1,6 +1,7 @@
 import { Context } from 'detritus-client/lib/command';
 
 import Assyst from '../../structures/Assyst';
+import { Markup } from 'detritus-client/lib/utils';
 
 export default {
   name: 'badtranslator',
@@ -22,6 +23,6 @@ export default {
         return ctx.editOrReply('You need to supply text to translate');
     }
     const response = await assyst.customRest.translate(args.badtranslator);
-    return ctx.editOrReply(`Translation: \`${response.text}\`\nLanguage chain: \`${response.chain.join(' -> ')}\``);
+    return ctx.editOrReply(`Language chain: \`${response.chain.join(' -> ')}\`\n\nTranslation: ${Markup.codeblock(response.text, { limit: 1990 })}`);
   }
 };
