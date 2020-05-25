@@ -17,12 +17,19 @@ export default {
     limit: 1,
     duration: 10000
   },
+  args: [
+      {
+          name: 'hops',
+          default: '6'
+      }
+  ],
   run: async (assyst: Assyst, ctx: Context, args: any) => {
       await ctx.triggerTyping();
     if(!args || !args.badtranslator) {
         return ctx.editOrReply('You need to supply text to translate');
     }
-    const response = await assyst.customRest.translate(args.badtranslator);
+    if(!ctx.client.isOwner(ctx.userId)) args.hops = '6'
+    const response = await assyst.customRest.translate(args.badtranslator, parseInt(args.hops));
     return ctx.editOrReply(`Language chain: \`${response.chain.join(' -> ')}\`\n\nTranslation: ${Markup.codeblock(response.text, { limit: 1990 })}`);
   }
 };
