@@ -4,7 +4,8 @@ import {
   dbl,
   discordbotlist,
   fapi,
-  gocode
+  gocode,
+  yandex
 } from '../../config.json';
 
 import { ShardClient } from 'detritus-client';
@@ -24,6 +25,27 @@ export default class RestController {
     constructor (assyst: Assyst) {
       this.assyst = assyst;
     }
+
+    private async translateRaw(text: string, language: string): Promise<Types.Translate.RawTranslation> {
+      return await this.sendRequest({
+        method: 'GET',
+        settings: {
+          timeout: 15000
+        },
+        url: new URL(`${Endpoints.translate}?text=${encodeURIComponent(text)}&lang=${language}&key=${yandex}`)
+      }).then(async (v) => await v.json())
+    }
+
+    public async translate(text: string): Promise<Types.Translate.Translation> {
+      const chain: Array<string> = [];
+      for (let i = 0; i < 6; ++i) {
+          const targetLanguage = i === 5 ? "en" : Types.Translate.Languages[Math.floor(Math.random() * Types.Translate.Languages.length)];
+          if (!targetLanguage) break;
+          text = await this.translateRaw(text, targetLanguage).then(res => res.text[0]);
+          chain.push(targetLanguage);
+      }
+      return { chain, text };
+  }
 
     public async searchGitHubRepository (query: string, options: Types.GitHub.Repository.SearchOptions = {}): Promise<Types.GitHub.Repository.SearchResult> {
       return await this.sendRequest({
