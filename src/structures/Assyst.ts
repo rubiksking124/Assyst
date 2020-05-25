@@ -158,7 +158,9 @@ export default class Assyst extends CommandClient {
             this.fireErrorWebhook(webhooks.commandOnError.id, webhooks.commandOnError.token, 'Command Type Error Fired', 0xCC2288, error);
           },
 
-          onSuccess: async (ctx: Context) => await this.db.updateCommandUsage(ctx)
+          onSuccess: async (ctx: Context) => await this.db.updateCommandUsage(ctx),
+
+          _file: file
         });
         if (!noLog) this.logger.info(`Loaded command: ${command.name}`);
       });
@@ -356,5 +358,9 @@ export default class Assyst extends CommandClient {
       message,
       getMemberFromString: () => null
     }, this).parse(input, args, tag);
+  }
+
+  public findCommand (name: string) {
+    return this.commands.find(c => c.name === name || c.aliases.includes(name));
   }
 }
