@@ -36,10 +36,10 @@ export default class RestController {
       }).then(async (v) => await v.json())
     }
 
-    public async translate(text: string): Promise<Types.Translate.Translation> {
+    public async translate(text: string, limit: number = 6): Promise<Types.Translate.Translation> {
       const chain: Array<string> = [];
-      for (let i = 0; i < 6; ++i) {
-          const targetLanguage = i === 5 ? "en" : Types.Translate.Languages[Math.floor(Math.random() * Types.Translate.Languages.length)];
+      for (let i = 0; i < limit; ++i) {
+          const targetLanguage = i === limit - 1 ? "en" : Types.Translate.Languages[Math.floor(Math.random() * Types.Translate.Languages.length)];
           if (!targetLanguage) break;
           text = await this.translateRaw(text, targetLanguage).then(res => {
             if(res.code !== 200) {
