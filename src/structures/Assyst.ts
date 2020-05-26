@@ -20,7 +20,7 @@ import {
   logErrors,
   doPostToBotLists,
   logGateway,
-  btChannels,
+  badTranslator,
   guildBlacklist
 } from '../../config.json';
 import RestController from '../rest/Rest';
@@ -78,7 +78,7 @@ export default class Assyst extends CommandClient {
   constructor (token: string, options: CommandClientOptions) {
     super(token || '', options);
 
-    this.btChannelController = new BTChannelController(this, btChannels);
+    this.btChannelController = new BTChannelController(this, badTranslator.channels);
     this.messageSnipeController = new MessageSnipeController(this);
     this.traceHandler = new TraceController(this);
     this.logErrors = logErrors === undefined ? true : logErrors;

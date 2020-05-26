@@ -56,5 +56,8 @@
     "api": {
         "port": 9922
     },
-    "btChannels": []
+    "badTranslator": {
+        "channels": [""],
+        "ratelimit": 5000
+    }
 }
