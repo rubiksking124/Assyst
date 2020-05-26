@@ -41,7 +41,8 @@ export default class BTChannelController {
         setTimeout(() => response.delete(), 1500);
         return;
       }
-      if (!message.author.isMe) {
+
+      if (!message.author.isMe && !message.author.isWebhook) {
         this.ratelimitCache.set(message.author.id, Date.now());
         await this.handle(message);
       }
