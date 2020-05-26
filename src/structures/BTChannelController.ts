@@ -92,7 +92,11 @@ export default class BTChannelController {
     return this._assyst.customRest.translate(text.substr(0, 1000), hops || 6).then(r => r.text);
   }
 
-  public async getWebhookOrCreate (username: string, channelId: string): Promise<Webhook | undefined> {
+  public async getWebhookOrCreate (username: string, channelId: string, attempt?: number): Promise<Webhook | undefined> {
+    if (attempt && attempt > 5) {
+      return;
+    }
+
     let webhook = this.webhookCache.find(w => w.name === username && w.channelId === channelId);
     if (!webhook) {
       try {
@@ -104,9 +108,7 @@ export default class BTChannelController {
         if (lru) {
           await this._assyst.rest.deleteWebhook(lru.id);
           this.webhookCache.delete(lru.id);
-          webhook = await this._assyst.client.rest.createWebhook(channelId, {
-            name: username
-          }).catch(() => console.log('e'));
+          webhook = await this.getWebhookOrCreate(username, channelId);
         }
       }
 
