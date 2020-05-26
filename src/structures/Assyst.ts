@@ -20,7 +20,8 @@ import {
   logErrors,
   doPostToBotLists,
   logGateway,
-  btChannels
+  btChannels,
+  guildBlacklist
 } from '../../config.json';
 import RestController from '../rest/Rest';
 import Logger from './Logger';
@@ -174,6 +175,12 @@ export default class Assyst extends CommandClient {
   }
 
   private registerEvents (): void {
+    this.client.on('guildCreate', async (event) => {
+      if (guildBlacklist.includes(event.guild.id)) {
+        await event.guild.leave();
+      }
+    });
+
     this.on('commandNone', () => {
       if ((<ShardClient> this.client).messages.size > 100) {
         (<ShardClient> this.client).messages.clear();

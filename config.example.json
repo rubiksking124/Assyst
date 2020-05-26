@@ -1,4 +1,5 @@
 {
+    "guildBlacklist": ["ID"],
     "logGateway": false,
     "doPostToBotLists": false,
     "feedbackChannels": {
