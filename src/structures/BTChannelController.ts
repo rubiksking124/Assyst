@@ -62,7 +62,7 @@ export default class BTChannelController {
     if (attempt && attempt > 5) {
       return;
     }
-    const translatedText = await this.translate(message.content.substr(0, 1000), 3);
+    const translatedText = await this.translate(message.content.substr(0, 1000), badTranslator.hops);
     const webhook = await this.getWebhookOrCreate(message.author.username, message.channelId);
     try {
       await this.executeWebhook(webhook!, translatedText, message.author.avatarUrlFormat('png'));
