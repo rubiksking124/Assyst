@@ -1,31 +1,23 @@
-import Command from '../../lib/Command';
-import Assyst from '../../lib/Assyst';
-import { COOLDOWN_TYPES } from '../../lib/Enums';
-import { ICommandContext } from '../../lib/CInterfaces';
-import { Message } from 'detritus-client/lib/structures';
+import { Context } from 'detritus-client/lib/command';
 
+import Assyst from '../structures/Assyst';
 
-export default class Cmd extends Command {
-    constructor(assyst: Assyst) {
-        super({
-            name: '',
-            aliases: [],
-            assyst,
-            cooldown: {
-                timeout: 5000,
-                type: COOLDOWN_TYPES.GUILD
-            },
-            validFlags: [],
-            info: {
-                description: '',
-                examples: [],
-                usage: '',
-                author: ''
-            }
-        });
-    }
+export default {
+  name: '',
+  aliases: [''],
+  responseOptional: true,
+  metadata: {
+    description: '',
+    usage: '',
+    examples: ['']
+  },
+  ratelimit: {
+    type: '',
+    limit: 1,
+    duration: 5000
+  },
+  onBefore: (ctx: Context) => {},
+  run: async (assyst: Assyst, ctx: Context, args: any) => {
 
-    public async execute(context: ICommandContext): Promise<Message | null> {
-        return context.message;
-    }
-}
+  }
+};

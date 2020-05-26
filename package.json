@@ -1,40 +1,44 @@
 {
-  "name": "assyst-ts",
-  "version": "1.0.3",
-  "description": "Dev-helper discord bot",
-  "main": "index.js",
-  "directories": {
-    "lib": "lib"
+  "name": "assyst",
+  "version": "0.5.0",
+  "description": "Assyst Rewrite",
+  "author": "Jacher",
+  "link": "https://github.com/AssystDev/Assyst",
+  "license": "MIT",
+  "engines": {
+    "node": ">=8.0.0"
   },
+  "dependencies": {
+    "detritus-client": "^0.10.5",
+    "detritus-pagination": "^1.0.73",
+    "node-fetch": "^2.6.0",
+    "pg": "^7.18.2",
+    "polka": "^0.5.2"
+  },
+  "devDependencies": {
+    "@types/node-fetch": "^2.5.7",
+    "@types/pg": "^7.14.3",
+    "@typescript-eslint/eslint-plugin": "^2.25.0",
+    "@typescript-eslint/parser": "^2.25.0",
+    "eslint": "^6.8.0",
+    "eslint-config-standard": "^14.1.1",
+    "eslint-plugin-import": "^2.20.1",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-promise": "^4.2.1",
+    "eslint-plugin-standard": "^4.0.1",
+    "esm": "^3.2.25"
+  },
+  "main": "./index.ts",
   "scripts": {
-    "test": "node index.js"
+    "start": "tsc && cd JS && node .",
+    "start:script": ""
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Jacherr/Assyst-TS.git"
+    "url": "git+https://github.com/AssystDev/Assyst.git"
   },
-  "author": "Jacherr",
-  "license": "ISC",
   "bugs": {
-    "url": "https://github.com/Jacherr/Assyst-TS/issues"
+    "url": "https://github.com/AssystDev/Assyst/issues"
   },
-  "homepage": "https://github.com/Jacherr/Assyst-TS#readme",
-  "dependencies": {
-    "@types/git-rev-sync": "^1.12.0",
-    "@types/node-fetch": "^2.5.5",
-    "@types/pg": "^7.14.1",
-    "@types/superagent": "^4.1.7",
-    "detritus-client": "^0.9.44",
-    "detritus-pagination": "^1.0.5",
-    "git-rev-sync": "^2.0.0",
-    "node-fetch": "^2.6.0",
-    "pg": "^7.18.2",
-    "superagent": "^5.2.2"
-  },
-  "devDependencies": {
-    "@typescript-eslint/eslint-plugin": "^2.21.0",
-    "@typescript-eslint/parser": "^2.21.0",
-    "eslint": "^6.8.0",
-    "typescript": "^3.8.2"
-  }
+  "homepage": "https://github.com/AssystDev/Assyst"
 }

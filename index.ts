@@ -1,18 +1,19 @@
-import Assyst from './lib/Assyst';
-import Config from './lib/Config';
+import Assyst from './src/structures/Assyst';
 
-const client: Assyst = new Assyst({
-    config: new Config()
-});
+import { webhooks, token, commandClientOptions } from './config.json';
 
-client.bot.on('gatewayReady', () => {
-    console.info('Assyst is ready');
+const client = new Assyst(token, commandClientOptions);
+
+client.client.on('gatewayReady', () => {
+  client.logger.info('Assyst is ready');
 });
 
 process.on('unhandledRejection', (err: any) => {
-    client.bot.channels.get(client.config.errorChannel)?.createMessage(`\`\`\`js\n${err.stack.toString()}\`\`\``);
+  if (err.response && err.response.statusCode === 429) return;
+  client.fireErrorWebhook(webhooks.unhandledRejection.id, webhooks.unhandledRejection.token, 'Unhandled Rejection', 0xFF0000, err);
+  console.error(err);
 });
 
 (async () => {
-    await client.bot.run();
+  await client.client.run();
 })();
