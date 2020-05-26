@@ -44,8 +44,8 @@ export default class BTChannelController {
         if (!this.sentRatelimits.has(message.author.id)) {
           response = await message.reply(`${message.author.mention} try again in ${(timeLeft / 1000).toFixed(2)} seconds!`);
           this.sentRatelimits.add(message.author.id);
+          setTimeout(() => response.delete(), 1500);
         }
-        setTimeout(() => response.delete(), 1500);
         return;
       }
 
@@ -106,7 +106,7 @@ export default class BTChannelController {
           this.webhookCache.delete(lru.id);
           webhook = await this._assyst.client.rest.createWebhook(channelId, {
             name: username
-          });
+          }).catch(() => console.log('e'));
         }
       }
 

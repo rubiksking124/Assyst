@@ -58,6 +58,7 @@
     },
     "badTranslator": {
         "channels": [""],
-        "ratelimit": 5000
+        "ratelimit": 5000,
+        "hops": 3
     }
 }
