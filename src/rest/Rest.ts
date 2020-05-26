@@ -55,6 +55,13 @@ export default class RestController {
           }
         });
       }
+      text = await this.translateRaw(text, 'en').then(res => {
+        if (res.code !== 200) {
+          return text;
+        } else {
+          return res.text[0];
+        }
+      });
       return { chain, text };
     }
 
@@ -329,6 +336,23 @@ export default class RestController {
           args: {
             text: resolution
           },
+          images: [imageUrl]
+        }
+      }).then(async (v) => await v.body());
+    }
+
+    public async emojiMosaicImage (imageUrl: string) {
+      return await this.sendRequest({
+        url: new URL('fapi.wrmsr.io/e2m'),
+        method: 'POST',
+        headers: {
+          Authorization: fapi,
+          'content-type': 'application/json'
+        },
+        settings: {
+          timeout: 10000
+        },
+        body: {
           images: [imageUrl]
         }
       }).then(async (v) => await v.body());
