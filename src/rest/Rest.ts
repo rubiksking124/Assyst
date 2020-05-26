@@ -26,32 +26,32 @@ export default class RestController {
       this.assyst = assyst;
     }
 
-    private async translateRaw(text: string, language: string): Promise<Types.Translate.RawTranslation> {
+    private async translateRaw (text: string, language: string): Promise<Types.Translate.RawTranslation> {
       return await this.sendRequest({
         method: 'GET',
         settings: {
           timeout: 15000
         },
         url: new URL(`${Endpoints.translate}?text=${encodeURIComponent(text)}&lang=${language}&key=${yandex}`)
-      }).then(async (v) => await v.json())
+      }).then(async (v) => await v.json());
     }
 
-    public async translate(text: string, limit: number = 6): Promise<Types.Translate.Translation> {
+    public async translate (text: string, limit: number = 6): Promise<Types.Translate.Translation> {
       const chain: Array<string> = [];
       for (let i = 0; i < limit; ++i) {
-          const targetLanguage = i === limit - 1 ? "en" : Types.Translate.Languages[Math.floor(Math.random() * Types.Translate.Languages.length)];
-          if (!targetLanguage) break;
-          text = await this.translateRaw(text, targetLanguage).then(res => {
-            if(res.code !== 200) {
-              return text
-            } else {
-              chain.push(targetLanguage);
-              return res.text[0]
-            }
-          });
+        const targetLanguage = i === limit - 1 ? 'en' : Types.Translate.Languages[Math.floor(Math.random() * Types.Translate.Languages.length)];
+        if (!targetLanguage) break;
+        text = await this.translateRaw(text, targetLanguage).then(res => {
+          if (res.code !== 200) {
+            return text;
+          } else {
+            chain.push(targetLanguage);
+            return res.text[0];
+          }
+        });
       }
       return { chain, text };
-  }
+    }
 
     public async searchGitHubRepository (query: string, options: Types.GitHub.Repository.SearchOptions = {}): Promise<Types.GitHub.Repository.SearchResult> {
       return await this.sendRequest({

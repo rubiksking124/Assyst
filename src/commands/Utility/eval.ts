@@ -10,9 +10,15 @@ import { ShardClient } from 'detritus-client';
 
 const currentExecutions: BaseSet<string> = new BaseSet([]);
 
-function getPrependedCode (client: ShardClient): string {
+async function getPrependedCode (client: ShardClient): Promise<string> {
+  const guilds = await client.rest.fetchMeGuilds();
+  const guildSize = guilds.size;
   return `(function() {
-        const Collection = Map;
+        class Collection extends Map {
+          constructor(options) {
+            super(options)
+          }
+        }
         
         function rand(min, max) {
             return Math.floor(Math.random() * (max - min)) + min
@@ -20,20 +26,20 @@ function getPrependedCode (client: ShardClient): string {
         
         function populate() {
             return [new Array(19).fill().map(() => Math.random().toString()[2]).join(""), {
-                name: String.fromCharCode(rand(65, 127)).repeat(10)
+                name: String.fromCharCode(rand(65, 127)).repeat(rand(5, 32))
             }];
         }
         
         this.client = {
-            channels: new Collection(new Array(${client.channels.size}).fill().map(populate)),
-            guilds: new Collection(new Array(${client.guilds.size}).fill().map(populate)),
-            users: new Collection(new Array(${client.users.size}).fill().map(populate)),
+            channels: new Collection(new Array(${Math.floor(guildSize * 20.5)}).fill().map(populate)),
+            guilds: new Collection(new Array(${guildSize}).fill().map(populate)),
+            users: new Collection(new Array(${Math.floor(guildSize * 325.5)}).fill().map(populate)),
             token: "NTcxNjYxMjIxODU0NzA3NzEz.Dvl8Dw.aKlcU6mA69pSOI_YBB8RG7nNGUE",
             uptime: ${process.uptime()}
         };
     }).call(global);
     
-    console.log(eval("{input}"));`;
+    console.log(eval(\`{input}\`));`;
 }
 
 export default {
@@ -63,7 +69,8 @@ export default {
     }
     await ctx.triggerTyping();
     currentExecutions.add(ctx.userId);
-    const response = await assyst.customRest.runSandboxedCode('js', getPrependedCode(<ShardClient> assyst.client).replace('{input}', args.eval.replace(/"/g, '\''))).then((res) => res);
+    const prependedCode = await getPrependedCode(<ShardClient> assyst.client);
+    const response = await assyst.customRest.runSandboxedCode('js', prependedCode.replace('{input}', args.eval.replace(/"/g, '\''))).then((res) => res);
     currentExecutions.delete(ctx.userId);
     if (typeof response === 'string') {
       return ctx.editOrReply(response.slice(0, 1990));
