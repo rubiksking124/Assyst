@@ -5,7 +5,7 @@ import { Markup } from 'detritus-client/lib/utils';
 
 export default {
   name: 'badtranslator',
-  aliases: ['bt','badtranslate'],
+  aliases: ['bt', 'badtranslate'],
   responseOptional: true,
   metadata: {
     description: 'Run text through a bad translator',
@@ -18,17 +18,23 @@ export default {
     duration: 10000
   },
   args: [
-      {
-          name: 'hops',
-          default: '6'
-      }
+    {
+      name: 'hops',
+      default: '6'
+    }
   ],
   run: async (assyst: Assyst, ctx: Context, args: any) => {
-      await ctx.triggerTyping();
-    if(!args || !args.badtranslator) {
-        return ctx.editOrReply('You need to supply text to translate');
+    await ctx.triggerTyping();
+    if (!args || !args.badtranslator) {
+      return ctx.editOrReply('You need to supply text to translate');
     }
-    if(!ctx.client.isOwner(ctx.userId)) args.hops = '6'
+    if (!ctx.client.isOwner(ctx.userId)) {
+      const hops = parseInt(args.hops);
+      if (isNaN(args.hops)) args.hops = 6;
+      else if (hops > 10) args.hops = 10;
+      else if (args.hops < 2) args.hops = 2;
+      else args.hops = hops;
+    }
     const response = await assyst.customRest.translate(args.badtranslator, parseInt(args.hops));
     return ctx.editOrReply(`Language chain: \`${response.chain.join(' -> ')}\`\n\nTranslation: ${Markup.codeblock(response.text, { limit: 1990 })}`);
   }
