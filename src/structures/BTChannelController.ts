@@ -26,7 +26,11 @@ export default class BTChannelController {
     }
 
     this._assyst.client.on('messageCreate', async ({ message }) => {
-      if (!this.channels.includes(message.channelId) || message.author.bot || !message.content) return;
+      if (!this.channels.includes(message.channelId)) return;
+
+      if (message.author.bot || !message.content) {
+        if (!message.deleted) return await message.delete();
+      }
 
       const userRatelimit = this.ratelimitCache.get(message.author.id);
       if (userRatelimit && Date.now() - userRatelimit < Ratelimit) {
