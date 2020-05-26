@@ -2,7 +2,7 @@ import Assyst from './Assyst';
 import { Webhook, Message } from 'detritus-client/lib/structures';
 import { BaseCollection } from 'detritus-client/lib/collections';
 
-const Ratelimit = 3500; // allow one message every 2s
+const Ratelimit = 10000; // allow one message every 10s
 
 export default class BTChannelController {
   private channels: string[];
