@@ -41,9 +41,10 @@ export default class BTChannelController {
         setTimeout(() => response.delete(), 1500);
         return;
       }
-      this.ratelimitCache.set(message.author.id, Date.now());
-
-      await this.handle(message);
+      if (!message.author.isMe) {
+        this.ratelimitCache.set(message.author.id, Date.now());
+        await this.handle(message);
+      }
     });
   }
 
