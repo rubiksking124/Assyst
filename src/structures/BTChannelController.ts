@@ -28,7 +28,7 @@ export default class BTChannelController {
     this._assyst.client.on('messageCreate', async ({ message }) => {
       if (!this.channels.includes(message.channelId)) return;
 
-      if (message.author.bot || !message.content) {
+      if ((message.author.bot && !message.author.isWebhook) || !message.content) {
         if (!message.deleted) return await message.delete();
       }
 
