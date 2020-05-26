@@ -1,6 +1,7 @@
 import Assyst from './Assyst';
 import { Webhook, Message } from 'detritus-client/lib/structures';
 import { BaseCollection } from 'detritus-client/lib/collections';
+import { ShardClient } from 'detritus-client';
 
 const Ratelimit = 2000; // allow one message every 2s
 
@@ -28,7 +29,7 @@ export default class BTChannelController {
     this._assyst.client.on('messageCreate', async ({ message }) => {
       if (!this.channels.includes(message.channelId)) return;
 
-      if ((message.author.bot && !message.author.isWebhook) || !message.content) {
+      if ((message.author.bot && !message.author.isWebhook && !message.author.isMe) || !message.content) {
         if (!message.deleted) return await message.delete();
       }
 
