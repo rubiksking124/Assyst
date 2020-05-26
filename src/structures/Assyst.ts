@@ -19,7 +19,8 @@ import {
   limitToUsers,
   logErrors,
   doPostToBotLists,
-  logGateway
+  logGateway,
+  btChannels
 } from '../../config.json';
 import RestController from '../rest/Rest';
 import Logger from './Logger';
@@ -34,6 +35,7 @@ import Trace from './Trace';
 
 import MessageSnipe from './MessageSnipe';
 import MessageSnipeController from './MessageSnipeController';
+import BTChannelController from './BTChannelController';
 
 interface Field {
   name: string,
@@ -70,9 +72,12 @@ export default class Assyst extends CommandClient {
 
   public messageSnipeController: MessageSnipeController
 
+  public btChannelController: BTChannelController
+
   constructor (token: string, options: CommandClientOptions) {
     super(token || '', options);
 
+    this.btChannelController = new BTChannelController(this, btChannels);
     this.messageSnipeController = new MessageSnipeController(this);
     this.traceHandler = new TraceController(this);
     this.logErrors = logErrors === undefined ? true : logErrors;
@@ -96,6 +101,7 @@ export default class Assyst extends CommandClient {
     this.initMetricsChecks();
     this.loadCommands();
     this.registerEvents();
+    this.btChannelController.init();
     if (doPostToBotLists) this.initBotListPosting();
   }
 
