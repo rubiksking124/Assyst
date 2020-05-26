@@ -108,7 +108,7 @@ export default class BTChannelController {
         if (lru) {
           await this._assyst.rest.deleteWebhook(lru.id);
           this.webhookCache.delete(lru.id);
-          webhook = await this.getWebhookOrCreate(username, channelId);
+          webhook = await this.getWebhookOrCreate(username, channelId, (attempt || 0) + 1);
         }
       }
 
