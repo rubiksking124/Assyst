@@ -22,7 +22,7 @@
     "dbl": "",
     "discordbotlist": "",
     "fapi": "",
-    "yandex": "",
+    "yandex": [""],
     "db": {
         "host": "",
         "username": "",

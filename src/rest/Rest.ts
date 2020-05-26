@@ -21,18 +21,23 @@ import * as Types from './Types';
 export default class RestController {
     public assyst: Assyst
     private defaultTimeout: number = 15000
+    private _currentYandexKey = 0
 
     constructor (assyst: Assyst) {
       this.assyst = assyst;
     }
 
     private async translateRaw (text: string, language: string): Promise<Types.Translate.RawTranslation> {
+      this._currentYandexKey++;
+      if (this._currentYandexKey > yandex.length - 1) {
+        this._currentYandexKey = 0;
+      }
       return await this.sendRequest({
         method: 'GET',
         settings: {
           timeout: 15000
         },
-        url: new URL(`${Endpoints.translate}?text=${encodeURIComponent(text)}&lang=${language}&key=${yandex}`)
+        url: new URL(`${Endpoints.translate}?text=${encodeURIComponent(text)}&lang=${language}&key=${yandex[this._currentYandexKey]}`)
       }).then(async (v) => await v.json());
     }
 
