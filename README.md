@@ -18,7 +18,7 @@ If you wish to self-host Assyst, you can follow these steps. Do keep in mind tha
 ### Without docker
 **1.) Clone this repository**
 ```sh
-$ git clone https://github.com/Jacher/Assyst-TS
+$ git clone https://github.com/AssystDev/Assyst
 ```
 
 ### With docker
