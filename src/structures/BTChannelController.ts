@@ -1,7 +1,6 @@
 import Assyst from './Assyst';
 import { Webhook, Message } from 'detritus-client/lib/structures';
 import { BaseCollection } from 'detritus-client/lib/collections';
-import { ShardClient } from 'detritus-client';
 
 const Ratelimit = 2000; // allow one message every 2s
 
@@ -9,6 +8,7 @@ export default class BTChannelController {
   private channels: string[];
   private webhookCache: BaseCollection<string, Webhook>;
   private ratelimitCache: BaseCollection<string, number>;
+  private sentRatelimits: Set<string>;
   private _assyst: Assyst;
 
   constructor (assyst: Assyst, channels?: string[]) {
@@ -16,6 +16,7 @@ export default class BTChannelController {
     this.channels = channels || [];
     this.webhookCache = new BaseCollection({ limit: 100 });
     this.ratelimitCache = new BaseCollection({ limit: 100 });
+    this.sentRatelimits = new Set();
   }
 
   public async init (): Promise<void> {
@@ -37,12 +38,17 @@ export default class BTChannelController {
       if (userRatelimit && Date.now() - userRatelimit < Ratelimit) {
         const timeLeft = (userRatelimit + Ratelimit) - Date.now();
         if (!message.deleted) await message.delete();
-        const response = await message.reply(`${message.author.mention} try again in ${(timeLeft / 1000).toFixed(2)} seconds!`);
+        let response: Message;
+        if (!this.sentRatelimits.has(message.author.id)) {
+          response = await message.reply(`${message.author.mention} try again in ${(timeLeft / 1000).toFixed(2)} seconds!`);
+          this.sentRatelimits.add(message.author.id);
+        }
         setTimeout(() => response.delete(), 1500);
         return;
       }
 
       if (!message.author.isMe && !message.author.isWebhook) {
+        this.sentRatelimits.delete(message.author.id);
         this.ratelimitCache.set(message.author.id, Date.now());
         await this.handle(message);
       }
