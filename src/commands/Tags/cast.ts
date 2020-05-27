@@ -22,6 +22,7 @@ export default {
       return ctx.editOrReply('You need to supply text to parse');
     }
     const result = await assyst.customRest.parseText(args.cast);
-    return ctx.editOrReply(`${result.result.slice(0, 1900)}\n\n⏰ Time taken: \`${result.timeTaken}μs\`\n🔞 Nsfw: ${result.nsfw}\n📜 Imagescripts: ${result.imagescripts ? result.imagescripts.length : 0}\n📋 Attachments: ${result.attachments ? result.attachments.length : 0}`);
+    const output = result.result.slice(0, 1900);
+    return ctx.editOrReply(`${output.length > 0 ? output : '`⚠️ No Output`'}\n\n⏰ Time taken: \`${result.timeTaken}μs\`\n🔞 Nsfw: ${result.nsfw}\n📜 Imagescripts: ${result.imagescripts ? result.imagescripts.length : 0}\n📋 Attachments: ${result.attachments ? result.attachments.length : 0}`);
   }
 };
