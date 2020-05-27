@@ -1,7 +1,5 @@
 import { Context } from 'detritus-client/lib/command';
 
-import { Message } from 'detritus-client/lib/structures';
-
 import { exec } from 'child_process';
 
 import { promisify } from 'util';
@@ -11,7 +9,6 @@ import Assyst from '../../structures/Assyst';
 import { Utils } from 'detritus-client';
 
 import { admins } from '../../../config.json';
-import { BaseSet } from 'detritus-client/lib/collections';
 
 const { Markup } = Utils;
 

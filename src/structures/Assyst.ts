@@ -73,12 +73,12 @@ export default class Assyst extends CommandClient {
 
   public messageSnipeController: MessageSnipeController
 
-  public btChannelController: BTChannelController
+  public btChannelController?: BTChannelController
 
   constructor (token: string, options: CommandClientOptions) {
     super(token || '', options);
 
-    this.btChannelController = new BTChannelController(this, badTranslator.channels);
+    if (badTranslator.channels[0].length > 0) this.btChannelController = new BTChannelController(this, badTranslator.channels);
     this.messageSnipeController = new MessageSnipeController(this);
     this.traceHandler = new TraceController(this);
     this.logErrors = logErrors === undefined ? true : logErrors;
@@ -102,7 +102,7 @@ export default class Assyst extends CommandClient {
     this.initMetricsChecks();
     this.loadCommands();
     this.registerEvents();
-    this.btChannelController.init();
+    if (this.btChannelController) this.btChannelController.init();
     if (doPostToBotLists) this.initBotListPosting();
   }
 
