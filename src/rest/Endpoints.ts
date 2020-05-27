@@ -21,5 +21,6 @@ export default Object.freeze({
   zx8: 'https://zx8.jacher.io/api/v1',
   ocr: 'https://api.tsu.sh/google/ocr',
   identify: 'https://captionbot.azurewebsites.net/api/messages?language=en-US',
-  translate: 'https://translate.yandex.net/api/v1.5/tr.json/translate'
+  translate: 'https://translate.yandex.net/api/v1.5/tr.json/translate',
+  cast: 'https://jacher.io/cast'
 });

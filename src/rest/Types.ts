@@ -410,3 +410,12 @@ export namespace Translate {
         text: string
     }
 }
+
+export interface CastResult {
+    success: boolean
+    nsfw: boolean
+    attachments: string[] | null
+    imagescripts: string[] | null
+    result: string
+    timeTaken: number
+}

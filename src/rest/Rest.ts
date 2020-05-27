@@ -27,6 +27,19 @@ export default class RestController {
       this.assyst = assyst;
     }
 
+    public async parseText (input: string): Promise<Types.CastResult> {
+      return await this.sendRequest({
+        method: 'POST',
+        body: {
+          input
+        },
+        settings: {
+          timeout: 60000
+        },
+        url: new URL(Endpoints.cast)
+      }).then(async (v) => await v.json());
+    }
+
     private async translateRaw (text: string, language: string): Promise<Types.Translate.RawTranslation> {
       this._currentYandexKey++;
       if (this._currentYandexKey > yandex.length - 1) {
