@@ -23,6 +23,6 @@ export default {
     }
     const result = await assyst.customRest.parseText(args.cast);
     const output = result.result.slice(0, 1900);
-    return ctx.editOrReply(`${output.length > 0 ? output : '`⚠️ No Output`'}\n\n⏰ Time taken: \`${result.timeTaken}μs\`\n🔞 Nsfw: ${result.nsfw}\n📜 Imagescripts: ${result.imagescripts ? result.imagescripts.length : 0}\n📋 Attachments: ${result.attachments ? result.attachments.length : 0}`);
+    return ctx.editOrReply(`${output.length > 0 ? output : '⚠️ `No Output`'}\n\n⏰ Time taken: \`${result.timeTaken}μs\`\n🔞 Nsfw: ${result.nsfw}\n📜 Imagescripts: ${result.imagescripts ? result.imagescripts.length : 0}\n📋 Attachments: ${result.attachments ? result.attachments.length : 0}`);
   }
 };
