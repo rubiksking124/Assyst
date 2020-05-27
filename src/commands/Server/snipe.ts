@@ -28,17 +28,20 @@ export default {
         if (channelId.split(' ').length > 1) {
           return ctx.editOrReply('Your channel mention is invalid');
         }
-    }
-    if(!channel) {
+      }
+      if (!channel) {
         return ctx.editOrReply('Channel not found')
-    }
-    snipe = assyst.messageSnipeController.findRecentSnipeFromChannelId(channel.id);
-    if(!snipe) {
+      }
+      snipe = assyst.messageSnipeController.findRecentSnipeFromChannelId(channel.id);
+      if (!snipe) {
         return ctx.editOrReply('No snipes recorded in this channel')
-    }
-  } catch(e) {
+      }
+    } catch (e) {
       return ctx.editOrReply(e.message)
+    }
+    return ctx.editOrReply({
+      content: `\`${snipe.author.username}#${snipe.author.discriminator}\`: ${snipe.content}`, allowedMentions:
+        { parse: [] }
+    })
   }
-  return ctx.editOrReply(`\`${snipe.author.username}#${snipe.author.discriminator}\`: ${snipe.content}`)
-}
 };
