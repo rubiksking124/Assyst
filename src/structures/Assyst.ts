@@ -189,8 +189,13 @@ export default class Assyst extends CommandClient {
     });
 
     this.on('commandNone', () => {
-      if ((<ShardClient> this.client).messages.size > 100) {
-        (<ShardClient> this.client).messages.clear();
+      const messages = (<ShardClient> this.client).messages;
+      if (messages.size > 1000) {
+        const difference = messages.size - 1000;
+        for (let i = 0; i < difference; i++) {
+          const firstEntry = Array.from(messages)[0];
+          messages.delete(firstEntry[0]);
+        }
       }
     });
 
