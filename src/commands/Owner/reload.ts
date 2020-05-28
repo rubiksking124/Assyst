@@ -24,7 +24,7 @@ export default {
       type: Boolean
     }
   ],
-  onBefore: (ctx: Context) => { return ctx.client.isOwner(ctx.userId) || admins.includes(ctx.userId); },
+  onBefore: (assyst: Assyst, ctx: Context) => { return ctx.client.isOwner(ctx.userId) || admins.includes(ctx.userId); },
   run: async (assyst: Assyst, ctx: Context, args: any) => {
     await ctx.editOrReply('reloading');
     execSync(`${args.pull ? 'git pull && ' : ''}tsc`);

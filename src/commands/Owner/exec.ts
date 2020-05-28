@@ -36,7 +36,7 @@ export default {
     name: 'sd',
     default: '100000'
   }],
-  onBefore: (ctx: Context) => ctx.client.isOwner(ctx.userId) || admins.includes(<never>ctx.userId),
+  onBefore: (assyst: Assyst, ctx: Context) => ctx.client.isOwner(ctx.userId) || admins.includes(<never>ctx.userId),
   run: async (assyst: Assyst, ctx: Context, args: any) => {
     if (!args.nostream) {
       return assyst.utils.createExecStream(ctx, args.exec, parseInt(args.timeout), parseInt(args.sd));

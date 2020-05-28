@@ -32,7 +32,7 @@ export default {
       type: Boolean
     }
   ],
-  onBefore: (ctx: Context): boolean => ctx.client.isOwner(ctx.userId) || admins.includes(ctx.userId),
+  onBefore: (assyst: Assyst, ctx: Context): boolean => ctx.client.isOwner(ctx.userId) || admins.includes(ctx.userId),
   run: async (assyst: Assyst, ctx: Context, args: any) => {
     let evaled: any;
     try {

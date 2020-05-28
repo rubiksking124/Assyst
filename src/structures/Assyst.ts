@@ -115,7 +115,8 @@ export default class Assyst extends CommandClient {
       files.forEach(async (file) => {
         if (file.includes('template') || file.includes('category_info')) return;
         const command: any = await import(`../commands/${folder}/${file}`).then((v: any) => v.default);
-        this.add({
+
+        const commandOptions: Command.Command<any> = {
           ...command,
 
           metadata: {
@@ -168,7 +169,13 @@ export default class Assyst extends CommandClient {
           onSuccess: async (ctx: Context) => await this.db.updateCommandUsage(ctx),
 
           _file: file
-        });
+        };
+
+        if (command.onBefore !== undefined) {
+          commandOptions.onBefore = command.onBefore.bind(null, this);
+        }
+
+        this.add(commandOptions);
         if (!noLog) this.logger.info(`Loaded command: ${command.name}`);
       });
     });
