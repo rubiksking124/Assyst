@@ -38,7 +38,9 @@ export default {
     const sourceMessageIds = channelReplies.map(r => r.context.messageId);
     const replyMessageIds = channelReplies.map(r => r.reply.id);
     const messageIds = [...replyMessageIds, ...sourceMessageIds];
-    console.log(messageIds);
+    if (messageIds.length === 0) {
+      return ctx.editOrReply('No messages found');
+    }
     await ctx.rest.bulkDeleteMessages(ctx.channelId, messageIds);
     return await ctx.editOrReply(`${messageIds.length} messages cleaned`).then((res) => {
       setTimeout(async () => {
