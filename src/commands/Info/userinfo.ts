@@ -59,6 +59,36 @@ export default {
     const daysElapsedSinceCreate = Math.round((Date.now() - user.createdAtUnix) / 1000 / 60 / 60 / 24);
     const roleCount = member instanceof Member ? member.roles.length : 0;
 
+    const fields = [
+      {
+        name: 'Creation Date',
+        value: `${createdDate} (${daysElapsedSinceCreate} days ago)`,
+        inline: false
+      },
+
+      {
+        name: 'User Flags',
+        value: memberFlags.length > 0 ? memberFlags.join('\n') : 'None',
+        inline: true
+      }
+    ]
+
+    if(roleCount > 0) {
+      fields.push({
+        name: 'Role Count',
+        value: roleCount.toString(),
+        inline: true
+      })
+    }
+
+    if(joinDate !== 'None') {
+      fields.push({
+        name: 'Join Date',
+        value: `${joinDate} ${daysElapsedSinceJoin}`,
+        inline: false
+      })
+    }
+
     return ctx.editOrReply({
       embed: {
         description: user.mention,
@@ -67,28 +97,7 @@ export default {
           name: `${user.name}#${user.discriminator}`,
           iconUrl: user.avatarUrl
         },
-        fields: [
-          {
-            name: 'Join Date',
-            value: `${joinDate} ${daysElapsedSinceJoin}`,
-            inline: false
-          },
-          {
-            name: 'Creation Date',
-            value: `${createdDate} (${daysElapsedSinceCreate} days ago)`,
-            inline: false
-          },
-          {
-            name: 'Role Count',
-            value: roleCount.toString(),
-            inline: true
-          },
-          {
-            name: 'User Flags',
-            value: memberFlags.length > 0 ? memberFlags.join('\n') : 'None',
-            inline: true
-          }
-        ]
+        fields
       }
     });
   }
