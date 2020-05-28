@@ -20,7 +20,6 @@ export default {
     return ctx.client.isOwner(ctx.userId) || admins.includes(ctx.userId) || await assyst.db.checkIfUserIsGuildAdmin(<string> ctx.guildId, ctx.userId);
   },
   run: async (assyst: Assyst, ctx: Context, args: any) => {
-    ctx.triggerTyping();
     let limit = 50;
     if (args && args.clean) {
       const limitCanBeSet = !isNaN(args.clean);
@@ -41,6 +40,7 @@ export default {
     if (messageIds.length === 0) {
       return ctx.editOrReply('No messages found');
     }
+    await ctx.triggerTyping();
     await ctx.rest.bulkDeleteMessages(ctx.channelId, messageIds);
     return await ctx.editOrReply(`${messageIds.length} messages cleaned`).then((res) => {
       setTimeout(async () => {
