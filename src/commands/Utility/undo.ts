@@ -24,13 +24,17 @@ export default {
     }
     const allRecentInvocations = assyst.replies.filter(r => r.context.userId === ctx.userId && r.context.channelId === ctx.channelId && !r.reply.deleted);
     const recentInvocations = allRecentInvocations.slice(allRecentInvocations.length - amount);
-    if (recentInvocations.length === 0) {
-      return ctx.editOrReply('No recent commands found').then((res) => {
-        setTimeout(async () => await ctx.rest.bulkDeleteMessages(ctx.channelId, [res.id, ctx.messageId]), 2500);
-      });
-    }
     const messageIds = [...recentInvocations.map(r => r.reply.id), ...recentInvocations.map(r => r.context.message.id)];
-    await ctx.rest.bulkDeleteMessages(ctx.channelId, messageIds);
+    try {
+      await ctx.rest.bulkDeleteMessages(ctx.channelId, messageIds);
+      if (recentInvocations.length === 0) {
+        return ctx.editOrReply('No recent commands found').then((res) => {
+          setTimeout(async () => await ctx.rest.bulkDeleteMessages(ctx.channelId, [res.id, ctx.messageId]).catch(() => 1), 2500);
+        });
+      }
+    } catch (e) {
+      return ctx.editOrReply(e.message);
+    }
     return ctx.editOrReply(`${messageIds.length} messages deleted`).then((res) => {
       setTimeout(async () => await ctx.rest.bulkDeleteMessages(ctx.channelId, [res.id, ctx.messageId]), 2500);
     });
