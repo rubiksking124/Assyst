@@ -4,11 +4,10 @@ import Assyst from '../../structures/Assyst';
 import { Markup } from 'detritus-client/lib/utils';
 
 import { STATUS_CODES } from 'http';
-import { BaseSet } from 'detritus-client/lib/collections';
 
 import { ShardClient } from 'detritus-client';
 
-const currentExecutions: BaseSet<string> = new BaseSet([]);
+const currentExecutions: Set<string> = new Set();
 
 async function getPrependedCode (client: ShardClient): Promise<string> {
   const guilds = await client.rest.fetchMeGuilds();
