@@ -21,7 +21,7 @@ export default {
     if (!args || !args.duckduckgoimg) {
       return ctx.editOrReply('You need to supply a search query');
     }
-    const results = await assyst.customRest.searchDuckDuckGoImages(args.duckduckgoimg, 1);
+    const results = await assyst.fapi.duckDuckGoImages(args.duckduckgoimg, { safe: true });
     if (results.length === 0) {
       return ctx.editOrReply('No results found');
     }

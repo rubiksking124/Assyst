@@ -20,7 +20,7 @@ export default {
     if (!args || !args.steamplaying) {
       return ctx.editOrReply('You need to provide a game to search for');
     }
-    const response = await assyst.customRest.fetchSteamPlaying(args.steamplaying);
+    const response = await assyst.fapi.steamPlaying(args.steamplaying);
     return ctx.editOrReply(response);
   }
 };

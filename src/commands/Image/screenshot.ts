@@ -25,7 +25,7 @@ export default {
     else nsfw = ctx.channel.nsfw;
     let response: Buffer | string;
     try {
-      response = await assyst.customRest.screenshotWebPage(args.screenshot, nsfw);
+      response = await assyst.fapi.screenshot(args.screenshot, { allowNSFW: nsfw });
     } catch (e) {
       return ctx.editOrReply(e.message);
     }

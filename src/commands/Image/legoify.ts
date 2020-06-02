@@ -30,7 +30,7 @@ export default {
     if (!imageUrl) {
       return ctx.editOrReply('No valid image found or supplied');
     }
-    const res = await assyst.customRest.legoifyImage(imageUrl, args.res);
+    const res = await assyst.fapi.lego(imageUrl, { resolution: args.res });
     if (typeof res === 'string') {
       return ctx.editOrReply(res);
     }

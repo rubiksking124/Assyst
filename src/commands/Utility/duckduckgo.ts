@@ -20,7 +20,7 @@ export default {
     if (!args || !args.duckduckgo) {
       return ctx.editOrReply('You need to supply a search query');
     }
-    const results = await assyst.customRest.searchDuckDuckGo(args.duckduckgo).then(r => r.results);
+    const results = await assyst.fapi.duckDuckGo(args.duckduckgo).then(r => r.results);
     if (results.length === 0) {
       return ctx.editOrReply('No results found');
     }
