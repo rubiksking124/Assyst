@@ -22,7 +22,10 @@ export default {
     }
   ],
   run: async (assyst: Assyst, ctx: Context, args: any) => {
-    if ((!args || !args.prefix) && (!ctx.member?.can('administrator') || !ctx.client.isOwner(ctx.userId))) {
+    if (!ctx.guildId || !ctx.userId) return;
+    const argsExist = args && args.prefix;
+    const canSet = await assyst.db.checkIfUserIsGuildAdmin(ctx.guildId, ctx.userId) || ctx.client.isOwner(ctx.userId);
+    if (!argsExist || !canSet) {
       let prefix = assyst.prefixCache.get(<string> ctx.guildId);
       if (!prefix) {
         prefix = await assyst.db.getGuildPrefix(<string> ctx.guildId);
