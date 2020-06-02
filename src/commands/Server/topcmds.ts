@@ -2,8 +2,6 @@ import { Context } from 'detritus-client/lib/command';
 
 import Assyst from '../../structures/Assyst';
 
-import { QueryResult } from 'pg';
-
 import { Markup } from 'detritus-client/lib/utils';
 
 interface CommandUseInfo {

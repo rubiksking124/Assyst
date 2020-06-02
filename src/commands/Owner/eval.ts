@@ -1,5 +1,5 @@
 /* eslint-disable no-eval */
-import { Context, Command } from 'detritus-client/lib/command';
+import { Context } from 'detritus-client/lib/command';
 
 import { inspect } from 'util';
 
@@ -7,12 +7,7 @@ import Assyst from '../../structures/Assyst';
 
 import { admins } from '../../../config.json';
 
-import {
-  Utils,
-  Constants
-} from 'detritus-client';
-
-const AsyncFunction = Object.getPrototypeOf(async function () {}).constructor;
+import { Utils } from 'detritus-client';
 
 const { Markup } = Utils;
 

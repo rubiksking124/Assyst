@@ -1,5 +1,4 @@
-import { Guild } from 'detritus-client/lib/structures';
-import { Command, Context } from 'detritus-client/lib/command';
+import { Context } from 'detritus-client/lib/command';
 
 export interface TraceOptions {
     error: Error,

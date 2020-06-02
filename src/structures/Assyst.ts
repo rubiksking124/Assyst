@@ -23,11 +23,11 @@ import {
   badTranslator,
   guildBlacklist
 } from '../../config.json';
-import RestController from '../rest/Rest';
+import RestController from '../rest/RestController';
 import Logger from './Logger';
 import { Context } from 'detritus-client/lib/command';
 import { Markup } from 'detritus-client/lib/utils';
-import AssystApi from '../api/Api';
+import AssystApi from '../api/AssystApi';
 import { BaseCollection, BaseSet } from 'detritus-client/lib/collections';
 
 import { Paginator } from 'detritus-pagination';
@@ -224,7 +224,7 @@ export default class Assyst extends CommandClient {
       if (folder.includes('.js')) throw new Error('Commands must be within subfolders for their category');
       const files = readdirSync(`./src/commands/${folder}`);
       files.forEach(async (file) => {
-        if (file.includes('template') || file.includes('category_info')) { } else {
+        if (!file.includes('template') && !file.includes('category_info')) {
           delete require.cache[require.resolve(`../commands/${folder}/${file}`)];
         }
       });

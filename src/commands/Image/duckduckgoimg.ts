@@ -1,8 +1,6 @@
 import { Context } from 'detritus-client/lib/command';
 
 import Assyst from '../../structures/Assyst';
-import { Embed } from 'detritus-client/lib/utils';
-import { Command } from 'detritus-client';
 
 export default {
   name: 'duckduckgoimg',
