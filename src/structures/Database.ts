@@ -56,6 +56,25 @@ export default class Database {
       });
     }
 
+    public async addGuildAdmin (guildId: string, userId: string): Promise<void> {
+      await this.sql('insert into guild_admins("guild", "user_id") values($1, $2)', [guildId, userId]);
+    }
+
+    // eslint-disable-next-line camelcase
+    public async getGuildAdmins (guildId: string): Promise<{user_id: string}[]> {
+      return await this.sql('select user_id from guild_admins where guild = $1', [guildId]).then(r => r.rows);
+    }
+
+    public async checkIfUserIsGuildAdmin (guildId: string, userId: string): Promise<boolean> {
+      const guildAdmins = await this.getGuildAdmins(guildId);
+      const users = guildAdmins.map(u => u.user_id);
+      return users.includes(userId);
+    }
+
+    public async removeGuildAdmin (guildId: string, userId: string): Promise<void> {
+      await this.sql('delete from guild_admins where guild = $1 and user_id = $2', [guildId, userId]);
+    }
+
     public async updateCommandUsage (ctx: Context): Promise<void> {
       if (!ctx.command) return;
       const registeredCommandUses: FoundCommandRow[] = await this.sql('select command, uses from command_uses where guild = $1', [ctx.guildId]).then((r: QueryResult) => r.rows);

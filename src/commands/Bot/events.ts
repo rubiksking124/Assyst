@@ -21,7 +21,8 @@ export default {
     const events = await assyst.db.getEvents();
     const fields: MetricItem[] = [];
     const totalEvents = events.map(e => parseInt(e.amount)).reduce((a, b) => a + b);
-    events.sort((a, b) => parseInt(b.amount) - parseInt(a.amount)).forEach(event => {
+    const sortedEvents = events.sort((a, b) => parseInt(b.amount) - parseInt(a.amount));
+    sortedEvents.forEach(event => {
       fields.push({
         name: event.name,
         value: event.amount.toString()

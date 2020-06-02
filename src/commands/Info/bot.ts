@@ -24,7 +24,7 @@ export default {
     const response = await assyst.customRest.fetchTopGGBot(args.bot);
     if (response.error) {
       return ctx.editOrReply(response.error);
-    };
+    }
     const output = assyst.utils.formatMetricList([
       {
         name: 'Username:',

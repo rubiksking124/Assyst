@@ -1,5 +1,5 @@
 /* eslint-disable no-useless-escape */
-import { Context, ArgumentParser } from 'detritus-client/lib/command';
+import { Context } from 'detritus-client/lib/command';
 
 import Assyst from '../../structures/Assyst';
 import { MetricItem } from '../../structures/Utils';
@@ -71,11 +71,11 @@ export default {
         }
       ];
       return ctx.editOrReply(Markup.codeblock(assyst.utils.formatMetricList(fields), { limit: 1990, language: 'ml' }));
-    } else if(args.ping === 'info') {
+    } else if (args.ping === 'info') {
       return ctx.editOrReply(Markup.codeblock(`REST: Time taken to send a query to the Discord REST API, for things like sending messages (most useful)
 Gateway: How long it takes the bot to recieve events, such as messages being sent by other users
 Database: How long it takes to query the bot's database
-SQL Drift: The time difference between the local system clock and the database clock`))
+SQL Drift: The time difference between the local system clock and the database clock`));
     } else {
       const count = isNaN(parseInt(args.c)) || parseInt(args.c) > 10 ? 4 : parseInt(args.c);
       const size = isNaN(parseInt(args.s)) || parseInt(args.s) > 128 ? 64 : parseInt(args.s);

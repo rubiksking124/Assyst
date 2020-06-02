@@ -1,11 +1,10 @@
-import { Context, ArgumentParser } from 'detritus-client/lib/command';
+import { Context } from 'detritus-client/lib/command';
 
 import { ShardClient } from 'detritus-client';
 
 import Assyst from '../../structures/Assyst';
 import { MetricItem } from '../../structures/Utils';
 import { Markup } from 'detritus-client/lib/utils';
-import { Invite } from 'detritus-client-rest/lib/endpoints';
 
 export default {
   name: 'invite',
@@ -25,7 +24,7 @@ export default {
       return ctx.editOrReply(`Bot invite: <${(<ShardClient> assyst.client).application?.oauth2UrlFormat({ scope: 'bot' })}>\nJoin the support server: <https://jacher.io/assyst>\nVote for Assyst: <https://top.gg/bot/${ctx.client.user?.id}/vote>`);
     }
     const code = args.invite;
-    let invite = Invite;
+    let invite;
     try {
       invite = await ctx.rest.fetchInvite(code, { withCounts: true });
     } catch (e) {

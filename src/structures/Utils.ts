@@ -1,9 +1,6 @@
 import Assyst from './Assyst';
 
-import { promisify } from 'util';
-import { unlink, writeFile } from 'fs';
-
-import { Message, ChannelGuildText } from 'detritus-client/lib/structures';
+import { Message } from 'detritus-client/lib/structures';
 
 import { Context } from 'detritus-client/lib/command';
 
@@ -48,7 +45,7 @@ export default class Utils {
       if (longestVal > separatorValue) separatorValue = longestVal;
       let returnString = '';
       items.forEach((i: MetricItem) => {
-        if (!formatItems || !formatItems.map(i => i.item).includes(i.name)) {
+        if (!formatItems || !formatItems.map(j => j.item).includes(i.name)) {
           returnString += `${i.name} ${'-'.repeat(separatorValue - i.name.length)} ${i.value}\n`;
         } else {
           returnString += `${i.name} ${'-'.repeat(separatorValue - i.name.length)} ${formatItems.find(j => j.item === i.name)?.format(i.value)}\n`;
@@ -57,11 +54,11 @@ export default class Utils {
       return returnString;
     }
 
-    public async getRecentAttachmentOrEmbed (message: Message, amtOfMessages: number): Promise<string | undefined> {
-      if (message.attachments.length > 0) {
-        return message.attachments.first()?.url;
+    public async getRecentAttachmentOrEmbed (msg: Message, amtOfMessages: number): Promise<string | undefined> {
+      if (msg.attachments.length > 0) {
+        return msg.attachments.first()?.url;
       }
-      const messages: Array<Message> = await this.assyst.rest.fetchMessages(message.channelId, { limit: amtOfMessages });
+      const messages: Array<Message> = await this.assyst.rest.fetchMessages(msg.channelId, { limit: amtOfMessages });
       if (!messages) {
         return undefined;
       }
@@ -150,7 +147,7 @@ export default class Utils {
 
       if (stream.stdout === null || stream.stderr === null) {
         return handleStreamEnd();
-      };
+      }
 
       stream.stdout.on('data', async (data) => {
         updateQueue.push(String(data));

@@ -5,9 +5,7 @@ import { Markup } from 'detritus-client/lib/utils';
 
 import { STATUS_CODES } from 'http';
 
-import { BaseSet } from 'detritus-client/lib/collections';
-
-const currentExecutions: BaseSet<string> = new BaseSet([]);
+const currentExecutions: Set<string> = new Set([]);
 
 export default {
   name: 'code',

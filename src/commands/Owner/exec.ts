@@ -1,7 +1,5 @@
 import { Context } from 'detritus-client/lib/command';
 
-import { Message } from 'detritus-client/lib/structures';
-
 import { exec } from 'child_process';
 
 import { promisify } from 'util';
@@ -11,7 +9,6 @@ import Assyst from '../../structures/Assyst';
 import { Utils } from 'detritus-client';
 
 import { admins } from '../../../config.json';
-import { BaseSet } from 'detritus-client/lib/collections';
 
 const { Markup } = Utils;
 
@@ -39,7 +36,7 @@ export default {
     name: 'sd',
     default: '100000'
   }],
-  onBefore: (ctx: Context) => ctx.client.isOwner(ctx.userId) || admins.includes(<never>ctx.userId),
+  onBefore: (assyst: Assyst, ctx: Context) => ctx.client.isOwner(ctx.userId) || admins.includes(<never>ctx.userId),
   run: async (assyst: Assyst, ctx: Context, args: any) => {
     if (!args.nostream) {
       return assyst.utils.createExecStream(ctx, args.exec, parseInt(args.timeout), parseInt(args.sd));

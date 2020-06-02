@@ -23,11 +23,11 @@ import {
   badTranslator,
   guildBlacklist
 } from '../../config.json';
-import RestController from '../rest/Rest';
+import RestController from '../rest/RestController';
 import Logger from './Logger';
 import { Context } from 'detritus-client/lib/command';
 import { Markup } from 'detritus-client/lib/utils';
-import AssystApi from '../api/Api';
+import AssystApi from '../api/AssystApi';
 import { BaseCollection, BaseSet } from 'detritus-client/lib/collections';
 
 import { Paginator } from 'detritus-pagination';
@@ -73,12 +73,12 @@ export default class Assyst extends CommandClient {
 
   public messageSnipeController: MessageSnipeController
 
-  public btChannelController: BTChannelController
+  public btChannelController?: BTChannelController
 
   constructor (token: string, options: CommandClientOptions) {
     super(token || '', options);
 
-    this.btChannelController = new BTChannelController(this, badTranslator.channels);
+    if (badTranslator.channels[0].length > 0) this.btChannelController = new BTChannelController(this, badTranslator.channels);
     this.messageSnipeController = new MessageSnipeController(this);
     this.traceHandler = new TraceController(this);
     this.logErrors = logErrors === undefined ? true : logErrors;
@@ -102,7 +102,7 @@ export default class Assyst extends CommandClient {
     this.initMetricsChecks();
     this.loadCommands();
     this.registerEvents();
-    this.btChannelController.init();
+    if (this.btChannelController) this.btChannelController.init();
     if (doPostToBotLists) this.initBotListPosting();
   }
 
@@ -115,7 +115,8 @@ export default class Assyst extends CommandClient {
       files.forEach(async (file) => {
         if (file.includes('template') || file.includes('category_info')) return;
         const command: any = await import(`../commands/${folder}/${file}`).then((v: any) => v.default);
-        this.add({
+
+        const commandOptions: Command.Command<any> = {
           ...command,
 
           metadata: {
@@ -168,7 +169,13 @@ export default class Assyst extends CommandClient {
           onSuccess: async (ctx: Context) => await this.db.updateCommandUsage(ctx),
 
           _file: file
-        });
+        };
+
+        if (command.onBefore !== undefined) {
+          commandOptions.onBefore = command.onBefore.bind(null, this);
+        }
+
+        this.add(commandOptions);
         if (!noLog) this.logger.info(`Loaded command: ${command.name}`);
       });
     });
@@ -182,8 +189,13 @@ export default class Assyst extends CommandClient {
     });
 
     this.on('commandNone', () => {
-      if ((<ShardClient> this.client).messages.size > 100) {
-        (<ShardClient> this.client).messages.clear();
+      const messages = (<ShardClient> this.client).messages;
+      if (messages.size > 1000) {
+        const difference = messages.size - 1000;
+        for (let i = 0; i < difference; i++) {
+          const firstEntry = Array.from(messages)[0];
+          messages.delete(firstEntry[0]);
+        }
       }
     });
 
@@ -212,7 +224,7 @@ export default class Assyst extends CommandClient {
       if (folder.includes('.js')) throw new Error('Commands must be within subfolders for their category');
       const files = readdirSync(`./src/commands/${folder}`);
       files.forEach(async (file) => {
-        if (file.includes('template') || file.includes('category_info')) { } else {
+        if (!file.includes('template') && !file.includes('category_info')) {
           delete require.cache[require.resolve(`../commands/${folder}/${file}`)];
         }
       });
@@ -226,7 +238,7 @@ export default class Assyst extends CommandClient {
     if (error.errors) {
       extraFields.push({
         name: 'Errors',
-        value: Markup.codeblock(inspect(error.errors, { depth: 6, showHidden: true }))
+        value: Markup.codeblock(inspect(error.errors, { depth: 9, showHidden: true }))
       });
     }
     this.client.rest.executeWebhook(id, token, {

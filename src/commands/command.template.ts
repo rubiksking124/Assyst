@@ -16,7 +16,7 @@ export default {
     limit: 1,
     duration: 5000
   },
-  onBefore: (ctx: Context) => {},
+  onBefore: (assyst: Assyst, ctx: Context) => {},
   run: async (assyst: Assyst, ctx: Context, args: any) => {
 
   }

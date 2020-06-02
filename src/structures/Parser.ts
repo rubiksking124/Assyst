@@ -5,7 +5,7 @@ import Assyst from './Assyst';
 import Utils from './Utils';
 import { Permissions } from 'detritus-client/lib/constants';
 
-import Rest from '../rest/Rest';
+import Rest from '../rest/RestController';
 
 import { GoCodeIt } from '../rest/Types';
 

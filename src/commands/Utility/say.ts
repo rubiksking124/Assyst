@@ -1,7 +1,6 @@
 import { Context } from 'detritus-client/lib/command';
 
 import Assyst from '../../structures/Assyst';
-import { Markup } from 'detritus-client/lib/utils';
 
 export default {
   name: 'say',

@@ -19,7 +19,7 @@ export default {
     limit: 1,
     duration: 5000
   },
-  onBefore: (ctx: Context) => ctx.client.isOwner(ctx.userId) || admins.includes(<never>ctx.userId),
+  onBefore: (assyst: Assyst, ctx: Context) => ctx.client.isOwner(ctx.userId) || admins.includes(<never>ctx.userId),
   run: async (assyst: Assyst, ctx: Context, args: any) => {
     const trace = assyst.traceHandler.getTrace(args.trace);
     if (!trace) {

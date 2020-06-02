@@ -12,12 +12,12 @@ export default {
     usage: '<user id>',
     examples: ['1234567890']
   },
-  onBefore: (ctx: Context) => ctx.client.isOwner(ctx.userId) || admins.includes(ctx.userId),
+  onBefore: (assyst: Assyst, ctx: Context) => ctx.client.isOwner(ctx.userId) || admins.includes(ctx.userId),
   run: async (assyst: Assyst, ctx: Context, args: any) => {
-    if(!args || !args.fblacklist) {
-      return ctx.editOrReply('pass a user id')
+    if (!args || !args.fblacklist) {
+      return ctx.editOrReply('pass a user id');
     }
     await assyst.db.addUserToFeedbackBlacklist(args.fblacklist);
-    return ctx.editOrReply('user blacklisted')
+    return ctx.editOrReply('user blacklisted');
   }
 };

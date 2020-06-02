@@ -4,7 +4,6 @@ import Assyst from '../../structures/Assyst';
 
 import { unlinkSync, writeFileSync } from 'fs';
 
-import { promisify } from 'util';
 import { BaseSet } from 'detritus-client/lib/collections';
 
 const currentQueries: BaseSet<string> = new BaseSet([]);

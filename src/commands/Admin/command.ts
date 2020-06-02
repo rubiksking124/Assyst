@@ -19,7 +19,9 @@ export default {
     limit: 1,
     duration: 5000
   },
-  onBefore: (ctx: Context) => { return ctx.client.isOwner(ctx.userId) || admins.includes(ctx.userId) || ctx.member?.can('administrator'); },
+  onBefore: async (assyst: Assyst, ctx: Context) => {
+    return ctx.client.isOwner(ctx.userId) || admins.includes(ctx.userId) || await assyst.db.checkIfUserIsGuildAdmin(<string> ctx.guildId, ctx.userId);
+  },
   run: async (assyst: Assyst, ctx: Context, args: any) => {
     if (!args || !args.command) {
       return ctx.editOrReply('You need to provide a command to disable or re-enable');

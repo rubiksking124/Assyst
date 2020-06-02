@@ -27,6 +27,19 @@ export default class RestController {
       this.assyst = assyst;
     }
 
+    public async parseText (input: string): Promise<Types.CastResult> {
+      return await this.sendRequest({
+        method: 'POST',
+        body: {
+          input
+        },
+        settings: {
+          timeout: 60000
+        },
+        url: new URL(Endpoints.cast)
+      }).then(async (v) => await v.json());
+    }
+
     private async translateRaw (text: string, language: string): Promise<Types.Translate.RawTranslation> {
       this._currentYandexKey++;
       if (this._currentYandexKey > yandex.length - 1) {
@@ -55,6 +68,13 @@ export default class RestController {
           }
         });
       }
+      text = await this.translateRaw(text, 'en').then(res => {
+        if (res.code !== 200) {
+          return text;
+        } else {
+          return res.text[0];
+        }
+      });
       return { chain, text };
     }
 
@@ -329,6 +349,23 @@ export default class RestController {
           args: {
             text: resolution
           },
+          images: [imageUrl]
+        }
+      }).then(async (v) => await v.body());
+    }
+
+    public async emojiMosaicImage (imageUrl: string) {
+      return await this.sendRequest({
+        url: new URL('fapi.wrmsr.io/e2m'),
+        method: 'POST',
+        headers: {
+          Authorization: fapi,
+          'content-type': 'application/json'
+        },
+        settings: {
+          timeout: 10000
+        },
+        body: {
           images: [imageUrl]
         }
       }).then(async (v) => await v.body());
