@@ -32,7 +32,7 @@ export default {
     if (!imageUrl) {
       return ctx.editOrReply('No valid image found or supplied');
     }
-    const response = await assyst.customRest.runEvalMagik(args.evalmagik, imageUrl).catch((e) => {
+    const response = await assyst.fapi.evalMagik(imageUrl, args.evalmagik).catch((e) => {
       ctx.editOrReply(e.message);
       success = false;
     });

@@ -22,7 +22,7 @@ export default {
     }
     ctx.triggerTyping();
     let success = true;
-    const response = await assyst.customRest.runImageScript(args.imagescript).catch((e) => {
+    const response = await assyst.fapi.imageTagParser(args.imagescript).catch((e) => {
       ctx.editOrReply(e.message);
       success = false;
     });

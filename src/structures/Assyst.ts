@@ -21,7 +21,8 @@ import {
   doPostToBotLists,
   logGateway,
   badTranslator,
-  guildBlacklist
+  guildBlacklist,
+  fapi
 } from '../../config.json';
 import RestController from '../rest/RestController';
 import Logger from './Logger';
@@ -37,6 +38,8 @@ import Trace from './Trace';
 import MessageSnipe from './MessageSnipe';
 import MessageSnipeController from './MessageSnipeController';
 import BTChannelController from './BTChannelController';
+
+import { Client } from 'fapi-client';
 
 interface Field {
   name: string,
@@ -75,6 +78,8 @@ export default class Assyst extends CommandClient {
 
   public btChannelController?: BTChannelController
 
+  public fapi: Client.Client
+
   constructor (token: string, options: CommandClientOptions) {
     super(token || '', options);
 
@@ -87,6 +92,7 @@ export default class Assyst extends CommandClient {
     this.logger = new Logger();
     this.api = new AssystApi(this);
     this.utils = new Utils(this);
+    this.fapi = new Client.Client({ auth: fapi });
     this.prefixCache = new BaseCollection({
       expire: 3600000
     });
