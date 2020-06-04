@@ -40,6 +40,10 @@ export default {
     {
       name: 'async',
       type: Boolean
+    },
+    {
+      name: 'attach',
+      type: Boolean
     }
   ],
   onBefore: (assyst: Assyst, ctx: Context): boolean => ctx.client.isOwner(ctx.userId) || admins.includes(ctx.userId),
@@ -53,6 +57,20 @@ export default {
       }
     } catch (e) {
       return ctx.editOrReply(Markup.codeblock(e.message, { limit: 1990, language: 'js' }));
+    }
+
+    if (args.attach) {
+      let extension = 'txt';
+
+      if (Buffer.isBuffer(evaled)) extension = 'png';
+      else if (typeof evaled === 'object') {
+        evaled = inspect(evaled, { depth: 0, showHidden: true });
+      } else {
+        evaled = String(evaled);
+      }
+
+      if (typeof evaled === 'string') evaled = evaled.replace(tokenRegexp, '');
+      return ctx.editOrReply({ file: { data: evaled, filename: `eval.${extension}` } });
     }
 
     if (typeof evaled === 'object') {
