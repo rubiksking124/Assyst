@@ -5,11 +5,26 @@ import { inspect } from 'util';
 
 import Assyst from '../../structures/Assyst';
 
-import { admins } from '../../../config.json';
+import {
+  admins,
+  token,
+  fapi,
+  dbl,
+  db,
+  discordbotlist,
+  yandex,
+  gocode,
+  github
+} from '../../../config.json';
 
 import { Utils } from 'detritus-client';
 
 const { Markup } = Utils;
+
+const tokensList = `${token}|${fapi}|${dbl}|${db.password}|${db.host}|${discordbotlist}|${yandex.join('|')}|${gocode}|${github}`;
+
+// eslint-disable-next-line no-useless-escape
+const tokenRegexp: RegExp | null = new RegExp(tokensList.replace(/([\.\{\}\(\)\*\+\-\=\!\?\^\$])/g, '\\$1'), 'g');
 
 export default {
   name: 'e',
@@ -46,7 +61,7 @@ export default {
       evaled = String(evaled);
     }
 
-    evaled = evaled.split(ctx.client.token).join(' ');
+    evaled = evaled.replace(tokenRegexp, '');
 
     return ctx.editOrReply(Markup.codeblock(evaled, { language: 'js', limit: 1990 }));
   }
