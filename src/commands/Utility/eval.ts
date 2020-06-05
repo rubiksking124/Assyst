@@ -66,17 +66,27 @@ export default {
     } else if (currentExecutions.has(ctx.userId)) {
       return ctx.editOrReply('You already have a currently executing program');
     }
+
+    if (!assyst.ivmIsolate || assyst.ivmIsolate.isDisposed) await assyst.buildIsolate();
+    if (!assyst.ivmContext || !assyst.ivmIsolate) return ctx.editOrReply("An unknown issue occurred");
+
     await ctx.triggerTyping();
     currentExecutions.add(ctx.userId);
-    const prependedCode = await getPrependedCode(<ShardClient> assyst.client);
-    const response = await assyst.customRest.runSandboxedCode('js', prependedCode.replace('{input}', args.eval.replace(/"/g, '\''))).then((res) => res);
-    currentExecutions.delete(ctx.userId);
-    if (typeof response === 'string') {
-      return ctx.editOrReply(response.slice(0, 1990));
+    
+    let response;
+    try {
+      response = await assyst.ivmContext.eval(args.eval, {
+        timeout: 50,
+        promise: true,
+        copy: true
+      });
+    } catch(e) {
+      response = e.message;
     }
-    if (response.status !== 200) {
-      return ctx.editOrReply(`Error ${response.status}: ${STATUS_CODES[response.status]} - ${response.data.res}`);
-    }
-    return ctx.editOrReply(`${Markup.codeblock(response.data.res, { limit: 1990, language: 'js' })}${args.time ? `\n⏱️ Took ${response.data.comp}ms` : ''}`);
+
+    return ctx.editOrReply(Markup.codeblock(response, {
+      language: 'js',
+      limit: 1990
+    }));
   }
 };
