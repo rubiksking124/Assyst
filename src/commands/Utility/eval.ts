@@ -24,10 +24,10 @@ export default {
     }
 
     if (!assyst.ivmIsolate || assyst.ivmIsolate.isDisposed) await assyst.buildIsolate();
-    if (!assyst.ivmContext || !assyst.ivmIsolate) return ctx.editOrReply("An unknown issue occurred");
+    if (!assyst.ivmContext || !assyst.ivmIsolate) return ctx.editOrReply('An unknown issue occurred');
 
     await ctx.triggerTyping();
-    
+
     let response;
     try {
       response = await assyst.ivmContext.eval(args.eval, {
@@ -35,11 +35,13 @@ export default {
         copy: true,
         promise: true
       }).then(v => v.result);
-    } catch(e) {
+    } catch (e) {
       response = e.message;
     }
-    
+
     if (typeof response !== 'string') response = inspect(response, { depth: 1 });
+
+    response = response.replace(/ could not be cloned\./g, '');
 
     return ctx.editOrReply(Markup.codeblock(response, {
       language: 'js',

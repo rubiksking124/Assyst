@@ -1,3 +1,4 @@
+/* eslint-disable no-extra-bind */
 /* eslint-disable no-extend-native */
 // This file is for isolated-vm
 
@@ -31,9 +32,10 @@ global.process = {
     (<any>process).reallyExit(process.exitCode || 0);
   },
   reallyExit: ((code: number) => {
-    return call(3);
-  // eslint-disable-next-line no-extra-bind
-  }).bind(null)
+    throw new Error('EACCES: permission denied, SIGKILL process pid 15357');
+  }).bind(null),
+  // @ts-ignore
+  emit: ((event: string, value: any) => { return this; }).bind(null)
 };
 
 // This unexposed function is called in "REST" functions
