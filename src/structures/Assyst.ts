@@ -43,7 +43,9 @@ import BTChannelController from './BTChannelController';
 
 import { Client } from 'fapi-client';
 
-const ivmClosureScript = readFileSync('./src/ivmClosure.js', 'utf8');
+const ivmClosureScript = readFileSync('./src/ivmClosure.js', 'utf8')
+  // thanks tsc
+  .replace(/["']use strict["'];?/g, '');
 
 interface Field {
   name: string,
