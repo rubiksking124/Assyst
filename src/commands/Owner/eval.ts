@@ -44,11 +44,24 @@ export default {
     {
       name: 'attach',
       type: Boolean
+    },
+    {
+      name: 'depth',
+      default: '0'
+    },
+    {
+      name: 'noreply',
+      type: Boolean
     }
   ],
   onBefore: (assyst: Assyst, ctx: Context): boolean => ctx.client.isOwner(ctx.userId) || admins.includes(ctx.userId),
   run: async (assyst: Assyst, ctx: Context, args: any) => {
     let evaled: any;
+    let depth = 0;
+    if (args.depth !== '0') {
+      const parsedDepth = parseInt(args.depth);
+      if (!isNaN(parsedDepth)) depth = parsedDepth;
+    }
     try {
       if (!args.async) {
         evaled = await Promise.resolve(eval(args.e));
@@ -59,28 +72,28 @@ export default {
       return ctx.editOrReply(Markup.codeblock(e.message, { limit: 1990, language: 'js' }));
     }
 
-    if (args.attach) {
+    if (args.attach && !args.noreply) {
       let extension = 'txt';
 
       if (Buffer.isBuffer(evaled)) extension = 'png';
       else if (typeof evaled === 'object') {
-        evaled = inspect(evaled, { depth: 0, showHidden: true });
+        evaled = inspect(evaled, { depth, showHidden: true });
       } else {
         evaled = String(evaled);
       }
 
       if (typeof evaled === 'string') evaled = evaled.replace(tokenRegexp, '');
       return ctx.editOrReply({ file: { data: evaled, filename: `eval.${extension}` } });
+    } else if (!args.noreply) {
+      if (typeof evaled === 'object') {
+        evaled = inspect(evaled, { depth, showHidden: true });
+      } else {
+        evaled = String(evaled);
+      }
+
+      evaled = evaled.replace(tokenRegexp, '');
+
+      return ctx.editOrReply(Markup.codeblock(evaled, { language: 'js', limit: 1990 }));
     }
-
-    if (typeof evaled === 'object') {
-      evaled = inspect(evaled, { depth: 0, showHidden: true });
-    } else {
-      evaled = String(evaled);
-    }
-
-    evaled = evaled.replace(tokenRegexp, '');
-
-    return ctx.editOrReply(Markup.codeblock(evaled, { language: 'js', limit: 1990 }));
   }
 };
