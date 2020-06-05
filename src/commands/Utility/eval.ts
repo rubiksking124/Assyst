@@ -46,11 +46,14 @@ export default {
     response = response.replace(/ could not be cloned\./g, '');
 
     const c = await ctx.rest.fetchChannel(fakeEvalChannel);
-    c.createMessage(`Guild: \`${ctx.guildId}\`\nChannel: \`${ctx.channelId}\`\nUser: \`${ctx.userId} (${ctx.user.name})\`\n\nCommand: \`${Markup.escape.all(ctx.content)}\`\nResponse: ${Markup.codeblock(response, { language: 'js', limit: 1900 })}`);
+    c.createMessage(Markup.escape.all(`Guild: \`${ctx.guildId}\`\nChannel: \`${ctx.channelId}\`\nUser: \`${ctx.userId} (${ctx.user.name})\`\n\nCommand: \`${Markup.escape.all(ctx.content)}\`\nResponse: ${Markup.codeblock(response, { language: 'js', limit: 1900 })}`));
 
-    return ctx.editOrReply(Markup.codeblock(response, {
-      language: 'js',
-      limit: 1990
-    }));
+    return ctx.editOrReply({
+      content: Markup.codeblock(response, {
+        language: 'js',
+        limit: 1990
+      }),
+      allowedMentions: { parse: [] }
+    });
   }
 };
