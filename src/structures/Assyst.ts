@@ -87,7 +87,7 @@ export default class Assyst extends CommandClient {
   public fapi: Client.Client
 
   public ivmContext?: IVMContext
-  
+
   public ivmIsolate?: IVMIsolate
 
   constructor (token: string, options: CommandClientOptions) {
@@ -230,7 +230,8 @@ export default class Assyst extends CommandClient {
   private handleTraceAddition (ctx: Context, args: any, error: any) {
     const id = TraceController.generateId();
     this.traceHandler.addTrace(id, new Trace({ error, args, context: ctx, thrownAt: new Date() }));
-    ctx.editOrReply(`An error occurred, to report this error please join the support server (with ${ctx.prefix}invite) and quote the error id \`${id}\``);
+    if (!ctx.client.isOwner(ctx.userId)) ctx.editOrReply(`An error occurred, to report this error please join the support server (with ${ctx.prefix}invite) and quote the error id \`${id}\``);
+    else ctx.editOrReply(`Error: ${error.message}`);
   }
 
   public reloadCommands () {
@@ -394,7 +395,7 @@ export default class Assyst extends CommandClient {
     else return false;
   }
 
-  public async buildIsolate() {
+  public async buildIsolate () {
     const isolate = new IVMIsolate({ memoryLimit: 8 });
     const context = await isolate.createContext();
     context.global.set('global', context.global.derefInto());
@@ -405,16 +406,16 @@ export default class Assyst extends CommandClient {
     await this.runContextClosure();
   }
 
-  public async runContextClosure() {
+  public async runContextClosure () {
     if (!this.ivmContext) return;
     await this.ivmContext.evalClosure(ivmClosureScript, [
       {
         collections: Object.keys(this.client)
           // @ts-ignore
           // Only import base collections
-          .filter(f => this.client[f] && typeof this.client[f].size === "number")
+          .filter(f => this.client[f] && typeof this.client[f].size === 'number')
           // @ts-ignore
-          .map(k => [ k, this.client[k].size ])
+          .map(k => [k, this.client[k].size])
       }
     ], {
       arguments: {

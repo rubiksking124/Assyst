@@ -1,4 +1,5 @@
 {
+    "fakeEvalChannel": "",
     "guildBlacklist": ["ID"],
     "logGateway": false,
     "doPostToBotLists": false,
