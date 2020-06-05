@@ -2,6 +2,7 @@ import { Context } from 'detritus-client/lib/command';
 
 import Assyst from '../../structures/Assyst';
 import { Markup } from 'detritus-client/lib/utils';
+import { inspect } from 'util';
 
 export default {
   name: 'eval',
@@ -37,6 +38,8 @@ export default {
     } catch(e) {
       response = e.message;
     }
+    
+    if (typeof response !== 'string') response = inspect(response, { depth: 1 });
 
     return ctx.editOrReply(Markup.codeblock(response, {
       language: 'js',
