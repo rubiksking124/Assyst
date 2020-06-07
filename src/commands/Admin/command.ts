@@ -20,7 +20,7 @@ export default {
     duration: 5000
   },
   onBefore: async (assyst: Assyst, ctx: Context) => {
-    return ctx.client.isOwner(ctx.userId) || admins.includes(ctx.userId) || await assyst.db.checkIfUserIsGuildAdmin(<string> ctx.guildId, ctx.userId);
+    return ctx.client.isOwner(ctx.userId) || admins.includes(ctx.userId) || await assyst.db.checkIfUserIsGuildAdmin(<string> ctx.guildId, ctx.userId) || ctx.member?.isOwner;
   },
   run: async (assyst: Assyst, ctx: Context, args: any) => {
     if (!args || !args.command) {

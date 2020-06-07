@@ -182,7 +182,10 @@ export default class Assyst extends CommandClient {
             this.fireErrorWebhook(webhooks.commandOnError.id, webhooks.commandOnError.token, 'Command Type Error Fired', 0xCC2288, error);
           },
 
-          onSuccess: async (ctx: Context) => await this.db.updateCommandUsage(ctx),
+          onSuccess: async (ctx: Context) => {
+            this.logCommandUsage(ctx);
+            await this.db.updateCommandUsage(ctx);
+          },
 
           _file: file
         };
@@ -225,6 +228,33 @@ export default class Assyst extends CommandClient {
     });
 
     this.initGatewayEventHandlers();
+  }
+
+  private async logCommandUsage (ctx: Context): Promise<void> {
+    const logChannel = await this.db.getCommandLogChannel(<string> ctx.guildId);
+    if (!logChannel) return;
+    const channel = await ctx.rest.fetchChannel(logChannel);
+    const replyContent = this.replies.get(ctx.messageId)?.reply.content;
+    await channel.createMessage({
+      content: `:bangbang: Command usage log: ${ctx.command?.name}`,
+      embed: {
+        author: {
+          name: ctx.user.name,
+          iconUrl: ctx.user.avatarUrl
+        },
+        title: `Command: ${ctx.command?.name}`,
+        description: `Raw: \`${Markup.escape.all(ctx.content, { limit: 1000 })}\``,
+        timestamp: new Date().toISOString(),
+        fields: [
+          {
+            name: 'Output',
+            value: replyContent ? replyContent.slice(0, 1000) : 'None'
+          }
+        ],
+        color: 0x07dfeb
+      },
+      allowedMentions: { parse: [] }
+    });
   }
 
   private handleTraceAddition (ctx: Context, args: any, error: any) {

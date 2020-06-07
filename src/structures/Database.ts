@@ -167,4 +167,21 @@ export default class Database {
       const ids = users.map(u => u.userid);
       return ids.includes(userId);
     }
+
+    public async setCommandLogChannel (guildId: string, channelId: string): Promise<void> {
+      const commandLogChannelExists = await this.sql('select channel from command_logging where guild = $1', [guildId]).then(res => res.rows.length > 0);
+      if (!commandLogChannelExists) {
+        this.sql('insert into command_logging (guild, channel) values ($1, $2)', [guildId, channelId]);
+      } else {
+        this.sql('update command_logging set channel = $1 where guild = $2', [channelId, guildId]);
+      }
+    }
+
+    public async getCommandLogChannel (guildId: string): Promise<string | undefined> {
+      return await this.sql('select channel from command_logging where guild = $1', [guildId]).then(r => r.rows[0]?.channel);
+    }
+
+    public async deleteCommandLogChannel (guildId: string): Promise<void> {
+      await this.sql('delete from command_logging where guild = $1', [guildId]);
+    }
 }
