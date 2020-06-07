@@ -4,20 +4,61 @@
 
 declare var $0: any;
 
+const generateSnowflake = () => new Array(19).fill(null).map(() => Math.random() * 9 | 0).join('');
+const vowels = ['a', 'e', 'i', 'o', 'u'];
+const generateDiscriminator = () => (Math.random() * 9999 | 0).toString().padStart(4, '0');
+const generateUsername = () => new Array((Math.random() * 5 | 0) + 5)
+  .fill(null)
+  .map((_, i) => i % 2 === 0
+    ? vowels[Math.random() * vowels.length | 0]
+    : (Math.random() > 0.8
+      ? (Math.random() * 9 | 0)
+      : String.fromCharCode((Math.random() * 25 | 0) + 97))).join('');
+
+
 // @ts-ignore
-global.require = function (mod) {
+global.require = (function (mod) {
   switch (mod) {
     default:
       throw new Error('Cannot find module ' + mod);
   }
-};
+}).bind(null);
+
+// @ts-ignore
+global.message = {
+  reply: (() => {
+    return call(5)
+  }).bind(null),
+  delete: (() => {
+    return call(6);
+  }).bind(null),
+  edit: (() => {
+    return call(7);
+  }).bind(null),
+  id: generateSnowflake(),
+  // @ts-ignore
+  author: {
+    avatar: null,
+    bot: false,
+    discriminator: generateDiscriminator(),
+    id: generateSnowflake(),
+    public_flags: 0,
+    system: undefined,
+    username: generateUsername()
+  },
+  member: null,
+  toString: (function () {
+    // @ts-ignore
+    return this;
+  })
+}
 
 // @ts-ignore
 global.process = {
   _exiting: false,
-  uptime () {
+  uptime: (() => {
     return Date.now();
-  },
+  }).bind(null),
   // @ts-ignore
   exit (code) {
     if (code || code === 0) { process.exitCode = code; }
@@ -35,7 +76,32 @@ global.process = {
     throw new Error('EACCES: permission denied, SIGKILL process pid 15357');
   }).bind(null),
   // @ts-ignore
-  emit: ((event: string, value: any) => { return this; }).bind(null)
+  emit: ((event: string, value: any) => { return this; }).bind(null),
+  version: 'v12.18.0',
+  versions: {
+    node: '12.18.0',
+    v8: '7.8.279.23-node.37',
+    uv: '1.37.0',
+    zlib: '1.2.11',
+    // @ts-ignore
+    brotli: '1.0.7',
+    ares: '1.16.0',
+    modules: '72',
+    nghttp2: '1.41.0',
+    napi: '6',
+    llhttp: '2.0.4',
+    http_parser: '2.9.3',
+    openssl: '1.1.1g',
+    cldr: '37.0',
+    icu: '67.1',
+    tz: '2019c',
+    unicode: '13.0'
+  },
+
+  env: {
+    TOKEN: 'NTcxNjYxMjIxODU0NzA3NzEz.Dvl8Dw.aKlcU6mA69pSOI_YBB8RG7nNGUE',
+    DBL_TOKEN: 'eyJhbGciOiHOI8Nidb3AInR5cCI6IkpXVCJ9.eyJqZCI6IjU3MUZNAiaIyMTg1NDcwNzcxMyIsI57bHSLAOQU826ZSwiaWF0IjoxNTg2MzY3OTgyfQ.euTh8Q-z0aB48nbGHnamcT2YzGv54nSIwn7B6Cmr7sRag'
+  }
 };
 
 // This unexposed function is called in "REST" functions
@@ -77,18 +143,12 @@ class Channel {
   }
 }
 
-(function () {
-  const vowels = ['a', 'e', 'i', 'o', 'u'];
-  const generateSnowflake = () => new Array(19).fill(null).map(() => Math.random() * 9 | 0).join('');
-  const generateDiscriminator = () => (Math.random() * 9999 | 0).toString().padStart(4, '0');
-  const generateUsername = () => new Array((Math.random() * 5 | 0) + 5)
-    .fill(null)
-    .map((_, i) => i % 2 === 0
-      ? vowels[Math.random() * vowels.length | 0]
-      : (Math.random() > 0.8
-        ? (Math.random() * 9 | 0)
-        : String.fromCharCode((Math.random() * 25 | 0) + 97))).join('');
+// @ts-ignore
+global.fetch = ((u: string) => {
+  throw new Error(`request to ${u} failed, reason: getaddrinfo ENOTFOUND ${u}`);
+}).bind(null);
 
+(function () {
   const generatorFunctions = {
     users: (id: string) => ({
       avatar: null,
