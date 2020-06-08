@@ -406,8 +406,8 @@ export default class Assyst extends CommandClient {
   private async initBotListPosting (): Promise<void> {
     setInterval(async () => {
       const result = await this.customRest.postStats();
-      this.rest.createMessage(logs.botListsPostingResults, JSON.stringify(result));
-    }, 60000);
+      this.rest.createMessage(logs.botListsPostingResults, Markup.codeblock(inspect(result), { language: 'js' }));
+    }, 300000);
   }
 
   public async onCommandCheck (ctx: Context, command: Command.Command): Promise<boolean> {
