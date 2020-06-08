@@ -299,8 +299,9 @@ export namespace GoCodeIt {
 
 export namespace BotLists {
     export interface PostResults {
-        dbl: any, // todo
-        discordbotlist: any // todo
+        dbl: any,
+        discordbotlist: any,
+        discordboats: any
     }
 }
 

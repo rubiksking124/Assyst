@@ -17,6 +17,7 @@ export default Object.freeze({
   }),
   topgg: 'https://top.gg/api/bots',
   discordbotlist: 'https://discordbotlist.com/api/bots',
+  discordboats: 'https://discord.boats/api/bot',
   gocodeit: 'https://api.gocode.it/exec',
   zx8: 'https://zx8.jacher.io/api/v1',
   ocr: 'https://api.tsu.sh/google/ocr',

@@ -1,10 +1,12 @@
 {
-    "fakeEvalChannel": "",
+    "logs": {
+        "fakeEval": "",
+        "botListsPostingResults": ""
+    },
     "guildBlacklist": ["ID"],
     "logGateway": false,
     "doPostToBotLists": false,
     "feedbackChannels": {
-        "guild": "ID",
         "complaints": "ID",
         "compliments": "ID"
     },
@@ -22,6 +24,7 @@
     "gocode": "",
     "dbl": "",
     "discordbotlist": "",
+    "discordboats": "",
     "fapi": "",
     "yandex": [""],
     "db": {

@@ -4,7 +4,7 @@ import Assyst from '../../structures/Assyst';
 import { Markup } from 'detritus-client/lib/utils';
 import { inspect } from 'util';
 
-import { fakeEvalChannel } from '../../../config.json';
+import { logs } from '../../../config.json';
 
 export default {
   name: 'eval',
@@ -45,7 +45,7 @@ export default {
 
     response = response.replace(/ could not be cloned\./g, '');
 
-    const c = await ctx.rest.fetchChannel(fakeEvalChannel);
+    const c = await ctx.rest.fetchChannel(logs.fakeEval);
     c.createMessage(`Guild: \`${ctx.guildId}\`\nChannel: \`${ctx.channelId}\`\nUser: \`${ctx.userId} (${ctx.user.name})\`\n\nCommand: \`${Markup.escape.all(ctx.content)}\`\nResponse: ${Markup.codeblock(response, { language: 'js', limit: 1900 })}`);
 
     return ctx.editOrReply({

@@ -24,7 +24,8 @@ import {
   logGateway,
   badTranslator,
   guildBlacklist,
-  fapi
+  fapi,
+  logs
 } from '../../config.json';
 import RestController from '../rest/RestController';
 import Logger from './Logger';
@@ -404,7 +405,8 @@ export default class Assyst extends CommandClient {
 
   private async initBotListPosting (): Promise<void> {
     setInterval(async () => {
-      await this.customRest.postStats();
+      const result = await this.customRest.postStats();
+      this.rest.createMessage(logs.botListsPostingResults, JSON.stringify(result));
     }, 60000);
   }
 

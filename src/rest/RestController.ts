@@ -3,9 +3,9 @@ import Assyst from '../structures/Assyst';
 import {
   dbl,
   discordbotlist,
-  fapi,
   gocode,
-  yandex
+  yandex,
+  discordboats
 } from '../../config.json';
 
 import { ShardClient } from 'detritus-client';
@@ -140,9 +140,8 @@ export default class RestController {
 
     public async postStats (): Promise<Types.BotLists.PostResults> {
       const guildCount = await this.assyst.rest.fetchMeGuilds().then(g => g.length);
-      const results: Types.BotLists.PostResults = { dbl: null, discordbotlist: null };
-      results.dbl = await this.postStatsToTopGG(guildCount);
-      results.discordbotlist = await this.postStatsToDiscordBotList(guildCount);
+      const results: Types.BotLists.PostResults = { dbl: null, discordbotlist: null, discordboats: null };
+      [results.discordbotlist, results.dbl, results.discordboats] = await Promise.all([this.postStatsToDiscordBotList(guildCount), this.postStatsToTopGG(guildCount), this.postStatsToDiscordBoats(guildCount)]);
       return results;
     }
 
@@ -151,7 +150,7 @@ export default class RestController {
         method: 'POST',
         url: new URL(`${Endpoints.topgg}/${(<ShardClient> this.assyst.client).user?.id}/stats`),
         settings: {
-          timeout: 5000
+          timeout: 15000
         },
         headers: {
           Authorization: dbl
@@ -168,13 +167,29 @@ export default class RestController {
         method: 'POST',
         url: new URL(`${Endpoints.discordbotlist}/${(<ShardClient> this.assyst.client).user?.id}/stats`),
         settings: {
-          timeout: 5000
+          timeout: 15000
         },
         headers: {
           Authorization: `Bot ${discordbotlist}`
         },
         body: {
           guilds: guildCount
+        }
+      }).then(async (v) => await v.text());
+    }
+
+    private async postStatsToDiscordBoats (guildCount: number) {
+      return await this.sendRequest({
+        method: 'POST',
+        url: new URL(`${Endpoints.discordboats}/${(<ShardClient> this.assyst.client).user?.id}`),
+        settings: {
+          timeout: 15000
+        },
+        headers: {
+          Authorization: discordboats
+        },
+        body: {
+          server_count: guildCount
         }
       }).then(async (v) => await v.text());
     }
