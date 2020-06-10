@@ -28,7 +28,7 @@ export default {
     const commandUses = await assyst.db.getGuildCommandUses(<string>ctx.guildId);
     const rows: string[] = [];
     commandUses.forEach((c: CommandUseInfo) => {
-      rows.push(`Command: ${c.command} ${'-'.repeat(15 - c.command.length)} Uses: ${c.uses}`);
+      rows.push(`Command: ${c.command} ${'-'.repeat(20 - c.command.length)} Uses: ${c.uses}`);
     });
     ctx.editOrReply({
       embed: {
