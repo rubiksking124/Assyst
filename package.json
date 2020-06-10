@@ -11,7 +11,7 @@
   "dependencies": {
     "detritus-client": "^0.10.5",
     "detritus-pagination": "^1.0.73",
-    "fapi-client": "^0.3.0",
+    "fapi-client": "^0.3.2",
     "isolated-vm": "^3.3.3",
     "node-fetch": "^2.6.0",
     "pg": "^7.18.2",

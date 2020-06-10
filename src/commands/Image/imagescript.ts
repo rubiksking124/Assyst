@@ -1,15 +1,16 @@
 import { Context } from 'detritus-client/lib/command';
 
 import Assyst from '../../structures/Assyst';
+import { ReturnTypes } from 'fapi-client/JS/src/types';
 
 export default {
   name: 'imagescript',
   aliases: ['runis'],
   responseOptional: true,
   metadata: {
-    description: 'Execute imagescript ([Docs](https://gist.github.com/matmen/d4fa000110efe2944078fb8065dafd11))',
+    description: 'Execute imagescript (Docs)[https://imagescript.dreadful.tech/]',
     usage: '[script]',
-    examples: ['load image myimg\nexplode myimg\nrender myimg']
+    examples: ['const image = Image.new(1024,1024); image.fill((x,y)=>x+y | Date.now() % (x+y))']
   },
   ratelimit: {
     type: 'guild',
@@ -21,15 +22,16 @@ export default {
       return ctx.editOrReply('You need to provide a script to run');
     }
     ctx.triggerTyping();
-    let success = true;
-    const response = await assyst.fapi.imageTagParser(args.imagescript).catch((e) => {
-      ctx.editOrReply(e.message);
-      success = false;
-    });
-    if (typeof response === 'string') {
-      return ctx.editOrReply(response);
+    const guildAttachmentLimitBytes = await ctx.rest.fetchGuild(<string> ctx.guildId).then(g => g.maxAttachmentSize);
+    let response: ReturnTypes.ImageScript | undefined;
+    try {
+      response = await assyst.fapi.imageScript(args.imagescript);
+    } catch (e) {
+      return ctx.editOrReply(e.message);
     }
-    if (success) return ctx.editOrReply({ file: { filename: 'imagescript.png', data: response } });
-    else return null;
+    if (response?.image && response?.image.length > guildAttachmentLimitBytes) {
+      return ctx.editOrReply('Image too large to send');
+    }
+    return ctx.editOrReply({ file: { filename: 'imagescript.png', data: response?.image } });
   }
 };
