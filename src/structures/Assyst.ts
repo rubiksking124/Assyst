@@ -108,8 +108,6 @@ export default class Assyst extends CommandClient {
       expire: 3600000
     });
 
-    (<ShardClient> this.client).messages.limit = 100;
-
     this.paginator = new Paginator(this.client, {
       maxTime: 60000,
       pageLoop: true,
