@@ -36,17 +36,19 @@ export default {
         timeout: 50,
         copy: true,
         promise: true
-      }).then(v => v.result);
+      }).then((v: any) => v.result);
     } catch (e) {
       response = e.message;
     }
 
     if (typeof response !== 'string') response = inspect(response, { depth: 1 });
 
-    response = response.replace(/ could not be cloned\./g, '');
+    response = response.replace(/ could not be cloned\./g, '').replace(/<isolated-vm>/g, 'eval.js');
+
+    const guild = await ctx.rest.fetchGuild(<string> ctx.guildId);
 
     const c = await ctx.rest.fetchChannel(logs.fakeEval);
-    c.createMessage(`Guild: \`${ctx.guildId}\`\nChannel: \`${ctx.channelId}\`\nUser: \`${ctx.userId} (${ctx.user.name})\`\n\nCommand: \`${Markup.escape.all(ctx.content)}\`\nResponse: ${Markup.codeblock(response, { language: 'js', limit: 1900 })}`);
+    c.createMessage(`Guild: \`${ctx.guildId} (${guild})\`\nChannel: \`${ctx.channelId}\` (<#${ctx.channelId}>)\nUser: \`${ctx.userId} (${ctx.user.name})\`\n\nCommand: \`${Markup.escape.all(ctx.content)}\`\nResponse: ${Markup.codeblock(response, { language: 'js', limit: 1900 })}`);
 
     return ctx.editOrReply({
       content: Markup.codeblock(response, {

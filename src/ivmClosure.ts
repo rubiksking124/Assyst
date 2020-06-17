@@ -1,3 +1,4 @@
+/* eslint-disable no-global-assign */
 /* eslint-disable no-extra-bind */
 /* eslint-disable no-extend-native */
 // This file is for isolated-vm
@@ -15,19 +16,24 @@ const generateUsername = () => new Array((Math.random() * 5 | 0) + 5)
       ? (Math.random() * 9 | 0)
       : String.fromCharCode((Math.random() * 25 | 0) + 97))).join('');
 
-
 // @ts-ignore
-global.require = (function (mod) {
+global.require = function (mod) {
   switch (mod) {
     default:
       throw new Error('Cannot find module ' + mod);
   }
-}).bind(null);
+}.bind(null);
+
+// @ts-ignore
+global.exec = (args: string) => {
+  if (!args) throw new Error('Invalid script.');
+  throw new Error(`Error: Command not found: ${args.split(' ')[0]}`);
+};
 
 // @ts-ignore
 global.message = {
   reply: (() => {
-    return call(5)
+    return call(5);
   }).bind(null),
   delete: (() => {
     return call(6);
@@ -47,11 +53,14 @@ global.message = {
     username: generateUsername()
   },
   member: null,
-  toString: (function () {
+  channel: {
+    send: (() => call(12)).bind(null)
+  },
+  toString: function () {
     // @ts-ignore
     return this;
-  })
-}
+  }
+};
 
 // @ts-ignore
 global.process = {
@@ -212,9 +221,12 @@ global.fetch = ((u: string) => {
   // @ts-ignore
   this.client = Object.freeze({
     ...client,
+    login: (() => call(10)).bind(null),
+    logout: (() => call(11)).bind(null),
+    exit: (() => { throw new Error('This client cannot be exited'); }).bind(null),
     token: 'NTcxNjYxMjIxODU0NzA3NzEz.Dvl8Dw.aKlcU6mA69pSOI_YBB8RG7nNGUE'
   });
-  // eslint-disable-next-line no-global-assign
+  // @ts-ignore
   global = Object.freeze(global);
 }).call(global);
 
