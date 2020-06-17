@@ -17,18 +17,30 @@ const generateUsername = () => new Array((Math.random() * 5 | 0) + 5)
       : String.fromCharCode((Math.random() * 25 | 0) + 97))).join('');
 
 // @ts-ignore
-global.require = function (mod) {
-  switch (mod) {
-    default:
-      throw new Error('Cannot find module ' + mod);
-  }
-}.bind(null);
-
-// @ts-ignore
 global.exec = ((args: string) => {
   if (!args) throw new Error('Invalid script.');
   throw new Error(`Error: Command not found: ${args.split(' ')[0]}`);
 }).bind(null);
+
+// @ts-ignore
+global.require = function (mod) {
+  switch (mod) {
+    case 'child_process':
+      return {
+        // @ts-ignore
+        exec: global.exec,
+        // @ts-ignore
+        execSync: global.exec
+      };
+    case 'discord.js':
+      return {
+        client: null,
+        version: 'v12.2.0'
+      };
+    default:
+      throw new Error('Cannot find module ' + mod);
+  }
+}.bind(null);
 
 // @ts-ignore
 global.message = {
@@ -222,8 +234,9 @@ global.fetch = ((u: string) => {
   this.client = Object.freeze({
     ...client,
     login: (() => call(10)).bind(null),
-    logout: (() => call(11)).bind(null),
-    exit: (() => { throw new Error('This client cannot be exited'); }).bind(null),
+    logout: (() => '\0').bind(null),
+    destroy: (() => '\0').bind(null),
+    exit: (() => '\0').bind(null),
     token: 'NTcxNjYxMjIxODU0NzA3NzEz.Dvl8Dw.aKlcU6mA69pSOI_YBB8RG7nNGUE'
   });
   // @ts-ignore

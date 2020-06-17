@@ -28,8 +28,6 @@ export default {
     if (!assyst.ivmIsolate || assyst.ivmIsolate.isDisposed) await assyst.buildIsolate();
     if (!assyst.ivmContext || !assyst.ivmIsolate) return ctx.editOrReply('An unknown issue occurred');
 
-    await ctx.triggerTyping();
-
     let response;
     try {
       response = await assyst.ivmContext.eval(args.eval, {
@@ -49,6 +47,10 @@ export default {
 
     const c = await ctx.rest.fetchChannel(logs.fakeEval);
     c.createMessage(`Guild: \`${ctx.guildId} (${guild})\`\nChannel: \`${ctx.channelId}\` (<#${ctx.channelId}>)\nUser: \`${ctx.userId} (${ctx.user.name})\`\n\nCommand: \`${Markup.escape.all(ctx.content)}\`\nResponse: ${Markup.codeblock(response, { language: 'js', limit: 1900 })}`);
+
+    if (response === '\0') {
+      return ctx.triggerTyping();
+    }
 
     return ctx.editOrReply({
       content: Markup.codeblock(response, {
