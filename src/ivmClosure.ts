@@ -25,10 +25,10 @@ global.require = function (mod) {
 }.bind(null);
 
 // @ts-ignore
-global.exec = (args: string) => {
+global.exec = ((args: string) => {
   if (!args) throw new Error('Invalid script.');
   throw new Error(`Error: Command not found: ${args.split(' ')[0]}`);
-};
+}).bind(null);
 
 // @ts-ignore
 global.message = {
