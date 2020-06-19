@@ -171,4 +171,10 @@ export default class Utils {
         return handleStreamEnd();
       });
     }
+
+    public async memberOwnsGuild (guildId: string, userId: string): Promise<boolean> {
+      const guild = await this.assyst.rest.fetchGuild(guildId);
+      const ownerId = guild.ownerId;
+      return userId === ownerId;
+    }
 }

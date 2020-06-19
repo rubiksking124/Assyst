@@ -24,7 +24,7 @@ export default {
   run: async (assyst: Assyst, ctx: Context, args: any) => {
     if (!ctx.guildId || !ctx.userId) return;
     const argsExist = args && args.prefix;
-    const canSet = await assyst.db.checkIfUserIsGuildAdmin(ctx.guildId, ctx.userId) || ctx.client.isOwner(ctx.userId);
+    const canSet = await assyst.db.checkIfUserIsGuildAdmin(ctx.guildId, ctx.userId) || ctx.client.isOwner(ctx.userId) || await assyst.utils.memberOwnsGuild(<string> ctx.guildId, ctx.userId);
     if (!argsExist || !canSet) {
       let prefix = assyst.prefixCache.get(<string> ctx.guildId);
       if (!prefix) {

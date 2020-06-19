@@ -18,7 +18,7 @@ export default {
     limit: 1,
     duration: 5000
   },
-  onBefore: (assyst: Assyst, ctx: Context) => { return ctx.client.isOwner(ctx.userId) || admins.includes(ctx.userId) || ctx.member?.isOwner; },
+  onBefore: async (assyst: Assyst, ctx: Context) => { return ctx.client.isOwner(ctx.userId) || admins.includes(ctx.userId) || await assyst.utils.memberOwnsGuild(<string> ctx.guildId, ctx.userId); },
   run: async (assyst: Assyst, ctx: Context, args: any) => {
     if (!args || !args.addadmin) {
       return ctx.editOrReply('You need to supply a user id to add as an admin');
