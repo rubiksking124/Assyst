@@ -27,6 +27,6 @@ export default {
       return ctx.editOrReply('This tag does not exist');
     }
     const tag = tags[0];
-    return ctx.editOrReply(`Tag: \`${tag.name}\` - raw content: ${Markup.codeblock(tag.content, { language: 'js', limit: 1990 })}`);
+    return ctx.editOrReply(`Tag: \`${Markup.escape.all(tag.name)}\` - raw content: ${Markup.codeblock(tag.content, { language: 'js', limit: 1990 })}`);
   }
 };

@@ -26,6 +26,6 @@ export default {
       return ctx.editOrReply('This tag does not exist');
     }
     const tag = tags[0];
-    return ctx.editOrReply(Markup.escape.mentions(`Tag: \`${tag.name}\` - owner: ${tag.owner}`));
+    return ctx.editOrReply({ content: Markup.escape.mentions(`Tag: \`${Markup.escape.all(tag.name)}\` - owner: <@${tag.owner}>`), allowedMentions: { parse: [] }});
   }
 };
