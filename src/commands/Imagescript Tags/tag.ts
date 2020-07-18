@@ -23,7 +23,7 @@ export default {
     if (!args.imagescripttag) {
       return ctx.editOrReply('You need to supply a tag name');
     }
-    const [name, ...passedArgs] = args.imagescripttag;
+    const [name, ...passedArgs] = args.imagescripttag.split(' ');
     const tags = await assyst.db.fetchImageScriptTag(name).then(res => res.map(r => r.content));
     if (tags.length === 0) {
       return ctx.editOrReply('Tag not found');
