@@ -23,7 +23,8 @@ export default {
     if (!args.imagescripttag) {
       return ctx.editOrReply('You need to supply a tag name');
     }
-    const tags = await assyst.db.fetchImageScriptTag(args.imagescripttag).then(res => res.map(r => r.content));
+    const [name, ...passedArgs] = args.imagescripttag;
+    const tags = await assyst.db.fetchImageScriptTag(name).then(res => res.map(r => r.content));
     if (tags.length === 0) {
       return ctx.editOrReply('Tag not found');
     }
@@ -32,7 +33,10 @@ export default {
     const guildAttachmentLimitBytes = await ctx.rest.fetchGuild(<string> ctx.guildId).then(g => g.maxAttachmentSize);
     let response: ReturnTypes.ImageScript | undefined;
     try {
-      response = await assyst.fapi.imageScript(tag);
+      response = await assyst.fapi.imageScript(tag, {
+        args: passedArgs.join(' '),
+        avatar: ctx.user.avatarUrl
+      });
     } catch (e) {
       return ctx.editOrReply(e.message);
     }
