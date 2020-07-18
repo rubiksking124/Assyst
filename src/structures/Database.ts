@@ -198,6 +198,6 @@ export default class Database {
     }
 
     public async editImageScriptTag (name: string, content: string) {
-      await this.sql('update is_tags set content = $1 where name = $1', [content, name]);
+      await this.sql('update is_tags set content = $1 where name = $2', [content, name]);
     }
 }
