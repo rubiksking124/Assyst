@@ -19,6 +19,12 @@ export default {
     limit: 1,
     duration: 5000
   },
+  args: [
+    {
+      name: 'm',
+      type: Boolean
+    }
+  ],
   run: async (assyst: Assyst, ctx: Context, args: any) => {
     if (!args.imagescripttag) {
       return ctx.editOrReply('You need to supply a tag name');
@@ -43,6 +49,6 @@ export default {
     if (response?.image && response?.image.length > guildAttachmentLimitBytes) {
       return ctx.editOrReply('Image too large to send');
     }
-    return ctx.editOrReply({ file: { filename: 'imagescript.png', data: response?.image } });
+    return ctx.editOrReply({ content: args.m ? `CPU Time: ${response.cpuTime}ms\nWall Time: ${response.wallTime}\nMemory Usage: ${response.memoryUsage}MB` : '', file: { filename: 'imagescript.png', data: response?.image } });
   }
 };
