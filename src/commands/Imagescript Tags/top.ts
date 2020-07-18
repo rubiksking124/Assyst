@@ -19,6 +19,9 @@ export default {
   },
   run: async (assyst: Assyst, ctx: Context, args: any) => {
     const top10Tags = await assyst.db.fetchTopImageScriptTags(10);
-    return ctx.editOrReply(`**Top 10 tags by uses**\n${top10Tags.map(t => `**${t.name}** - ${t.uses} uses (owned by \`${t.owner}\`)`).join('\n')}`)
+    return ctx.editOrReply({ 
+        content: `**Top 10 tags by uses**\n${top10Tags.map(t => `**${t.name}** - ${t.uses} uses (owned by <@${t.owner}>)`).join('\n')}`,
+        allowedMentions: { parse: [] }
+    })
   }
 };

@@ -1,5 +1,5 @@
 import { Context } from 'detritus-client/lib/command';
-
+import { Markup } from 'detritus-client/lib/utils'
 import Assyst from '../../structures/Assyst';
 
 export default {
@@ -26,6 +26,6 @@ export default {
       return ctx.editOrReply('This tag does not exist');
     }
     const tag = tags[0];
-    return ctx.editOrReply(`Tag: \`${tag.name}\` - owner: ${tag.owner}`);
+    return ctx.editOrReply(Markup.escape.mentions(`Tag: \`${tag.name}\` - owner: ${tag.owner}`));
   }
 };
