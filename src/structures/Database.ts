@@ -190,7 +190,7 @@ export default class Database {
     }
 
     public async fetchImageScriptTag (name: string) {
-      return this.sql('select content from is_tags where name = $1', [name]).then(r => r.rows);
+      return this.sql('select * from is_tags where name = $1', [name]).then(r => r.rows);
     }
 
     public async deleteImageScriptTag (name: string) {
