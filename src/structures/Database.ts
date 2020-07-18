@@ -184,4 +184,20 @@ export default class Database {
     public async deleteCommandLogChannel (guildId: string): Promise<void> {
       await this.sql('delete from command_logging where guild = $1', [guildId]);
     }
+
+    public async createImageScriptTag (name: string, content: string, owner: string) {
+      await this.sql('insert into is_tags (name, content, owner) values ($1, $2, $3)', [name, content, owner]);
+    }
+
+    public async fetchImageScriptTag (name: string) {
+      return this.sql('select content from is_tags where name = $1', [name]).then(r => r.rows);
+    }
+
+    public async deleteImageScriptTag (name: string) {
+      await this.sql('delete from is_tags where name = $1', [name]);
+    }
+
+    public async editImageScriptTag (name: string, content: string) {
+      await this.sql('update is_tags set content = $1 where name = $1', [content, name]);
+    }
 }
