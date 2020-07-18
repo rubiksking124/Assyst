@@ -49,6 +49,6 @@ export default {
     if (response?.image && response?.image.length > guildAttachmentLimitBytes) {
       return ctx.editOrReply('Image too large to send');
     }
-    return ctx.editOrReply({ content: args.m ? `CPU Time: ${response.cpuTime}ms\nWall Time: ${response.wallTime}\nMemory Usage: ${response.memoryUsage}MB` : '', file: { filename: 'imagescript.png', data: response?.image } });
+    return ctx.editOrReply({ content: args.m ? `CPU Time: \`${response.cpuTime}\`ms\nWall Time: \`${response.wallTime}\`ms\nMemory Usage: \`${response.memoryUsage}\`MB` : '', file: { filename: 'imagescript.png', data: response?.image } });
   }
 };
