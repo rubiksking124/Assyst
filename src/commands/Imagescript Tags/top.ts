@@ -3,14 +3,14 @@ import { Context } from 'detritus-client/lib/command';
 import Assyst from '../../structures/Assyst';
 
 export default {
-  name: 'imagescripttag owner',
-  aliases: ['ist owner'],
+  name: 'imagescripttag top',
+  aliases: ['ist top'],
   responseOptional: true,
   priority: 2,
   metadata: {
-    description: 'Fetch the owner of an ImageScript Tag',
-    usage: '[tag name]',
-    examples: ['test']
+    description: 'Fetch the top 10 most used ImageScript tags',
+    usage: '',
+    examples: ['']
   },
   ratelimit: {
     type: 'guild',
