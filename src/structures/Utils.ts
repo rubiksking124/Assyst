@@ -180,8 +180,13 @@ export default class Utils {
 
     public parseCodeblocks (input: string, language: string): string {
       let output = input;
-      if (output.startsWith('```')) { output = output.replace('```', ''); return output; }
-      if (output.startsWith('```' + language)) output = output.replace('```' + language, '');
+      if (output.startsWith(Markup.Strings.CODEBLOCK + language)) {
+        output = output.replace(Markup.Strings.CODEBLOCK + language, '');
+        const lastIndex = output.lastIndexOf(Markup.Strings.CODEBLOCK);
+        if (lastIndex !== -1) {
+          output.split('').splice(lastIndex, Markup.Strings.CODEBLOCK.length);
+        }
+      }
       return output;
     }
 }
