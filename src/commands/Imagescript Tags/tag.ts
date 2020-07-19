@@ -50,6 +50,7 @@ export default {
       const url = await assyst.customRest.uploadToTsu(response.image, 'image/png');
       return ctx.editOrReply({ content: (args.m ? `CPU Time: \`${response.cpuTime}\`ms\nWall Time: \`${response.wallTime}\`ms\nMemory Usage: \`${response.memoryUsage}\`MB\n` : '') + url });
     }
+    await assyst.db.incrementImageScriptTagUses(name);
     return ctx.editOrReply({ content: args.m ? `CPU Time: \`${response.cpuTime}\`ms\nWall Time: \`${response.wallTime}\`ms\nMemory Usage: \`${response.memoryUsage}\`MB` : '', file: { filename: 'imagescript.png', data: response?.image } });
   }
 };

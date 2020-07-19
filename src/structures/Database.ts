@@ -186,7 +186,7 @@ export default class Database {
     }
 
     public async createImageScriptTag (name: string, content: string, owner: string) {
-      await this.sql('insert into is_tags (name, content, owner) values ($1, $2, $3)', [name, content, owner]);
+      await this.sql('insert into is_tags (name, content, owner, uses) values ($1, $2, $3, 0)', [name, content, owner]);
     }
 
     public async fetchImageScriptTag (name: string) {
@@ -197,7 +197,15 @@ export default class Database {
       await this.sql('delete from is_tags where name = $1', [name]);
     }
 
+    public async incrementImageScriptTagUses(name: string) {
+      await this.sql('update is_tags set uses = uses + 1 where name = $1', [name]);
+    }
+
     public async editImageScriptTag (name: string, content: string) {
       await this.sql('update is_tags set content = $1 where name = $2', [content, name]);
+    }
+
+    public async fetchTopImageScriptTags(limit: number) {
+      return await this.sql('select * from is_tags order by uses desc limit $1', [limit]).then(r => r.rows);
     }
 }
