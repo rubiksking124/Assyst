@@ -180,7 +180,7 @@ export default class Utils {
 
     public parseCodeblocks (input: string, language: string): string {
       const match = input.match(/(?:```(?:\w+\n)?)([\s\S]+)(?:```)|([\s\S]+)/);
-      if (match) return match[1];
+      if (match) return match[1] || input;
       return input;
     }
 }
