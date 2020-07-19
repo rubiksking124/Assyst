@@ -47,7 +47,8 @@ export default {
       return ctx.editOrReply(e.message);
     }
     if (response?.image && response?.image.length > guildAttachmentLimitBytes) {
-      return ctx.editOrReply('Image too large to send');
+      const url = await assyst.customRest.uploadToTsu(response.image, 'image/png');
+      return ctx.editOrReply({ content: (args.m ? `CPU Time: \`${response.cpuTime}\`ms\nWall Time: \`${response.wallTime}\`ms\nMemory Usage: \`${response.memoryUsage}\`MB\n` : '') + url });
     }
     return ctx.editOrReply({ content: args.m ? `CPU Time: \`${response.cpuTime}\`ms\nWall Time: \`${response.wallTime}\`ms\nMemory Usage: \`${response.memoryUsage}\`MB` : '', file: { filename: 'imagescript.png', data: response?.image } });
   }

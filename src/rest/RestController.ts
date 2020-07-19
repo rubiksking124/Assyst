@@ -16,6 +16,8 @@ import DefaultHeaders from './DefaultHeaders';
 import { Request, RequestOptions } from 'detritus-rest';
 import { Member, Role } from 'detritus-client/lib/structures';
 
+import fetch from 'node-fetch';
+
 import * as Types from './Types';
 
 export default class RestController {
@@ -25,6 +27,16 @@ export default class RestController {
 
     constructor (assyst: Assyst) {
       this.assyst = assyst;
+    }
+
+    public async uploadToTsu (data: any, contentType: string) {
+      return fetch(Endpoints.tsu, {
+        headers: {
+          'content-type': contentType
+        },
+        method: 'POST',
+        body: data
+      }).then(r => r.text());
     }
 
     public async parseText (input: string): Promise<Types.CastResult> {

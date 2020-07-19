@@ -23,5 +23,6 @@ export default Object.freeze({
   ocr: 'https://api.tsu.sh/google/ocr',
   identify: 'https://captionbot.azurewebsites.net/api/messages?language=en-US',
   translate: 'https://translate.yandex.net/api/v1.5/tr.json/translate',
-  cast: 'https://jacher.io/cast'
+  cast: 'https://jacher.io/cast',
+  tsu: 'https://tsu.sh'
 });
