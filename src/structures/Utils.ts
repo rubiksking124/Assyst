@@ -177,4 +177,11 @@ export default class Utils {
       const ownerId = guild.ownerId;
       return userId === ownerId;
     }
+
+    public parseCodeblocks (input: string, language: string): string {
+      let output = input;
+      if (output.startsWith('```')) { output = output.replace('```', ''); return output; }
+      if (output.startsWith('```' + language)) output = output.replace('```' + language, '');
+      return output;
+    }
 }

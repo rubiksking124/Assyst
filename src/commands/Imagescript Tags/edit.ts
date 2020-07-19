@@ -1,6 +1,7 @@
 import { Context } from 'detritus-client/lib/command';
 
 import Assyst from '../../structures/Assyst';
+import { Markup } from 'detritus-client/lib/utils';
 
 export default {
   name: 'imagescripttag edit',
@@ -30,7 +31,7 @@ export default {
     if (!tag || tag.owner !== ctx.userId) {
       return ctx.editOrReply('This tag doesn\'t exist or you don\'t own it');
     }
-    await assyst.db.editImageScriptTag(name, content.join(' '));
+    await assyst.db.editImageScriptTag(name, assyst.utils.parseCodeblocks(content.join(' '), 'js'));
     return ctx.editOrReply('Tag edited successfully');
   }
 };

@@ -29,7 +29,7 @@ export default {
     if (!content) {
       return ctx.editOrReply('You need to supply tag content');
     }
-    await assyst.db.createImageScriptTag(name, content.join(' '), ctx.userId);
+    await assyst.db.createImageScriptTag(name, assyst.utils.parseCodeblocks(content.join(' '), 'js'), ctx.userId);
     return ctx.editOrReply('Tag created successfully');
   }
 };
