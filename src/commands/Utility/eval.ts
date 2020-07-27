@@ -38,7 +38,12 @@ export default {
             try {
               res = await eval(str);
             } catch(e) {
-              res = e.message;
+              const descriptor = Object.getOwnPropertyDescriptor(e, 'message');
+              if (typeof descriptor.get === 'function') {
+                res = 'Aborting due to Error#message being a getter';
+              } else {
+                 res = e.message;
+              }
             }
 
             if (typeof res === 'function') {
