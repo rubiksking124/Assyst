@@ -86,12 +86,7 @@ export default class Assyst extends CommandClient {
 
   public btChannelController?: BTChannelController
 
-  public fapi: Client.Client
-
-  public ivmContext?: IVMContext
-
-  public ivmIsolate?: IVMIsolate
-
+  public fapi: Client.Client;
   constructor (token: string, options: CommandClientOptions) {
     super(token || '', options);
 
