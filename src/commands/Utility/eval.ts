@@ -30,18 +30,37 @@ export default {
 
     let response;
     try {
-      response = await assyst.ivmContext.eval(args.eval, {
+      response = await assyst.ivmContext.evalClosure(`
+          return (async (str) => {
+            const $0 = null;
+            let res;
+
+            try {
+              res = await eval(str);
+            } catch(e) {
+              res = e.message;
+            }
+
+            if (typeof res === 'function') {
+              res = res.toString();
+            }
+            
+            return res;
+        })($0);`, [args.eval], {
         timeout: 50,
-        copy: true,
-        promise: true
-      }).then((v: any) => v.result);
+        arguments: {
+          copy: true
+        },
+        result: {
+          promise: true,
+          copy: true
+        }
+      }).then(v => v.result);
     } catch (e) {
       response = e.message;
     }
 
     if (typeof response !== 'string') response = inspect(response, { depth: 1 });
-
-    response = response.replace(/ could not be cloned\./g, '').replace(/<isolated-vm>/g, 'eval.js');
 
     const guild = await ctx.rest.fetchGuild(<string> ctx.guildId);
 
@@ -57,7 +76,9 @@ export default {
         language: 'js',
         limit: 1990
       }),
-      allowedMentions: { parse: [] }
+      allowedMentions: {
+        parse: []
+      }
     });
   }
 };
