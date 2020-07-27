@@ -24,6 +24,7 @@ import {
   logGateway,
   badTranslator,
   guildBlacklist,
+  userBlacklist,
   fapi,
   logs
 } from '../../config.json';
@@ -409,7 +410,7 @@ export default class Assyst extends CommandClient {
   }
 
   public async onCommandCheck (ctx: Context, command: Command.Command): Promise<boolean> {
-    return this.checkBotUseLimit(ctx) && await this.checkIfDisabled(ctx, command);
+    return this.checkBotUseLimit(ctx) && await this.checkIfDisabled(ctx, command) && !userBlacklist.includes(ctx.userId);
   }
 
   private async checkIfDisabled (ctx: Context, command: Command.Command): Promise<boolean> {
