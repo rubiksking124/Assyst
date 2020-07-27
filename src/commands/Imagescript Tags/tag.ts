@@ -51,6 +51,6 @@ export default {
       return ctx.editOrReply({ content: (args.m ? `CPU Time: \`${response.cpuTime}\`ms\nWall Time: \`${response.wallTime}\`ms\nMemory Usage: \`${response.memoryUsage}\`MB\n` : '') + url });
     }
     await assyst.db.incrementImageScriptTagUses(name);
-    return ctx.editOrReply({ content: args.m ? `CPU Time: \`${response.cpuTime}\`ms\nWall Time: \`${response.wallTime}\`ms\nMemory Usage: \`${response.memoryUsage}\`MB` : '', file: { filename: 'imagescript.png', data: response?.image } });
+    return ctx.editOrReply({ content: args.m ? `CPU Time: \`${response.cpuTime.toFixed(2)}\`ms\nWall Time: \`${response.wallTime.toFixed(2)}\`ms\nMemory Usage: \`${response.memoryUsage.toFixed(2)}\`MB` : '', file: { filename: 'imagescript.png', data: response?.image } });
   }
 };
