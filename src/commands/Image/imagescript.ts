@@ -5,7 +5,7 @@ import { ReturnTypes } from 'fapi-client/JS/src/types';
 
 export default {
   name: 'imagescript',
-  aliases: ['runis'],
+  aliases: ['runis', 'is'],
   responseOptional: true,
   metadata: {
     description: 'Execute imagescript (Docs)[https://imagescript.dreadful.tech/]',
@@ -32,6 +32,6 @@ export default {
     if (response?.image && response?.image.length > guildAttachmentLimitBytes) {
       return ctx.editOrReply('Image too large to send');
     }
-    return ctx.editOrReply({ file: { filename: 'imagescript.png', data: response?.image } });
+    return ctx.editOrReply({ file: { filename: 'imagescript.png', data: response?.image }, content: `CPU Time: \`${response.cpuTime.toFixed(2)}\`ms\nWall Time: \`${response.wallTime.toFixed(2)}\`ms\nMemory Usage: \`${response.memoryUsage.toFixed(2)}\`MB`  });
   }
 };
