@@ -24,6 +24,7 @@ import {
   logGateway,
   badTranslator,
   guildBlacklist,
+  userBlacklist,
   fapi,
   logs
 } from '../../config.json';
@@ -43,10 +44,6 @@ import MessageSnipeController from './MessageSnipeController';
 import BTChannelController from './BTChannelController';
 
 import { Client } from 'fapi-client';
-
-const ivmClosureScript = readFileSync('./src/ivmClosure.js', 'utf8')
-  // thanks tsc
-  .replace(/["']use strict["'];?/g, '');
 
 interface Field {
   name: string,
@@ -85,12 +82,7 @@ export default class Assyst extends CommandClient {
 
   public btChannelController?: BTChannelController
 
-  public fapi: Client.Client
-
-  public ivmContext?: IVMContext
-
-  public ivmIsolate?: IVMIsolate
-
+  public fapi: Client.Client;
   constructor (token: string, options: CommandClientOptions) {
     super(token || '', options);
 
@@ -409,7 +401,7 @@ export default class Assyst extends CommandClient {
   }
 
   public async onCommandCheck (ctx: Context, command: Command.Command): Promise<boolean> {
-    return this.checkBotUseLimit(ctx) && await this.checkIfDisabled(ctx, command);
+    return this.checkBotUseLimit(ctx) && await this.checkIfDisabled(ctx, command) && !userBlacklist.includes(ctx.userId);
   }
 
   private async checkIfDisabled (ctx: Context, command: Command.Command): Promise<boolean> {
@@ -423,35 +415,6 @@ export default class Assyst extends CommandClient {
     if (limitToUsers.enabled && limitToUsers.users.includes(ctx.userId)) return true;
     else if (!limitToUsers.enabled) return true;
     else return false;
-  }
-
-  public async buildIsolate () {
-    const isolate = new IVMIsolate({ memoryLimit: 8 });
-    const context = await isolate.createContext();
-    context.global.set('global', context.global.derefInto());
-
-    this.ivmIsolate = isolate;
-    this.ivmContext = context;
-
-    await this.runContextClosure();
-  }
-
-  public async runContextClosure () {
-    if (!this.ivmContext) return;
-    await this.ivmContext.evalClosure(ivmClosureScript, [
-      {
-        collections: Object.keys(this.client)
-          // @ts-ignore
-          // Only import base collections
-          .filter(f => this.client[f] && typeof this.client[f].size === 'number')
-          // @ts-ignore
-          .map(k => [k, this.client[k].size])
-      }
-    ], {
-      arguments: {
-        copy: true
-      }
-    });
   }
 
   public parseNew (input: string, message: Message, args: string[] = [], tag: ITag) {
