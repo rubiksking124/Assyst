@@ -1,7 +1,7 @@
 import { Context } from 'detritus-client/lib/command';
 
 import Assyst from '../../structures/Assyst';
-import user from '../Github/user';
+import { Markup } from 'detritus-client/lib/utils';
 
 export default {
   name: 'imagescripttag list',
@@ -22,7 +22,7 @@ export default {
     const userId = args['imagescripttag list'] || ctx.userId;
     const tags = await assyst.db.fetchUserImageScriptTags(userId);
     if (tags.length === 0) { return ctx.editOrReply('No tags found'); }
-    const formattedTags = tags.sort((a, b) => a.split('')[0].charCodeAt(0) - b.split('')[0].charCodeAt(0)).map(t => `\`${t}\``).join(', ');
+    const formattedTags = tags.sort((a, b) => a.split('')[0].charCodeAt(0) - b.split('')[0].charCodeAt(0)).map(t => `\`${Markup.escape.all(t)}\``).join(', ');
     return ctx.editOrReply({ content: `**Tag List: <@${userId}>**\n${formattedTags}`, allowedMentions: { parse: [] } });
   }
 };
