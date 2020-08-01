@@ -21,7 +21,7 @@ export default {
     if (!args['imagescripttag create']) {
       return ctx.editOrReply('You need to supply a tag name and content');
     }
-    const [name, ...content] = args['imagescripttag create'].split(' ');
+    const [name, ...content]: [string, string] = args['imagescripttag create'].split(' ');
     const tags = await assyst.db.fetchImageScriptTag(name).then(res => res.map(r => r.content));
     if (tags.length > 0) {
       return ctx.editOrReply('This tag already exists');
@@ -29,7 +29,7 @@ export default {
     if (!content) {
       return ctx.editOrReply('You need to supply tag content');
     }
-    await assyst.db.createImageScriptTag(name.split('\n').join(''), assyst.utils.parseCodeblocks(content.join(' '), 'js'), ctx.userId);
+    await assyst.db.createImageScriptTag(name.split('\n').join('').toLowerCase(), assyst.utils.parseCodeblocks(content.join(' '), 'js'), ctx.userId);
     return ctx.editOrReply('Tag created successfully');
   }
 };
