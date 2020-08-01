@@ -15,7 +15,7 @@ export default {
   ratelimit: {
     type: 'guild',
     limit: 1,
-    duration: 10000
+    duration: 1500
   },
   run: async (assyst: Assyst, ctx: Context, args: any) => {
     if (!args || !args.imagescript) {
@@ -32,6 +32,6 @@ export default {
     if (response?.image && response?.image.length > guildAttachmentLimitBytes) {
       return ctx.editOrReply('Image too large to send');
     }
-    return ctx.editOrReply({ file: { filename: 'imagescript.png', data: response?.image }, content: `CPU Time: \`${response.cpuTime.toFixed(2)}\`ms\nWall Time: \`${response.wallTime.toFixed(2)}\`ms\nMemory Usage: \`${response.memoryUsage.toFixed(2)}\`MB`  });
+    return ctx.editOrReply({ file: { filename: 'imagescript.png', data: response?.image }, content: `CPU Time: \`${response.cpuTime.toFixed(2)}\`ms\nWall Time: \`${response.wallTime.toFixed(2)}\`ms\nMemory Usage: \`${response.memoryUsage.toFixed(2)}\`MB` });
   }
 };
