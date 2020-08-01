@@ -21,7 +21,7 @@ export default {
     if (!args['imagescripttag create']) {
       return ctx.editOrReply('You need to supply a tag name and content');
     }
-    const [name, ...content]: [string, string] = args['imagescripttag create'].split(' ');
+    const [name, ...content]: [string, string] = args['imagescripttag create'].split(/\s/);
     const tags = await assyst.db.fetchImageScriptTag(name).then(res => res.map(r => r.content));
     if (tags.length > 0) {
       return ctx.editOrReply('This tag already exists');
