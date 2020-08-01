@@ -197,7 +197,7 @@ export default class Database {
       await this.sql('delete from is_tags where name = $1', [name]);
     }
 
-    public async incrementImageScriptTagUses(name: string) {
+    public async incrementImageScriptTagUses (name: string) {
       await this.sql('update is_tags set uses = uses + 1 where name = $1', [name]);
     }
 
@@ -205,7 +205,11 @@ export default class Database {
       await this.sql('update is_tags set content = $1 where name = $2', [content, name]);
     }
 
-    public async fetchTopImageScriptTags(limit: number) {
+    public async fetchTopImageScriptTags (limit: number) {
       return await this.sql('select * from is_tags order by uses desc limit $1', [limit]).then(r => r.rows);
+    }
+
+    public async fetchUserImageScriptTags (owner: string): Promise<string[]> {
+      return await this.sql('select name from is_tags where owner = $1', [owner]).then(r => r.rows.map(i => i.name));
     }
 }
