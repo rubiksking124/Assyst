@@ -12,8 +12,6 @@ import { Message } from 'detritus-client/lib/structures';
 
 import { readdirSync, readFileSync } from 'fs';
 
-import { Context as IVMContext, Isolate as IVMIsolate } from 'isolated-vm';
-
 import {
   db,
   webhooks,
