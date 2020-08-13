@@ -93,7 +93,7 @@ export default class Assyst extends CommandClient {
     this.logger = new Logger();
     this.api = new AssystApi(this);
     this.utils = new Utils(this);
-    this.fapi = new Client.Client({ auth: fapi });
+    this.fapi = new Client.Client({ auth: fapi, timeout: 30000 });
     this.prefixCache = new BaseCollection({
       expire: 3600000
     });
