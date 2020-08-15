@@ -22,7 +22,20 @@ function getPrependedCode(): string {
             console.timeEnd(test.name);
         }
     }
-  };\n`;
+  };
+  
+  function bm(...funcs) {
+     let i = 0;
+     for (const arg of funcs) {
+         if (typeof arg === 'function') {
+             suite.add({ name: i, fn: arg })
+         } else {
+             suite.run({ iterations: parseInt(arg, 10) });
+             break;
+         }
+         i++;
+     }
+  }\n`;
 }
 
 export default {
