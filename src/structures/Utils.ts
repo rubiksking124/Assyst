@@ -24,6 +24,8 @@ interface ElapsedTime {
   days: number
 }
 
+const CODEBLOCK_REGEX = new RegExp('^\\s*```\\w*|```\\s*$', 'g');
+
 export default class Utils {
     private assyst: Assyst
 
@@ -179,8 +181,6 @@ export default class Utils {
     }
 
     public parseCodeblocks (input: string, language: string): string {
-      const match = input.match(/(?:```(?:\w+\n)?)([\s\S]+)(?:```)|([\s\S]+)/);
-      if (match) return match[1] || input;
-      return input;
+      return input.replace(CODEBLOCK_REGEX, '');
     }
 }
