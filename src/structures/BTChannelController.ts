@@ -43,6 +43,8 @@ export default class BTChannelController {
         if ((message.author.bot && message.author.id !== (<ShardClient> this._assyst.client).user?.id) || !message.content) {
           if (message.author.isWebhook) return;
           return message.delete();
+        } else if (message.author.id !== (<ShardClient> this._assyst.client).user?.id) {
+          return;
         }
 
         const userRatelimit = this.ratelimitCache.get(message.author.id);
