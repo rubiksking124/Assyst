@@ -3,6 +3,7 @@ import { Webhook, Message } from 'detritus-client/lib/structures';
 import Assyst from './Assyst';
 
 import { badTranslator } from '../../config.json';
+import { ShardClient } from 'detritus-client';
 
 type WebhookCollection = BaseCollection<string, Webhook>;
 
@@ -39,7 +40,7 @@ export default class BTChannelController {
       }) => {
         if (!this.channels.includes(message.channelId)) return;
 
-        if (message.author.bot || !message.content) {
+        if ((message.author.bot && message.author.id !== (<ShardClient> this._assyst.client).user?.id) || !message.content) {
           if (message.author.isWebhook) return;
           return message.delete();
         }
