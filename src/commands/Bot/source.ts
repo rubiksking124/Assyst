@@ -26,6 +26,6 @@ export default {
     if (!command) {
       return ctx.editOrReply('Command not found');
     }
-    return ctx.editOrReply(`${homepage}/tree/rewrite/src/commands/${command.metadata.category}/${command._file?.replace('js', 'ts')}`);
+    return ctx.editOrReply(`${homepage}/tree/master/src/commands/${command.metadata.category}/${command._file?.replace('js', 'ts')}`);
   }
 };

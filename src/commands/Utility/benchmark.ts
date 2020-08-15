@@ -5,7 +5,7 @@ import { Markup } from 'detritus-client/lib/utils';
 
 import { STATUS_CODES } from 'http';
 
-function getPrependedCode(): string {
+function getPrependedCode (): string {
   return `
   const fns = [];
   const suite = {
@@ -44,8 +44,8 @@ export default {
   responseOptional: true,
   metadata: {
     description: 'Benchmark JavaScript code',
-    usage: '',
-    examples: ['-benchmark suite\n\t.add({ name: \'floor\', fn: (i) => Math.floor(i) })\n\t.add({ name: \'bit\', fn: (i) => i | 0 });']
+    usage: 'bm(...functions, iterations)',
+    examples: ['bm(() => Math.random(), () => Date.now(), 1e6)']
   },
   ratelimit: {
     type: 'guild',
@@ -59,7 +59,7 @@ export default {
     await ctx.triggerTyping();
 
     const prependedCode = getPrependedCode();
-    const response = await assyst.customRest.runSandboxedCode('js', prependedCode + args.benchmark);
+    const response = await assyst.customRest.runSandboxedCode('js', prependedCode + assyst.utils.parseCodeblocks(args.benchmark, 'js'));
 
     if (typeof response === 'string') {
       return ctx.editOrReply(response.slice(0, 1990));

@@ -25,7 +25,7 @@ export default {
     const guildAttachmentLimitBytes = await ctx.rest.fetchGuild(<string> ctx.guildId).then(g => g.maxAttachmentSize);
     let response: ReturnTypes.ImageScript | undefined;
     try {
-      response = await assyst.fapi.imageScript(args.imagescript);
+      response = await assyst.fapi.imageScript(assyst.utils.parseCodeblocks(args.imagescript, 'js'));
     } catch (e) {
       return ctx.editOrReply(e.message);
     }
