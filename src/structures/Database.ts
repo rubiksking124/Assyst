@@ -1,6 +1,7 @@
 import Assyst, { Metric } from './Assyst';
 import { Pool, QueryResult } from 'pg';
 import { Context } from 'detritus-client/lib/command';
+const postgres = require('postgres');
 
 interface Tag {
     name: string,
@@ -40,20 +41,16 @@ export interface ITag {
 
 export default class Database {
     private assyst: Assyst;
-    private db: Pool
+    private db: any
 
     constructor (assyst: Assyst, db: DatabaseAuth) {
       this.assyst = assyst;
-      this.db = new Pool(db);
+      this.db = postgres(db);
     }
 
-    public async sql (query: string, values?: any[]): Promise<QueryResult> {
-      return new Promise((resolve, reject) => {
-        this.db.query(query, values || [], (err: any, res: any) => {
-          if (err) reject(err);
-          else resolve(res);
-        });
-      });
+    public sql (query: string, values?: any[]): Promise<QueryResult> {
+      // fix me!!!!!!!!!!
+      // default format: this.db(query)
     }
 
     public async addGuildAdmin (guildId: string, userId: string): Promise<void> {
