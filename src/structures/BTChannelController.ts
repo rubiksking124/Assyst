@@ -98,9 +98,9 @@ export default class BTChannelController {
     }
 
     public async translate (text: string, hops ? : number): Promise<string> {
-      // ONLY translate first 1000 chars
-      // Yandex doesn't like >1k character translations (takes very long!)
-      return this._assyst.customRest.translate(text.substr(0, 1000), hops || 6).then(r => r.text);
+      // ONLY translate first 150 chars
+      // Makes it harder to exceed daily limit, very easy to reach with constant 1k char translations
+      return this._assyst.customRest.translate(text.substr(0, 150), hops || 6).then(r => r.text);
     }
 
     public async getWebhookOrCreate (channelId: string, attempt ?: number): Promise<Webhook | undefined> {
