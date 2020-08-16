@@ -6,5 +6,21 @@ export const injectedCode: string = `Number.prototype.toRgba = function() {
     p.a = this & 0xff;
     return p;
 }
+
+Number.prototype.toHsla = function() {
+    let p = {}
+    let [r,g,b,a] = Object.values(this.toRgba()).map(a=>a / 255)
+    let max = Math.max(...[r,g,b,a])
+    let min = Math.min(...[r,g,b,a])
+    if(max == r & g >= b) p.h = (1/6) * (g - b) / (max - min)
+    if(max == r & g < b) p.h = (1/6) * (g - b) / (max - min) + 1
+    if(max == g) p.h = (1/6) * (b - r) / (max - min) + 2/6
+    if(max == b) p.h = (1/6) * (r - g) / (max - min) + 4/6
+    p.s = (max - min) / (1 - Math.abs(1 - (max + min)))
+    p.l = (max + min) / 2
+    p.a = a
+    return p
+};
+
 const checkBounds = (x, y, w, h) => x >= 1 && y >= 1 && x <= w && y <= h
 `
