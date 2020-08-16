@@ -3,6 +3,7 @@ import { Context } from 'detritus-client/lib/command';
 import { ReturnTypes } from 'fapi-client/JS/src/types';
 
 import Assyst from '../../structures/Assyst';
+import { injectedCode } from '../../constants/imagescript'
 
 export default {
   name: 'imagescripttag',
@@ -39,7 +40,7 @@ export default {
     const guildAttachmentLimitBytes = await ctx.rest.fetchGuild(<string> ctx.guildId).then(g => g.maxAttachmentSize);
     let response: ReturnTypes.ImageScript | undefined;
     try {
-      response = await assyst.fapi.imageScript(tag, {
+      response = await assyst.fapi.imageScript(injectedCode + '\n' + tag, {
         args: passedArgs.join(' '),
         avatar: ctx.user.avatarUrl
       });
