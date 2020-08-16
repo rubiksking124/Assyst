@@ -22,5 +22,7 @@ Number.prototype.toHsla = function() {
     return p
 };
 
+const random = (min,max) => max ? Math.round(Math.random() * (max - min) + min) : Math.round(Math.random() * min);
+
 const checkBounds = (x, y, w, h) => x >= 1 && y >= 1 && x <= w && y <= h
-`
+`;
