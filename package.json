@@ -9,7 +9,7 @@
     "node": ">=8.0.0"
   },
   "dependencies": {
-    "detritus-client": "^0.11.1",
+    "detritus-client": "^0.10.5",
     "detritus-pagination": "^1.2.2",
     "fapi-client": "^0.3.4",
     "node-fetch": "^2.6.0",
