@@ -3,7 +3,6 @@ import { Message } from 'detritus-client/lib/structures';
 
 import { BaseCommand } from './basecommand';
 import { Assyst } from '../assyst';
-import { BaseCollection } from 'detritus-client/lib/collections';
 
 export class BaseFapiCommand extends BaseCommand {
   constructor (commandClient: CommandClient, options: Partial<Command.CommandOptions>) {
@@ -18,6 +17,11 @@ export class BaseFapiCommand extends BaseCommand {
 
   get fapi () {
     return (this.commandClient as Assyst).fapi;
+  }
+
+  async onBefore (context: Command.Context): Promise<boolean> {
+    await context.triggerTyping();
+    return super.onBefore(context);
   }
 
   public async getRecentAttachmentOrEmbed (msg: Message, amtOfMessages: number): Promise<string | undefined> {

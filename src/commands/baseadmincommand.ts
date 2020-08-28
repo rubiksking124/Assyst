@@ -10,7 +10,7 @@ export class BaseAdminCommand extends BaseCommand {
     }, options));
   }
 
-  onBefore (context: Command.Context): boolean {
+  async onBefore (context: Command.Context): Promise<boolean> {
     super.onBefore(context);
     if (!context.user.isClientOwner) {
       return false;

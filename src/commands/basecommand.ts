@@ -38,7 +38,7 @@ export class BaseCommand extends Command.Command {
       });
     }
 
-    onBefore (context: Command.Context): boolean {
+    async onBefore (context: Command.Context): Promise<boolean> {
       const oldEditOrReply: ((options: Command.EditOrReply | string) => Promise<Message>) = context.editOrReply.bind(context);
 
       context.editOrReply = (options?: string | Command.EditOrReply) => {
@@ -65,8 +65,6 @@ export class BaseCommand extends Command.Command {
     async onRunError (context: Command.Context, _: any, error: any) {
       const commandClient = context.commandClient as Assyst;
 
-      console.log(error);
-
       const description: string[] = [error.message || error.stack];
 
       if (error.response) {
@@ -90,7 +88,7 @@ export class BaseCommand extends Command.Command {
         }
       }
 
-      commandClient.executeLogWebhook(logWebhooks.commandErrors, {
+      await commandClient.executeLogWebhook(logWebhooks.commandErrors, {
         embed: {
           color: EmbedColors.ERROR,
           description: description.join('\n'),
@@ -104,5 +102,7 @@ export class BaseCommand extends Command.Command {
           title: '⚠️ Command Error'
         }
       });
+
+      await context.reply('⚠️ An error occurred.');
     }
 }
