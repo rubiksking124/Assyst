@@ -20,9 +20,8 @@ class PingCommand extends basecommand_1.BaseCommand {
             description: 'Ping the Discord REST and WebSocket APIs'
         };
     }
-    run(context, args) {
+    run(context, _args) {
         return __awaiter(this, void 0, void 0, function* () {
-            console.log(args);
             const { gateway, rest } = yield context.client.ping();
             return context.editOrReply(`Pong! REST: ${rest}ms, WS: ${gateway}ms`);
         });
