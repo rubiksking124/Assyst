@@ -5,13 +5,13 @@ export interface CommandArgs {
     url: string
 }
 
-export default class TrumpCommand extends BaseFapiCommand {
+export default class ExcuseCommand extends BaseFapiCommand {
     label = 'url'
 
-    name = 'trump'
+    name = 'excuse'
 
     metadata = {
-      description: 'Trump',
+      description: 'Excuse',
       examples: ['https://link.to.my/image.png'],
       usage: '[url|attachment]'
     }
@@ -21,10 +21,10 @@ export default class TrumpCommand extends BaseFapiCommand {
       if (!url) {
         return this.error(context, 'No valid URL was found... Please use an attachment or valid image URL');
       }
-      const res = await this.fapi.trump(url);
+      const res = await this.fapi.excuse(url);
       return context.editOrReply({
         file: {
-          filename: 'trump.png',
+          filename: 'excuse.png',
           value: res
         }
       });
