@@ -3,21 +3,25 @@ import { Context, Command } from 'detritus-client/lib/command';
 
 import { Client } from 'fapi-client';
 
-import { tokens } from '../config.json';
+import { tokens, database, prefixOverride } from '../config.json';
 import { RequestTypes } from 'detritus-client-rest';
 import { Zx8 } from './rest/zx8';
+import { Database } from './database/database';
 
 export interface AssystOptions extends CommandClientOptions {
     directory: string
 }
 
 export class Assyst extends CommandClient {
+  public database: Database
     public directory: string
     public fapi: Client.Client
     public zx8: Zx8
 
     constructor (token: string, options: AssystOptions) {
       super(token, options);
+
+      this.database = new Database(this, database);
 
       this.directory = options.directory;
       this.fapi = new Client.Client({
@@ -64,7 +68,20 @@ export class Assyst extends CommandClient {
       return true;
     }
 
-    async onPrefixCheck () {
-      return '...';
+    async onPrefixCheck (context: Context) {
+      if (prefixOverride) return prefixOverride;
+
+      const defaultPrefix = 'a-';
+
+      const userId = context.client.userId;
+      const prefixes = new Set([`<@${userId}>`, `<@!${userId}>`]);
+      const customPrefix = await this.database.fetchGuildPrefix(context.guildId as string);
+      if (!customPrefix) {
+        await this.database.setGuildPrefix(context.guildId as string, defaultPrefix);
+        prefixes.add(defaultPrefix);
+        return prefixes;
+      }
+      prefixes.add(customPrefix);
+      return prefixes;
     }
 }

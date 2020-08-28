@@ -42,7 +42,6 @@ const bot = new Assyst('', {
     }
   },
   mentionsEnabled: true,
-  prefix: '...',
   ratelimits: [
     {
       duration: 60000,

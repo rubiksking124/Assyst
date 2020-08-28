@@ -28,6 +28,16 @@ export class BaseCommand extends Command.Command {
       }, options));
     }
 
+    async error (context: Command.Context, content: string) {
+      return context.editOrReply({
+        embed: {
+          color: EmbedColors.ERROR,
+          title: '⚠️ Command Error',
+          description: content
+        }
+      });
+    }
+
     onBefore (context: Command.Context): boolean {
       const oldEditOrReply: ((options: Command.EditOrReply | string) => Promise<Message>) = context.editOrReply.bind(context);
 
