@@ -3,7 +3,7 @@
     "resolveJsonModule": true,
     "target": "ES6",                          
     "module": "commonjs",                       
-    "outDir": "./JS",                         
+    "outDir": "./dist",                         
     "strict": true,                           
     "noImplicitAny": true,                    
     "alwaysStrict": true,                     
@@ -11,4 +11,7 @@
     "forceConsistentCasingInFileNames": true,
     "rootDir": "."
   },
+
+  "include": ["src"],
+  "exclude": ["node_modules"]
 }
