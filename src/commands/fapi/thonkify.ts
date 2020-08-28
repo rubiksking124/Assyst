@@ -5,24 +5,24 @@ export interface CommandArgs {
     text: string
 }
 
-export default class ChangeMyMindCommand extends BaseFapiCommand {
-    aliases = ['cmm']
+export default class ThonkifyCommand extends BaseFapiCommand {
+    aliases = ['thonk']
 
     label = 'text'
 
-    name = 'changemymind'
+    name = 'thonkify'
 
     metadata = {
-      description: 'Change My Mind',
+      description: 'Thonkify',
       examples: [''],
       usage: '[text]'
     }
 
     async run (context: Command.Context, args: CommandArgs) {
-      const res = await this.fapi.changeMyMind(args.text);
+      const res = await this.fapi.thonkify(args.text);
       return context.editOrReply({
         file: {
-          filename: 'changemymind.png',
+          filename: 'thonkify.png',
           value: res
         }
       });

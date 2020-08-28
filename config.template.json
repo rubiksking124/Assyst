@@ -10,6 +10,7 @@
         "commandErrors": "",
         "shards": ""
     },
+    "prefixOverride": "",
     "tokens": {
         "bot": "",
         "fapi": ""

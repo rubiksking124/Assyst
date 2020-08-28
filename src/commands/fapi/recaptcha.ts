@@ -5,24 +5,24 @@ export interface CommandArgs {
     text: string
 }
 
-export default class ChangeMyMindCommand extends BaseFapiCommand {
-    aliases = ['cmm']
+export default class RecaptchaCommand extends BaseFapiCommand {
+    aliases = ['captcha']
 
     label = 'text'
 
-    name = 'changemymind'
+    name = 'recaptcha'
 
     metadata = {
-      description: 'Change My Mind',
+      description: 'Recaptcha',
       examples: [''],
       usage: '[text]'
     }
 
     async run (context: Command.Context, args: CommandArgs) {
-      const res = await this.fapi.changeMyMind(args.text);
+      const res = await this.fapi.recaptcha(args.text);
       return context.editOrReply({
         file: {
-          filename: 'changemymind.png',
+          filename: 'recaptcha.png',
           value: res
         }
       });
